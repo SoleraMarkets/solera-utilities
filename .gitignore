@@ -5,3 +5,4 @@ packages/*/dist/
 node_modules
 package-lock.json
 .idea
+.env
