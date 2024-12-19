@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.2](https://github.com/aave/aave-utilities/compare/@kevoh1516/solera-contract-helpers@3.0.0...@kevoh1516/solera-contract-helpers@3.0.2) (2024-12-19)
+
+
+### Bug Fixes
+
+* bump version ([50f138f](https://github.com/aave/aave-utilities/commit/50f138f6efa933ac04c5becbd4541c19fd7cba11))
+
+
+
+
+
 # 3.0.0 (2024-12-19)
 
 
