@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.1.0](https://github.com/aave/aave-utilities/compare/@kevoh1516/solera-math-utils@3.0.0...@kevoh1516/solera-math-utils@3.1.0) (2024-12-19)
+
+
+### Features
+
+* solera staking ([63d0a64](https://github.com/aave/aave-utilities/commit/63d0a64522c8491c3521f3f405d38771d883ea44))
+
+
+
+
+
 # 3.0.0 (2024-12-19)
 
 

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.1.0](https://github.com/aave/aave-utilities/compare/@kevoh1516/solera-contract-types@1.0.3...@kevoh1516/solera-contract-types@1.1.0) (2024-12-19)
+
+
+### Features
+
+* solera staking ([63d0a64](https://github.com/aave/aave-utilities/commit/63d0a64522c8491c3521f3f405d38771d883ea44))
+
+
+
+
+
 ## 1.0.3 (2024-12-19)
 
 
