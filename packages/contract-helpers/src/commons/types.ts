@@ -113,6 +113,7 @@ export enum eEthereumTxType {
   REWARD_ACTION = 'REWARD_ACTION',
   V3_MIGRATION_ACTION = 'V3_MIGRATION_ACTION',
   FAUCET_V2_MINT = 'FAUCET_V2_MINT',
+  SOLERA_STAKE_ACTION = 'SOLERA_STAKE_ACTION',
 }
 
 export enum ProtocolAction {
@@ -137,6 +138,7 @@ export enum ProtocolAction {
   vote = 'vote',
   approval = 'approval',
   creditDelegationApproval = 'creditDelegationApproval',
+  soleraStake = 'soleraStake',
   stake = 'stake',
   stakeCooldown = 'stakeCooldown',
   unstake = 'unstake',
