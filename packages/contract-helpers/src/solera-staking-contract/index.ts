@@ -18,12 +18,15 @@ export class SoleraStakingService extends BaseService<SoleraStaking> {
 
   readonly erc20Service: IERC20ServiceInterface;
 
-  constructor(provider: providers.Provider, contractAddress: string) {
+  constructor(
+    provider: providers.Provider,
+    contractAddress: string | undefined,
+  ) {
     super(provider, SoleraStaking__factory);
 
     this.erc20Service = new ERC20Service(provider);
 
-    this.soleraStakingContractAddress = contractAddress;
+    this.soleraStakingContractAddress = contractAddress ?? '';
   }
 
   public async deposit(
