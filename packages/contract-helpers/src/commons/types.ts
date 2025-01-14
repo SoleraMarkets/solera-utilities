@@ -139,6 +139,8 @@ export enum ProtocolAction {
   approval = 'approval',
   creditDelegationApproval = 'creditDelegationApproval',
   soleraStake = 'soleraStake',
+  soleraRequestUnstake = 'soleraRequestUnstake',
+  soleraUnstake = 'soleraUnstake',
   stake = 'stake',
   stakeCooldown = 'stakeCooldown',
   unstake = 'unstake',

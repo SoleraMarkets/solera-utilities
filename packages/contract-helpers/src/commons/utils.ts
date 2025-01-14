@@ -110,6 +110,18 @@ export const gasLimitRecommendations: GasRecommendationType = {
     limit: '350000',
     recommended: '350000',
   },
+  [ProtocolAction.soleraStake]: {
+    limit: '350000',
+    recommended: '350000',
+  },
+  [ProtocolAction.soleraRequestUnstake]: {
+    limit: '350000',
+    recommended: '350000',
+  },
+  [ProtocolAction.soleraUnstake]: {
+    limit: '350000',
+    recommended: '350000',
+  },
   [ProtocolAction.stake]: {
     limit: '350000',
     recommended: '350000',

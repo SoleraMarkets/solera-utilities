@@ -82,4 +82,42 @@ export class SoleraStakingService extends BaseService<SoleraStaking> {
 
     return txs;
   }
+
+  public async requestRedeem(
+    user: tEthereumAddress,
+    receiver: tEthereumAddress,
+    amount: string,
+  ): Promise<EthereumTransactionTypeExtended[]> {
+    const txs: EthereumTransactionTypeExtended[] = [];
+
+    const { decimalsOf } = this.erc20Service;
+
+    const stakingContract: SoleraStaking = this.getContractInstance(
+      this.soleraStakingContractAddress,
+    );
+
+    const stakingTokenDecimals: number = await decimalsOf(
+      this.soleraStakingContractAddress,
+    );
+    const convertedAmount: string = valueToWei(amount, stakingTokenDecimals);
+
+    const txCallback: () => Promise<transactionType> = this.generateTxCallback({
+      rawTxMethod: async () =>
+        stakingContract.populateTransaction.deposit(convertedAmount, receiver),
+      from: user,
+      action: ProtocolAction.soleraRequestUnstake,
+    });
+
+    txs.push({
+      tx: txCallback,
+      txType: eEthereumTxType.SOLERA_STAKE_ACTION,
+      gas: this.generateTxPriceEstimation(
+        txs,
+        txCallback,
+        ProtocolAction.soleraRequestUnstake,
+      ),
+    });
+
+    return txs;
+  }
 }
