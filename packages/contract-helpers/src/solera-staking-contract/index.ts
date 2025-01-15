@@ -103,7 +103,11 @@ export class SoleraStakingService extends BaseService<SoleraStaking> {
 
     const txCallback: () => Promise<transactionType> = this.generateTxCallback({
       rawTxMethod: async () =>
-        stakingContract.populateTransaction.deposit(convertedAmount, receiver),
+        stakingContract.populateTransaction.requestRedeem(
+          convertedAmount,
+          receiver,
+          user,
+        ),
       from: user,
       action: ProtocolAction.soleraRequestUnstake,
     });

@@ -28,24 +28,14 @@ import type {
 export declare namespace SoleraStaking {
   export type WithdrawRequestStruct = {
     unlockTime: BigNumberish;
-    owner: string;
     receiver: string;
     assets: BigNumberish;
-    shares: BigNumberish;
   };
 
-  export type WithdrawRequestStructOutput = [
-    number,
-    string,
-    string,
-    BigNumber,
-    BigNumber,
-  ] & {
+  export type WithdrawRequestStructOutput = [number, string, BigNumber] & {
     unlockTime: number;
-    owner: string;
     receiver: string;
     assets: BigNumber;
-    shares: BigNumber;
   };
 }
 
@@ -94,6 +84,7 @@ export interface SoleraStakingInterface extends utils.Interface {
     'totalSupply()': FunctionFragment;
     'transfer(address,uint256)': FunctionFragment;
     'transferFrom(address,address,uint256)': FunctionFragment;
+    'underlyingAsset()': FunctionFragment;
     'vestedAmount(uint64)': FunctionFragment;
     'vestingDeposit(address,uint256)': FunctionFragment;
     'vestingDuration()': FunctionFragment;
@@ -148,6 +139,7 @@ export interface SoleraStakingInterface extends utils.Interface {
       | 'totalSupply'
       | 'transfer'
       | 'transferFrom'
+      | 'underlyingAsset'
       | 'vestedAmount'
       | 'vestingDeposit'
       | 'vestingDuration'
@@ -303,6 +295,10 @@ export interface SoleraStakingInterface extends utils.Interface {
     values: [string, string, BigNumberish],
   ): string;
   encodeFunctionData(
+    functionFragment: 'underlyingAsset',
+    values?: undefined,
+  ): string;
+  encodeFunctionData(
     functionFragment: 'vestedAmount',
     values: [BigNumberish],
   ): string;
@@ -453,6 +449,10 @@ export interface SoleraStakingInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: 'transfer', data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: 'transferFrom',
+    data: BytesLike,
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: 'underlyingAsset',
     data: BytesLike,
   ): Result;
   decodeFunctionResult(
@@ -833,6 +833,8 @@ export interface SoleraStaking extends BaseContract {
       overrides?: Overrides & { from?: string },
     ): Promise<ContractTransaction>;
 
+    underlyingAsset(overrides?: CallOverrides): Promise<[string]>;
+
     vestedAmount(
       timestamp: BigNumberish,
       overrides?: CallOverrides,
@@ -1042,6 +1044,8 @@ export interface SoleraStaking extends BaseContract {
     overrides?: Overrides & { from?: string },
   ): Promise<ContractTransaction>;
 
+  underlyingAsset(overrides?: CallOverrides): Promise<string>;
+
   vestedAmount(
     timestamp: BigNumberish,
     overrides?: CallOverrides,
@@ -1250,6 +1254,8 @@ export interface SoleraStaking extends BaseContract {
       value: BigNumberish,
       overrides?: CallOverrides,
     ): Promise<boolean>;
+
+    underlyingAsset(overrides?: CallOverrides): Promise<string>;
 
     vestedAmount(
       timestamp: BigNumberish,
@@ -1582,6 +1588,8 @@ export interface SoleraStaking extends BaseContract {
       overrides?: Overrides & { from?: string },
     ): Promise<BigNumber>;
 
+    underlyingAsset(overrides?: CallOverrides): Promise<BigNumber>;
+
     vestedAmount(
       timestamp: BigNumberish,
       overrides?: CallOverrides,
@@ -1811,6 +1819,8 @@ export interface SoleraStaking extends BaseContract {
       value: BigNumberish,
       overrides?: Overrides & { from?: string },
     ): Promise<PopulatedTransaction>;
+
+    underlyingAsset(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     vestedAmount(
       timestamp: BigNumberish,
