@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.3.0](https://github.com/aave/aave-utilities/compare/@kevoh1516/solera-contract-helpers@3.2.3...@kevoh1516/solera-contract-helpers@3.3.0) (2025-01-16)
+
+
+### Features
+
+* add getWithdrawRequests ([52a847e](https://github.com/aave/aave-utilities/commit/52a847e42584cfea478a37d82d4070883c2a337e))
+
+
+
+
+
 ## [3.2.3](https://github.com/aave/aave-utilities/compare/@kevoh1516/solera-contract-helpers@3.2.2...@kevoh1516/solera-contract-helpers@3.2.3) (2025-01-16)
 
 
