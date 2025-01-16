@@ -30,12 +30,19 @@ export declare namespace SoleraStaking {
     unlockTime: BigNumberish;
     receiver: string;
     assets: BigNumberish;
+    shares: BigNumberish;
   };
 
-  export type WithdrawRequestStructOutput = [number, string, BigNumber] & {
+  export type WithdrawRequestStructOutput = [
+    number,
+    string,
+    BigNumber,
+    BigNumber,
+  ] & {
     unlockTime: number;
     receiver: string;
     assets: BigNumber;
+    shares: BigNumber;
   };
 }
 
