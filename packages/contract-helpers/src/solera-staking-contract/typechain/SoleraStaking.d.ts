@@ -61,7 +61,7 @@ export interface SoleraStakingInterface extends utils.Interface {
     'feeRecipient()': FunctionFragment;
     'getRoleAdmin(bytes32)': FunctionFragment;
     'getVestingDeposit()': FunctionFragment;
-    'getWithdrawRequests()': FunctionFragment;
+    'getWithdrawRequests(address)': FunctionFragment;
     'grantRole(bytes32,address)': FunctionFragment;
     'hasRole(bytes32,address)': FunctionFragment;
     'lockTimePeriod()': FunctionFragment;
@@ -201,7 +201,7 @@ export interface SoleraStakingInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: 'getWithdrawRequests',
-    values?: undefined,
+    values: [string],
   ): string;
   encodeFunctionData(
     functionFragment: 'grantRole',
@@ -707,6 +707,7 @@ export interface SoleraStaking extends BaseContract {
     getVestingDeposit(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getWithdrawRequests(
+      user: string,
       overrides?: CallOverrides,
     ): Promise<[SoleraStaking.WithdrawRequestStructOutput[]]>;
 
@@ -918,6 +919,7 @@ export interface SoleraStaking extends BaseContract {
   getVestingDeposit(overrides?: CallOverrides): Promise<BigNumber>;
 
   getWithdrawRequests(
+    user: string,
     overrides?: CallOverrides,
   ): Promise<SoleraStaking.WithdrawRequestStructOutput[]>;
 
@@ -1129,6 +1131,7 @@ export interface SoleraStaking extends BaseContract {
     getVestingDeposit(overrides?: CallOverrides): Promise<BigNumber>;
 
     getWithdrawRequests(
+      user: string,
       overrides?: CallOverrides,
     ): Promise<SoleraStaking.WithdrawRequestStructOutput[]>;
 
@@ -1463,7 +1466,10 @@ export interface SoleraStaking extends BaseContract {
 
     getVestingDeposit(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getWithdrawRequests(overrides?: CallOverrides): Promise<BigNumber>;
+    getWithdrawRequests(
+      user: string,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
 
     grantRole(
       role: BytesLike,
@@ -1682,6 +1688,7 @@ export interface SoleraStaking extends BaseContract {
     getVestingDeposit(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getWithdrawRequests(
+      user: string,
       overrides?: CallOverrides,
     ): Promise<PopulatedTransaction>;
 
