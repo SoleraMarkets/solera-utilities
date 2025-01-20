@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.4.0](https://github.com/aave/aave-utilities/compare/@kevoh1516/solera-contract-helpers@3.3.0...@kevoh1516/solera-contract-helpers@3.4.0) (2025-01-20)
+
+
+### Features
+
+* add redeem ([1c71996](https://github.com/aave/aave-utilities/commit/1c71996ad39e1113d1114d76d81eceda6fcea5f5))
+
+
+
+
+
 # [3.3.0](https://github.com/aave/aave-utilities/compare/@kevoh1516/solera-contract-helpers@3.2.3...@kevoh1516/solera-contract-helpers@3.3.0) (2025-01-16)
 
 
