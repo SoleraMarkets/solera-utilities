@@ -134,4 +134,34 @@ export class SoleraStakingService extends BaseService<SoleraStaking> {
 
     return txs;
   }
+
+  public async redeem(
+    user: tEthereumAddress,
+    index: number,
+  ): Promise<EthereumTransactionTypeExtended[]> {
+    const txs: EthereumTransactionTypeExtended[] = [];
+
+    const stakingContract: SoleraStaking = this.getContractInstance(
+      this.soleraStakingContractAddress,
+    );
+
+    const txCallback: () => Promise<transactionType> = this.generateTxCallback({
+      rawTxMethod: async () =>
+        stakingContract.populateTransaction['redeem(uint256)'](index),
+      from: user,
+      action: ProtocolAction.soleraUnstake,
+    });
+
+    txs.push({
+      tx: txCallback,
+      txType: eEthereumTxType.SOLERA_STAKE_ACTION,
+      gas: this.generateTxPriceEstimation(
+        txs,
+        txCallback,
+        ProtocolAction.soleraUnstake,
+      ),
+    });
+
+    return txs;
+  }
 }
