@@ -29,6 +29,22 @@ export class SoleraStakingService extends BaseService<SoleraStaking> {
     this.soleraStakingContractAddress = contractAddress ?? '';
   }
 
+  public async previewRedeem(shares: string): Promise<string> {
+    const stakingContract: SoleraStaking = this.getContractInstance(
+      this.soleraStakingContractAddress,
+    );
+
+    return (await stakingContract.previewRedeem(shares)).toString();
+  }
+
+  public async previewDeposit(amount: string): Promise<string> {
+    const stakingContract: SoleraStaking = this.getContractInstance(
+      this.soleraStakingContractAddress,
+    );
+
+    return (await stakingContract.previewDeposit(amount)).toString();
+  }
+
   public async getWithdrawRequests(
     user: tEthereumAddress,
   ): Promise<SoleraStaking.WithdrawRequestStructOutput[]> {
