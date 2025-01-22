@@ -77,6 +77,8 @@ export enum ChainId {
   base_sepolia = 84532,
   bnb = 56,
   zksync = 324,
+  plume_devnet = 98864,
+  plume = 98865,
 }
 export type ConstantAddressesByNetwork = Record<
   string,
