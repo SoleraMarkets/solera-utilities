@@ -156,6 +156,7 @@ export enum ProtocolAction {
   batchMetaDelegate = 'batchMetaDelegate',
   updateRepresentatives = 'updateRepresentatives',
   migrateABPT = 'migrateABPT',
+  loop = 'loop',
 }
 
 export enum GovernanceVote {
