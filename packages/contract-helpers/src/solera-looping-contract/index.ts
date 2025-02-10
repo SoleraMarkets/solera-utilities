@@ -1,5 +1,4 @@
-import { BigNumber, providers } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils';
+import { providers } from 'ethers';
 import {
   BaseDebtToken,
   BaseDebtTokenInterface,
@@ -9,15 +8,11 @@ import {
   eEthereumTxType,
   EthereumTransactionTypeExtended,
   ProtocolAction,
-  tEthereumAddress,
   transactionType,
 } from '../commons/types';
 import { DEFAULT_APPROVE_AMOUNT } from '../commons/utils';
 import { ERC20Service, IERC20ServiceInterface } from '../erc20-contract';
-import {
-  UiPoolDataProvider,
-  UiPoolDataProviderInterface,
-} from '../v3-UiPoolDataProvider-contract';
+import { UiPoolDataProviderInterface } from '../v3-UiPoolDataProvider-contract';
 import {
   LendingPoolMarketConfigV3,
   Pool,
@@ -68,7 +63,7 @@ export class SoleraLoopingService extends BaseService<Looping> {
   }: LoopingParamsType): Promise<EthereumTransactionTypeExtended[]> {
     const txs: EthereumTransactionTypeExtended[] = [];
 
-    const { isApproved, approve, decimalsOf } = this.erc20Service;
+    const { isApproved, approve } = this.erc20Service;
 
     const { isDelegationApproved, approveDelegation } = this.debtTokenService;
 
