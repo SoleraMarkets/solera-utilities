@@ -12,7 +12,7 @@ export * from './cl-feed-registry';
 export * from './V3-uiStakeDataProvider-contract';
 export * from './v3-staking-contract';
 export * from './solera-staking-contract';
-export * from './solera-looping-contract';
+export * from './looping-contract';
 
 // services
 export * from './incentive-controller';
