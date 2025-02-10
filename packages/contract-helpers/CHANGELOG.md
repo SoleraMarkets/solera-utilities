@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.7.0](https://github.com/aave/aave-utilities/compare/@kevoh1516/solera-contract-helpers@3.6.0...@kevoh1516/solera-contract-helpers@3.7.0) (2025-02-10)
+
+
+### Features
+
+* add looping ([c7a99b9](https://github.com/aave/aave-utilities/commit/c7a99b9fba1285cc643504af14fa5e4e337b784d))
+
+
+
+
+
 # [3.6.0](https://github.com/aave/aave-utilities/compare/@kevoh1516/solera-contract-helpers@3.5.0...@kevoh1516/solera-contract-helpers@3.6.0) (2025-01-22)
 
 
