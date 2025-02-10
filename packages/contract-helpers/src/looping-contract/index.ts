@@ -23,7 +23,7 @@ import { LoopingParamsType } from './loopingTypes';
 import { Looping } from './typechain/Looping';
 import { Looping__factory } from './typechain/Looping__factory';
 
-export class SoleraLoopingService extends BaseService<Looping> {
+export class LoopingService extends BaseService<Looping> {
   readonly soleraLoopingContractAddress: string;
 
   readonly erc20Service: IERC20ServiceInterface;
