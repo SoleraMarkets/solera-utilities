@@ -21,14 +21,30 @@ import type {
   OnEvent,
 } from './common';
 
+export declare namespace Looping {
+  export type LoopParamsStruct = {
+    initialAmount: BigNumberish;
+    targetHealthFactor: BigNumberish;
+    numLoops: BigNumberish;
+  };
+
+  export type LoopParamsStructOutput = [BigNumber, number, number] & {
+    initialAmount: BigNumber;
+    targetHealthFactor: number;
+    numLoops: number;
+  };
+}
+
 export interface LoopingInterface extends utils.Interface {
   functions: {
     'aavePool()': FunctionFragment;
     'calculateBorrowAmount(uint256,address,address,uint256,uint256)': FunctionFragment;
-    'leveragePosition(address,address,address,bool,uint256,uint256,uint256)': FunctionFragment;
+    'calculateBorrowAmountSingleAsset(uint256,address,uint256,uint256)': FunctionFragment;
+    'leveragePositionMultiSwap(address,address,bytes,(uint256,uint16,uint16))': FunctionFragment;
+    'leveragePositionSingleAsset(address,(uint256,uint16,uint16))': FunctionFragment;
+    'leveragePositionSingleSwap(address,address,address,bool,(uint256,uint16,uint16))': FunctionFragment;
     'oracleDecimals()': FunctionFragment;
     'priceOracle()': FunctionFragment;
-    'simulateLeveragePosition(address,address,uint256,uint256,uint256)': FunctionFragment;
     'swapRouter()': FunctionFragment;
   };
 
@@ -36,10 +52,12 @@ export interface LoopingInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | 'aavePool'
       | 'calculateBorrowAmount'
-      | 'leveragePosition'
+      | 'calculateBorrowAmountSingleAsset'
+      | 'leveragePositionMultiSwap'
+      | 'leveragePositionSingleAsset'
+      | 'leveragePositionSingleSwap'
       | 'oracleDecimals'
       | 'priceOracle'
-      | 'simulateLeveragePosition'
       | 'swapRouter',
   ): FunctionFragment;
 
@@ -49,16 +67,20 @@ export interface LoopingInterface extends utils.Interface {
     values: [BigNumberish, string, string, BigNumberish, BigNumberish],
   ): string;
   encodeFunctionData(
-    functionFragment: 'leveragePosition',
-    values: [
-      string,
-      string,
-      string,
-      boolean,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-    ],
+    functionFragment: 'calculateBorrowAmountSingleAsset',
+    values: [BigNumberish, string, BigNumberish, BigNumberish],
+  ): string;
+  encodeFunctionData(
+    functionFragment: 'leveragePositionMultiSwap',
+    values: [string, string, BytesLike, Looping.LoopParamsStruct],
+  ): string;
+  encodeFunctionData(
+    functionFragment: 'leveragePositionSingleAsset',
+    values: [string, Looping.LoopParamsStruct],
+  ): string;
+  encodeFunctionData(
+    functionFragment: 'leveragePositionSingleSwap',
+    values: [string, string, string, boolean, Looping.LoopParamsStruct],
   ): string;
   encodeFunctionData(
     functionFragment: 'oracleDecimals',
@@ -67,10 +89,6 @@ export interface LoopingInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: 'priceOracle',
     values?: undefined,
-  ): string;
-  encodeFunctionData(
-    functionFragment: 'simulateLeveragePosition',
-    values: [string, string, BigNumberish, BigNumberish, BigNumberish],
   ): string;
   encodeFunctionData(
     functionFragment: 'swapRouter',
@@ -83,7 +101,19 @@ export interface LoopingInterface extends utils.Interface {
     data: BytesLike,
   ): Result;
   decodeFunctionResult(
-    functionFragment: 'leveragePosition',
+    functionFragment: 'calculateBorrowAmountSingleAsset',
+    data: BytesLike,
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: 'leveragePositionMultiSwap',
+    data: BytesLike,
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: 'leveragePositionSingleAsset',
+    data: BytesLike,
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: 'leveragePositionSingleSwap',
     data: BytesLike,
   ): Result;
   decodeFunctionResult(
@@ -92,10 +122,6 @@ export interface LoopingInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: 'priceOracle',
-    data: BytesLike,
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: 'simulateLeveragePosition',
     data: BytesLike,
   ): Result;
   decodeFunctionResult(functionFragment: 'swapRouter', data: BytesLike): Result;
@@ -141,35 +167,40 @@ export interface Looping extends BaseContract {
       overrides?: CallOverrides,
     ): Promise<[BigNumber]>;
 
-    leveragePosition(
+    calculateBorrowAmountSingleAsset(
+      amount: BigNumberish,
+      token: string,
+      ltv: BigNumberish,
+      targetHealthFactor: BigNumberish,
+      overrides?: CallOverrides,
+    ): Promise<[BigNumber]>;
+
+    leveragePositionMultiSwap(
+      supplyToken: string,
+      borrowToken: string,
+      path: BytesLike,
+      params: Looping.LoopParamsStruct,
+      overrides?: Overrides & { from?: string },
+    ): Promise<ContractTransaction>;
+
+    leveragePositionSingleAsset(
+      token: string,
+      params: Looping.LoopParamsStruct,
+      overrides?: Overrides & { from?: string },
+    ): Promise<ContractTransaction>;
+
+    leveragePositionSingleSwap(
       supplyToken: string,
       borrowToken: string,
       maverickPool: string,
       isSupplyTokenA: boolean,
-      numLoops: BigNumberish,
-      initialAmount: BigNumberish,
-      targetHealthFactor: BigNumberish,
+      params: Looping.LoopParamsStruct,
       overrides?: Overrides & { from?: string },
     ): Promise<ContractTransaction>;
 
     oracleDecimals(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     priceOracle(overrides?: CallOverrides): Promise<[string]>;
-
-    simulateLeveragePosition(
-      supplyToken: string,
-      borrowToken: string,
-      numLoops: BigNumberish,
-      initialAmount: BigNumberish,
-      targetHealthFactor: BigNumberish,
-      overrides?: CallOverrides,
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber] & {
-        totalSupplied: BigNumber;
-        totalBorrowed: BigNumber;
-        expectedHealthFactor: BigNumber;
-      }
-    >;
 
     swapRouter(overrides?: CallOverrides): Promise<[string]>;
   };
@@ -185,35 +216,40 @@ export interface Looping extends BaseContract {
     overrides?: CallOverrides,
   ): Promise<BigNumber>;
 
-  leveragePosition(
+  calculateBorrowAmountSingleAsset(
+    amount: BigNumberish,
+    token: string,
+    ltv: BigNumberish,
+    targetHealthFactor: BigNumberish,
+    overrides?: CallOverrides,
+  ): Promise<BigNumber>;
+
+  leveragePositionMultiSwap(
+    supplyToken: string,
+    borrowToken: string,
+    path: BytesLike,
+    params: Looping.LoopParamsStruct,
+    overrides?: Overrides & { from?: string },
+  ): Promise<ContractTransaction>;
+
+  leveragePositionSingleAsset(
+    token: string,
+    params: Looping.LoopParamsStruct,
+    overrides?: Overrides & { from?: string },
+  ): Promise<ContractTransaction>;
+
+  leveragePositionSingleSwap(
     supplyToken: string,
     borrowToken: string,
     maverickPool: string,
     isSupplyTokenA: boolean,
-    numLoops: BigNumberish,
-    initialAmount: BigNumberish,
-    targetHealthFactor: BigNumberish,
+    params: Looping.LoopParamsStruct,
     overrides?: Overrides & { from?: string },
   ): Promise<ContractTransaction>;
 
   oracleDecimals(overrides?: CallOverrides): Promise<BigNumber>;
 
   priceOracle(overrides?: CallOverrides): Promise<string>;
-
-  simulateLeveragePosition(
-    supplyToken: string,
-    borrowToken: string,
-    numLoops: BigNumberish,
-    initialAmount: BigNumberish,
-    targetHealthFactor: BigNumberish,
-    overrides?: CallOverrides,
-  ): Promise<
-    [BigNumber, BigNumber, BigNumber] & {
-      totalSupplied: BigNumber;
-      totalBorrowed: BigNumber;
-      expectedHealthFactor: BigNumber;
-    }
-  >;
 
   swapRouter(overrides?: CallOverrides): Promise<string>;
 
@@ -229,35 +265,40 @@ export interface Looping extends BaseContract {
       overrides?: CallOverrides,
     ): Promise<BigNumber>;
 
-    leveragePosition(
-      supplyToken: string,
-      borrowToken: string,
-      maverickPool: string,
-      isSupplyTokenA: boolean,
-      numLoops: BigNumberish,
-      initialAmount: BigNumberish,
+    calculateBorrowAmountSingleAsset(
+      amount: BigNumberish,
+      token: string,
+      ltv: BigNumberish,
       targetHealthFactor: BigNumberish,
       overrides?: CallOverrides,
     ): Promise<BigNumber>;
 
+    leveragePositionMultiSwap(
+      supplyToken: string,
+      borrowToken: string,
+      path: BytesLike,
+      params: Looping.LoopParamsStruct,
+      overrides?: CallOverrides,
+    ): Promise<[BigNumber, BigNumber, BigNumber]>;
+
+    leveragePositionSingleAsset(
+      token: string,
+      params: Looping.LoopParamsStruct,
+      overrides?: CallOverrides,
+    ): Promise<[BigNumber, BigNumber, BigNumber]>;
+
+    leveragePositionSingleSwap(
+      supplyToken: string,
+      borrowToken: string,
+      maverickPool: string,
+      isSupplyTokenA: boolean,
+      params: Looping.LoopParamsStruct,
+      overrides?: CallOverrides,
+    ): Promise<[BigNumber, BigNumber, BigNumber]>;
+
     oracleDecimals(overrides?: CallOverrides): Promise<BigNumber>;
 
     priceOracle(overrides?: CallOverrides): Promise<string>;
-
-    simulateLeveragePosition(
-      supplyToken: string,
-      borrowToken: string,
-      numLoops: BigNumberish,
-      initialAmount: BigNumberish,
-      targetHealthFactor: BigNumberish,
-      overrides?: CallOverrides,
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber] & {
-        totalSupplied: BigNumber;
-        totalBorrowed: BigNumber;
-        expectedHealthFactor: BigNumber;
-      }
-    >;
 
     swapRouter(overrides?: CallOverrides): Promise<string>;
   };
@@ -276,29 +317,40 @@ export interface Looping extends BaseContract {
       overrides?: CallOverrides,
     ): Promise<BigNumber>;
 
-    leveragePosition(
+    calculateBorrowAmountSingleAsset(
+      amount: BigNumberish,
+      token: string,
+      ltv: BigNumberish,
+      targetHealthFactor: BigNumberish,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
+
+    leveragePositionMultiSwap(
+      supplyToken: string,
+      borrowToken: string,
+      path: BytesLike,
+      params: Looping.LoopParamsStruct,
+      overrides?: Overrides & { from?: string },
+    ): Promise<BigNumber>;
+
+    leveragePositionSingleAsset(
+      token: string,
+      params: Looping.LoopParamsStruct,
+      overrides?: Overrides & { from?: string },
+    ): Promise<BigNumber>;
+
+    leveragePositionSingleSwap(
       supplyToken: string,
       borrowToken: string,
       maverickPool: string,
       isSupplyTokenA: boolean,
-      numLoops: BigNumberish,
-      initialAmount: BigNumberish,
-      targetHealthFactor: BigNumberish,
+      params: Looping.LoopParamsStruct,
       overrides?: Overrides & { from?: string },
     ): Promise<BigNumber>;
 
     oracleDecimals(overrides?: CallOverrides): Promise<BigNumber>;
 
     priceOracle(overrides?: CallOverrides): Promise<BigNumber>;
-
-    simulateLeveragePosition(
-      supplyToken: string,
-      borrowToken: string,
-      numLoops: BigNumberish,
-      initialAmount: BigNumberish,
-      targetHealthFactor: BigNumberish,
-      overrides?: CallOverrides,
-    ): Promise<BigNumber>;
 
     swapRouter(overrides?: CallOverrides): Promise<BigNumber>;
   };
@@ -315,29 +367,40 @@ export interface Looping extends BaseContract {
       overrides?: CallOverrides,
     ): Promise<PopulatedTransaction>;
 
-    leveragePosition(
+    calculateBorrowAmountSingleAsset(
+      amount: BigNumberish,
+      token: string,
+      ltv: BigNumberish,
+      targetHealthFactor: BigNumberish,
+      overrides?: CallOverrides,
+    ): Promise<PopulatedTransaction>;
+
+    leveragePositionMultiSwap(
+      supplyToken: string,
+      borrowToken: string,
+      path: BytesLike,
+      params: Looping.LoopParamsStruct,
+      overrides?: Overrides & { from?: string },
+    ): Promise<PopulatedTransaction>;
+
+    leveragePositionSingleAsset(
+      token: string,
+      params: Looping.LoopParamsStruct,
+      overrides?: Overrides & { from?: string },
+    ): Promise<PopulatedTransaction>;
+
+    leveragePositionSingleSwap(
       supplyToken: string,
       borrowToken: string,
       maverickPool: string,
       isSupplyTokenA: boolean,
-      numLoops: BigNumberish,
-      initialAmount: BigNumberish,
-      targetHealthFactor: BigNumberish,
+      params: Looping.LoopParamsStruct,
       overrides?: Overrides & { from?: string },
     ): Promise<PopulatedTransaction>;
 
     oracleDecimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     priceOracle(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    simulateLeveragePosition(
-      supplyToken: string,
-      borrowToken: string,
-      numLoops: BigNumberish,
-      initialAmount: BigNumberish,
-      targetHealthFactor: BigNumberish,
-      overrides?: CallOverrides,
-    ): Promise<PopulatedTransaction>;
 
     swapRouter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
