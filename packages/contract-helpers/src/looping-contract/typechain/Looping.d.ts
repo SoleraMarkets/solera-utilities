@@ -22,16 +22,82 @@ import type {
 } from './common';
 
 export declare namespace Looping {
-  export type LoopParamsStruct = {
-    initialAmount: BigNumberish;
+  export type LoopMultiSwapParamsStruct = {
+    supplyToken: string;
     targetHealthFactor: BigNumberish;
+    borrowToken: string;
     numLoops: BigNumberish;
+    initialAmount: BigNumberish;
+    minAmountSupplied: BigNumberish;
+    path: BytesLike;
   };
 
-  export type LoopParamsStructOutput = [BigNumber, number, number] & {
+  export type LoopMultiSwapParamsStructOutput = [
+    string,
+    number,
+    string,
+    number,
+    BigNumber,
+    BigNumber,
+    string,
+  ] & {
+    supplyToken: string;
+    targetHealthFactor: number;
+    borrowToken: string;
+    numLoops: number;
     initialAmount: BigNumber;
+    minAmountSupplied: BigNumber;
+    path: string;
+  };
+
+  export type LoopSingleAssetParamsStruct = {
+    token: string;
+    targetHealthFactor: BigNumberish;
+    numLoops: BigNumberish;
+    initialAmount: BigNumberish;
+  };
+
+  export type LoopSingleAssetParamsStructOutput = [
+    string,
+    number,
+    number,
+    BigNumber,
+  ] & {
+    token: string;
     targetHealthFactor: number;
     numLoops: number;
+    initialAmount: BigNumber;
+  };
+
+  export type LoopSingleSwapParamsStruct = {
+    supplyToken: string;
+    targetHealthFactor: BigNumberish;
+    isSupplyTokenA: boolean;
+    borrowToken: string;
+    numLoops: BigNumberish;
+    maverickPool: string;
+    minAmountSupplied: BigNumberish;
+    initialAmount: BigNumberish;
+  };
+
+  export type LoopSingleSwapParamsStructOutput = [
+    string,
+    number,
+    boolean,
+    string,
+    number,
+    string,
+    BigNumber,
+    BigNumber,
+  ] & {
+    supplyToken: string;
+    targetHealthFactor: number;
+    isSupplyTokenA: boolean;
+    borrowToken: string;
+    numLoops: number;
+    maverickPool: string;
+    minAmountSupplied: BigNumber;
+    initialAmount: BigNumber;
   };
 }
 
@@ -40,9 +106,9 @@ export interface LoopingInterface extends utils.Interface {
     'aavePool()': FunctionFragment;
     'calculateBorrowAmount(uint256,address,address,uint256,uint256)': FunctionFragment;
     'calculateBorrowAmountSingleAsset(uint256,address,uint256,uint256)': FunctionFragment;
-    'leveragePositionMultiSwap(address,address,bytes,(uint256,uint16,uint16))': FunctionFragment;
-    'leveragePositionSingleAsset(address,(uint256,uint16,uint16))': FunctionFragment;
-    'leveragePositionSingleSwap(address,address,address,bool,(uint256,uint16,uint16))': FunctionFragment;
+    'loopMultiSwap((address,uint16,address,uint16,uint256,uint256,bytes))': FunctionFragment;
+    'loopSingleAsset((address,uint16,uint16,uint256))': FunctionFragment;
+    'loopSingleSwap((address,uint16,bool,address,uint16,address,uint256,uint256))': FunctionFragment;
     'oracleDecimals()': FunctionFragment;
     'priceOracle()': FunctionFragment;
     'swapRouter()': FunctionFragment;
@@ -53,9 +119,9 @@ export interface LoopingInterface extends utils.Interface {
       | 'aavePool'
       | 'calculateBorrowAmount'
       | 'calculateBorrowAmountSingleAsset'
-      | 'leveragePositionMultiSwap'
-      | 'leveragePositionSingleAsset'
-      | 'leveragePositionSingleSwap'
+      | 'loopMultiSwap'
+      | 'loopSingleAsset'
+      | 'loopSingleSwap'
       | 'oracleDecimals'
       | 'priceOracle'
       | 'swapRouter',
@@ -71,16 +137,16 @@ export interface LoopingInterface extends utils.Interface {
     values: [BigNumberish, string, BigNumberish, BigNumberish],
   ): string;
   encodeFunctionData(
-    functionFragment: 'leveragePositionMultiSwap',
-    values: [string, string, BytesLike, Looping.LoopParamsStruct],
+    functionFragment: 'loopMultiSwap',
+    values: [Looping.LoopMultiSwapParamsStruct],
   ): string;
   encodeFunctionData(
-    functionFragment: 'leveragePositionSingleAsset',
-    values: [string, Looping.LoopParamsStruct],
+    functionFragment: 'loopSingleAsset',
+    values: [Looping.LoopSingleAssetParamsStruct],
   ): string;
   encodeFunctionData(
-    functionFragment: 'leveragePositionSingleSwap',
-    values: [string, string, string, boolean, Looping.LoopParamsStruct],
+    functionFragment: 'loopSingleSwap',
+    values: [Looping.LoopSingleSwapParamsStruct],
   ): string;
   encodeFunctionData(
     functionFragment: 'oracleDecimals',
@@ -105,15 +171,15 @@ export interface LoopingInterface extends utils.Interface {
     data: BytesLike,
   ): Result;
   decodeFunctionResult(
-    functionFragment: 'leveragePositionMultiSwap',
+    functionFragment: 'loopMultiSwap',
     data: BytesLike,
   ): Result;
   decodeFunctionResult(
-    functionFragment: 'leveragePositionSingleAsset',
+    functionFragment: 'loopSingleAsset',
     data: BytesLike,
   ): Result;
   decodeFunctionResult(
-    functionFragment: 'leveragePositionSingleSwap',
+    functionFragment: 'loopSingleSwap',
     data: BytesLike,
   ): Result;
   decodeFunctionResult(
@@ -175,26 +241,18 @@ export interface Looping extends BaseContract {
       overrides?: CallOverrides,
     ): Promise<[BigNumber]>;
 
-    leveragePositionMultiSwap(
-      supplyToken: string,
-      borrowToken: string,
-      path: BytesLike,
-      params: Looping.LoopParamsStruct,
+    loopMultiSwap(
+      params: Looping.LoopMultiSwapParamsStruct,
       overrides?: Overrides & { from?: string },
     ): Promise<ContractTransaction>;
 
-    leveragePositionSingleAsset(
-      token: string,
-      params: Looping.LoopParamsStruct,
+    loopSingleAsset(
+      params: Looping.LoopSingleAssetParamsStruct,
       overrides?: Overrides & { from?: string },
     ): Promise<ContractTransaction>;
 
-    leveragePositionSingleSwap(
-      supplyToken: string,
-      borrowToken: string,
-      maverickPool: string,
-      isSupplyTokenA: boolean,
-      params: Looping.LoopParamsStruct,
+    loopSingleSwap(
+      params: Looping.LoopSingleSwapParamsStruct,
       overrides?: Overrides & { from?: string },
     ): Promise<ContractTransaction>;
 
@@ -224,26 +282,18 @@ export interface Looping extends BaseContract {
     overrides?: CallOverrides,
   ): Promise<BigNumber>;
 
-  leveragePositionMultiSwap(
-    supplyToken: string,
-    borrowToken: string,
-    path: BytesLike,
-    params: Looping.LoopParamsStruct,
+  loopMultiSwap(
+    params: Looping.LoopMultiSwapParamsStruct,
     overrides?: Overrides & { from?: string },
   ): Promise<ContractTransaction>;
 
-  leveragePositionSingleAsset(
-    token: string,
-    params: Looping.LoopParamsStruct,
+  loopSingleAsset(
+    params: Looping.LoopSingleAssetParamsStruct,
     overrides?: Overrides & { from?: string },
   ): Promise<ContractTransaction>;
 
-  leveragePositionSingleSwap(
-    supplyToken: string,
-    borrowToken: string,
-    maverickPool: string,
-    isSupplyTokenA: boolean,
-    params: Looping.LoopParamsStruct,
+  loopSingleSwap(
+    params: Looping.LoopSingleSwapParamsStruct,
     overrides?: Overrides & { from?: string },
   ): Promise<ContractTransaction>;
 
@@ -273,26 +323,18 @@ export interface Looping extends BaseContract {
       overrides?: CallOverrides,
     ): Promise<BigNumber>;
 
-    leveragePositionMultiSwap(
-      supplyToken: string,
-      borrowToken: string,
-      path: BytesLike,
-      params: Looping.LoopParamsStruct,
+    loopMultiSwap(
+      params: Looping.LoopMultiSwapParamsStruct,
       overrides?: CallOverrides,
     ): Promise<[BigNumber, BigNumber, BigNumber]>;
 
-    leveragePositionSingleAsset(
-      token: string,
-      params: Looping.LoopParamsStruct,
+    loopSingleAsset(
+      params: Looping.LoopSingleAssetParamsStruct,
       overrides?: CallOverrides,
     ): Promise<[BigNumber, BigNumber, BigNumber]>;
 
-    leveragePositionSingleSwap(
-      supplyToken: string,
-      borrowToken: string,
-      maverickPool: string,
-      isSupplyTokenA: boolean,
-      params: Looping.LoopParamsStruct,
+    loopSingleSwap(
+      params: Looping.LoopSingleSwapParamsStruct,
       overrides?: CallOverrides,
     ): Promise<[BigNumber, BigNumber, BigNumber]>;
 
@@ -325,26 +367,18 @@ export interface Looping extends BaseContract {
       overrides?: CallOverrides,
     ): Promise<BigNumber>;
 
-    leveragePositionMultiSwap(
-      supplyToken: string,
-      borrowToken: string,
-      path: BytesLike,
-      params: Looping.LoopParamsStruct,
+    loopMultiSwap(
+      params: Looping.LoopMultiSwapParamsStruct,
       overrides?: Overrides & { from?: string },
     ): Promise<BigNumber>;
 
-    leveragePositionSingleAsset(
-      token: string,
-      params: Looping.LoopParamsStruct,
+    loopSingleAsset(
+      params: Looping.LoopSingleAssetParamsStruct,
       overrides?: Overrides & { from?: string },
     ): Promise<BigNumber>;
 
-    leveragePositionSingleSwap(
-      supplyToken: string,
-      borrowToken: string,
-      maverickPool: string,
-      isSupplyTokenA: boolean,
-      params: Looping.LoopParamsStruct,
+    loopSingleSwap(
+      params: Looping.LoopSingleSwapParamsStruct,
       overrides?: Overrides & { from?: string },
     ): Promise<BigNumber>;
 
@@ -375,26 +409,18 @@ export interface Looping extends BaseContract {
       overrides?: CallOverrides,
     ): Promise<PopulatedTransaction>;
 
-    leveragePositionMultiSwap(
-      supplyToken: string,
-      borrowToken: string,
-      path: BytesLike,
-      params: Looping.LoopParamsStruct,
+    loopMultiSwap(
+      params: Looping.LoopMultiSwapParamsStruct,
       overrides?: Overrides & { from?: string },
     ): Promise<PopulatedTransaction>;
 
-    leveragePositionSingleAsset(
-      token: string,
-      params: Looping.LoopParamsStruct,
+    loopSingleAsset(
+      params: Looping.LoopSingleAssetParamsStruct,
       overrides?: Overrides & { from?: string },
     ): Promise<PopulatedTransaction>;
 
-    leveragePositionSingleSwap(
-      supplyToken: string,
-      borrowToken: string,
-      maverickPool: string,
-      isSupplyTokenA: boolean,
-      params: Looping.LoopParamsStruct,
+    loopSingleSwap(
+      params: Looping.LoopSingleSwapParamsStruct,
       overrides?: Overrides & { from?: string },
     ): Promise<PopulatedTransaction>;
 

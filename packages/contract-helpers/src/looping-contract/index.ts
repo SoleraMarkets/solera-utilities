@@ -20,9 +20,9 @@ import {
 } from '../v3-pool-contract';
 import { LPReserveData } from '../v3-pool-contract/lendingPoolTypes';
 import {
-  LoopingMultiSwapParamsType,
-  LoopingSingleAssetParamsType,
-  LoopingSingleSwapParamsType,
+  LoopMultiSwapParamsType,
+  LoopSingleAssetParamsType,
+  LoopSingleSwapParamsType,
 } from './loopingTypes';
 import { Looping } from './typechain/Looping';
 import { Looping__factory } from './typechain/Looping__factory';
@@ -54,7 +54,7 @@ export class LoopingService extends BaseService<Looping> {
     this.soleraLoopingContractAddress = contractAddress ?? '';
   }
 
-  public async leveragePositionSingleSwap({
+  public async loopSingleSwap({
     user,
     supplyReserve,
     borrowReserve,
@@ -63,7 +63,8 @@ export class LoopingService extends BaseService<Looping> {
     numLoops,
     amount,
     targetHealthFactor,
-  }: LoopingSingleSwapParamsType): Promise<EthereumTransactionTypeExtended[]> {
+    minAmountSupplied,
+  }: LoopSingleSwapParamsType): Promise<EthereumTransactionTypeExtended[]> {
     const txs: EthereumTransactionTypeExtended[] = [];
 
     const { isApproved, approve } = this.erc20Service;
@@ -114,17 +115,16 @@ export class LoopingService extends BaseService<Looping> {
 
     const txCallback: () => Promise<transactionType> = this.generateTxCallback({
       rawTxMethod: async () =>
-        loopingContract.populateTransaction.leveragePositionSingleSwap(
-          supplyReserve,
-          borrowReserve,
-          maverickPool,
+        loopingContract.populateTransaction.loopSingleSwap({
+          supplyToken: supplyReserve,
+          targetHealthFactor,
           isSupplyTokenA,
-          {
-            initialAmount: amount,
-            targetHealthFactor,
-            numLoops,
-          },
-        ),
+          borrowToken: borrowReserve,
+          numLoops,
+          maverickPool,
+          minAmountSupplied,
+          initialAmount: amount,
+        }),
       from: user,
       action: ProtocolAction.loop,
     });
@@ -138,7 +138,7 @@ export class LoopingService extends BaseService<Looping> {
     return txs;
   }
 
-  public async leveragePositionMultiSwap({
+  public async loopMultiSwap({
     user,
     supplyReserve,
     borrowReserve,
@@ -146,7 +146,8 @@ export class LoopingService extends BaseService<Looping> {
     numLoops,
     amount,
     targetHealthFactor,
-  }: LoopingMultiSwapParamsType): Promise<EthereumTransactionTypeExtended[]> {
+    minAmountSupplied,
+  }: LoopMultiSwapParamsType): Promise<EthereumTransactionTypeExtended[]> {
     const txs: EthereumTransactionTypeExtended[] = [];
 
     const { isApproved, approve } = this.erc20Service;
@@ -197,16 +198,15 @@ export class LoopingService extends BaseService<Looping> {
 
     const txCallback: () => Promise<transactionType> = this.generateTxCallback({
       rawTxMethod: async () =>
-        loopingContract.populateTransaction.leveragePositionMultiSwap(
-          supplyReserve,
-          borrowReserve,
+        loopingContract.populateTransaction.loopMultiSwap({
+          supplyToken: supplyReserve,
+          targetHealthFactor,
+          borrowToken: borrowReserve,
+          numLoops,
+          initialAmount: amount,
+          minAmountSupplied,
           path,
-          {
-            initialAmount: amount,
-            targetHealthFactor,
-            numLoops,
-          },
-        ),
+        }),
       from: user,
       action: ProtocolAction.loop,
     });
@@ -220,13 +220,13 @@ export class LoopingService extends BaseService<Looping> {
     return txs;
   }
 
-  public async leveragePositionSingleAsset({
+  public async loopSingleAsset({
     user,
     reserve,
     numLoops,
     amount,
     targetHealthFactor,
-  }: LoopingSingleAssetParamsType): Promise<EthereumTransactionTypeExtended[]> {
+  }: LoopSingleAssetParamsType): Promise<EthereumTransactionTypeExtended[]> {
     const txs: EthereumTransactionTypeExtended[] = [];
 
     const { isApproved, approve } = this.erc20Service;
@@ -277,14 +277,12 @@ export class LoopingService extends BaseService<Looping> {
 
     const txCallback: () => Promise<transactionType> = this.generateTxCallback({
       rawTxMethod: async () =>
-        loopingContract.populateTransaction.leveragePositionSingleAsset(
-          reserve,
-          {
-            initialAmount: amount,
-            targetHealthFactor,
-            numLoops,
-          },
-        ),
+        loopingContract.populateTransaction.loopSingleAsset({
+          token: reserve,
+          initialAmount: amount,
+          targetHealthFactor,
+          numLoops,
+        }),
       from: user,
       action: ProtocolAction.loop,
     });
