@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.1](https://github.com/aave/aave-utilities/compare/@kevoh1516/solera-contract-types@1.3.0...@kevoh1516/solera-contract-types@1.3.1) (2025-02-13)
+
+
+### Bug Fixes
+
+* update loop ([dc47a5a](https://github.com/aave/aave-utilities/commit/dc47a5aeb90ac43f34e8abbfd80d4018f2305f01))
+
+
+
+
+
 # [1.3.0](https://github.com/aave/aave-utilities/compare/@kevoh1516/solera-contract-types@1.2.0...@kevoh1516/solera-contract-types@1.3.0) (2025-02-12)
 
 
