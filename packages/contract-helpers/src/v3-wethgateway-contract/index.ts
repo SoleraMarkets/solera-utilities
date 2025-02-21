@@ -57,6 +57,76 @@ export type WETHBorrowParamsType = {
   referralCode?: string;
 };
 
+export type LoopEntryETHSingleSwapParamsType = {
+  user: tEthereumAddress;
+  targetHealthFactor: string;
+  onBehalfOf?: tEthereumAddress;
+  isSupplyTokenA: boolean;
+  borrowToken: tEthereumAddress;
+  numLoops: string;
+  maverickPool: tEthereumAddress;
+  minAmountSupplied: string;
+  initialAmount: string;
+};
+
+export type LoopEntryETHMultiSwapParamsType = {
+  user: tEthereumAddress;
+  targetHealthFactor: string;
+  onBehalfOf?: tEthereumAddress;
+  borrowToken: tEthereumAddress;
+  numLoops: string;
+  minAmountSupplied: string;
+  initialAmount: string;
+  path: string;
+};
+
+export type LoopEntryETHSingleAssetParamsType = {
+  user: tEthereumAddress;
+  targetHealthFactor: string;
+  onBehalfOf: tEthereumAddress;
+  numLoops: string;
+  initialAmount: string;
+};
+
+export type LoopExitETHSingleSwapParamsType = {
+  user: tEthereumAddress;
+  targetHealthFactor: string;
+  onBehalfOf?: tEthereumAddress;
+  isSupplyTokenA: boolean;
+  supplyToken: tEthereumAddress;
+  numLoops: string;
+  maverickPool: tEthereumAddress;
+  minAmountSupplied: string;
+  initialAmount: string;
+};
+
+export type LoopExitETHMultiSwapParamsType = {
+  user: tEthereumAddress;
+  targetHealthFactor: string;
+  onBehalfOf?: tEthereumAddress;
+  supplyToken: tEthereumAddress;
+  numLoops: string;
+  minAmountSupplied: string;
+  initialAmount: string;
+  path: string;
+};
+
+export type LoopExitETHSingleAssetParamsType = {
+  user: tEthereumAddress;
+  targetHealthFactor: string;
+  onBehalfOf: tEthereumAddress;
+  numLoops: string;
+  initialAmount: string;
+};
+
+export type LoopETHSingleAssetParamsType = {
+  user: tEthereumAddress;
+  targetHealthFactor: string;
+  onBehalfOf: tEthereumAddress;
+  numLoops: string;
+  initialAmount: string;
+};
+
 export interface WETHGatewayInterface {
   generateDepositEthTxData: (
     args: WETHDepositParamsType,
@@ -377,6 +447,266 @@ export class WETHGatewayService
       gasSurplus: 30,
       from: user,
       value: convertedAmount,
+    });
+
+    return [
+      {
+        tx: txCallback,
+        txType: eEthereumTxType.DLP_ACTION,
+        gas: this.generateTxPriceEstimation([], txCallback),
+      },
+    ];
+  }
+
+  public loopEntryETHSingleSwap({
+    user,
+    targetHealthFactor,
+    onBehalfOf,
+    isSupplyTokenA,
+    borrowToken,
+    numLoops,
+    maverickPool,
+    minAmountSupplied,
+    initialAmount,
+  }: LoopEntryETHSingleSwapParamsType): EthereumTransactionTypeExtended[] {
+    const convertedAmount: string = valueToWei(initialAmount, 18);
+
+    const wethGatewayContract: WrappedTokenGatewayV3 = this.getContractInstance(
+      this.wethGatewayAddress,
+    );
+    const txCallback: () => Promise<transactionType> = this.generateTxCallback({
+      rawTxMethod: async () =>
+        wethGatewayContract.populateTransaction.loopEntryETHSingleSwap({
+          targetHealthFactor,
+          onBehalfOf: onBehalfOf ?? user,
+          isSupplyTokenA,
+          borrowToken,
+          numLoops,
+          maverickPool,
+          minAmountSupplied,
+        }),
+      from: user,
+      value: convertedAmount,
+    });
+
+    return [
+      {
+        tx: txCallback,
+        txType: eEthereumTxType.DLP_ACTION,
+        gas: this.generateTxPriceEstimation([], txCallback),
+      },
+    ];
+  }
+
+  public loopEntryETHMultiSwap({
+    user,
+    targetHealthFactor,
+    onBehalfOf,
+    borrowToken,
+    numLoops,
+    minAmountSupplied,
+    initialAmount,
+    path,
+  }: LoopEntryETHMultiSwapParamsType): EthereumTransactionTypeExtended[] {
+    const convertedAmount: string = valueToWei(initialAmount, 18);
+
+    const wethGatewayContract: WrappedTokenGatewayV3 = this.getContractInstance(
+      this.wethGatewayAddress,
+    );
+    const txCallback: () => Promise<transactionType> = this.generateTxCallback({
+      rawTxMethod: async () =>
+        wethGatewayContract.populateTransaction.loopEntryETHMultiSwap({
+          targetHealthFactor,
+          onBehalfOf: onBehalfOf ?? user,
+          borrowToken,
+          numLoops,
+          minAmountSupplied,
+          path,
+        }),
+      from: user,
+      value: convertedAmount,
+    });
+
+    return [
+      {
+        tx: txCallback,
+        txType: eEthereumTxType.DLP_ACTION,
+        gas: this.generateTxPriceEstimation([], txCallback),
+      },
+    ];
+  }
+
+  public loopEntryETHSingleAsset({
+    user,
+    targetHealthFactor,
+    onBehalfOf,
+    numLoops,
+    initialAmount,
+  }: LoopEntryETHSingleAssetParamsType): EthereumTransactionTypeExtended[] {
+    const convertedAmount: string = valueToWei(initialAmount, 18);
+
+    const wethGatewayContract: WrappedTokenGatewayV3 = this.getContractInstance(
+      this.wethGatewayAddress,
+    );
+    const txCallback: () => Promise<transactionType> = this.generateTxCallback({
+      rawTxMethod: async () =>
+        wethGatewayContract.populateTransaction.loopEntryETHSingleAsset({
+          targetHealthFactor,
+          onBehalfOf: onBehalfOf ?? user,
+          numLoops,
+        }),
+      from: user,
+      value: convertedAmount,
+    });
+
+    return [
+      {
+        tx: txCallback,
+        txType: eEthereumTxType.DLP_ACTION,
+        gas: this.generateTxPriceEstimation([], txCallback),
+      },
+    ];
+  }
+
+  public async loopExitETHSingleSwap({
+    user,
+    targetHealthFactor,
+    onBehalfOf,
+    isSupplyTokenA,
+    supplyToken,
+    numLoops,
+    maverickPool,
+    minAmountSupplied,
+    initialAmount,
+  }: LoopExitETHSingleSwapParamsType): Promise<
+    EthereumTransactionTypeExtended[]
+  > {
+    const { decimalsOf }: IERC20ServiceInterface = this.erc20Service;
+    const reserveDecimals: number = await decimalsOf(supplyToken);
+    const convertedAmount: string = valueToWei(initialAmount, reserveDecimals);
+
+    const wethGatewayContract: WrappedTokenGatewayV3 = this.getContractInstance(
+      this.wethGatewayAddress,
+    );
+    const txCallback: () => Promise<transactionType> = this.generateTxCallback({
+      rawTxMethod: async () =>
+        wethGatewayContract.populateTransaction.loopExitETHSingleSwap({
+          targetHealthFactor,
+          onBehalfOf: onBehalfOf ?? user,
+          isSupplyTokenA,
+          supplyToken,
+          numLoops,
+          maverickPool,
+          minAmountSupplied,
+          initialAmount: convertedAmount,
+        }),
+      from: user,
+    });
+
+    return [
+      {
+        tx: txCallback,
+        txType: eEthereumTxType.DLP_ACTION,
+        gas: this.generateTxPriceEstimation([], txCallback),
+      },
+    ];
+  }
+
+  public async loopExitETHMultiSwap({
+    user,
+    targetHealthFactor,
+    onBehalfOf,
+    supplyToken,
+    numLoops,
+    minAmountSupplied,
+    initialAmount,
+    path,
+  }: LoopExitETHMultiSwapParamsType): Promise<
+    EthereumTransactionTypeExtended[]
+  > {
+    const { decimalsOf }: IERC20ServiceInterface = this.erc20Service;
+    const reserveDecimals: number = await decimalsOf(supplyToken);
+    const convertedAmount: string = valueToWei(initialAmount, reserveDecimals);
+
+    const wethGatewayContract: WrappedTokenGatewayV3 = this.getContractInstance(
+      this.wethGatewayAddress,
+    );
+    const txCallback: () => Promise<transactionType> = this.generateTxCallback({
+      rawTxMethod: async () =>
+        wethGatewayContract.populateTransaction.loopExitETHMultiSwap({
+          targetHealthFactor,
+          onBehalfOf: onBehalfOf ?? user,
+          supplyToken,
+          numLoops,
+          minAmountSupplied,
+          initialAmount: convertedAmount,
+          path,
+        }),
+      from: user,
+    });
+
+    return [
+      {
+        tx: txCallback,
+        txType: eEthereumTxType.DLP_ACTION,
+        gas: this.generateTxPriceEstimation([], txCallback),
+      },
+    ];
+  }
+
+  public loopExitETHSingleAsset({
+    user,
+    targetHealthFactor,
+    onBehalfOf,
+    numLoops,
+    initialAmount,
+  }: LoopExitETHSingleAssetParamsType): EthereumTransactionTypeExtended[] {
+    const convertedAmount: string = valueToWei(initialAmount, 18);
+
+    const wethGatewayContract: WrappedTokenGatewayV3 = this.getContractInstance(
+      this.wethGatewayAddress,
+    );
+    const txCallback: () => Promise<transactionType> = this.generateTxCallback({
+      rawTxMethod: async () =>
+        wethGatewayContract.populateTransaction.loopExitETHSingleAsset({
+          targetHealthFactor,
+          onBehalfOf: onBehalfOf ?? user,
+          numLoops,
+          initialAmount: convertedAmount,
+        }),
+      from: user,
+    });
+
+    return [
+      {
+        tx: txCallback,
+        txType: eEthereumTxType.DLP_ACTION,
+        gas: this.generateTxPriceEstimation([], txCallback),
+      },
+    ];
+  }
+
+  public loopETHSingleAsset({
+    user,
+    targetHealthFactor,
+    onBehalfOf,
+    numLoops,
+    initialAmount,
+  }: LoopETHSingleAssetParamsType): EthereumTransactionTypeExtended[] {
+    const convertedAmount: string = valueToWei(initialAmount, 18);
+
+    const wethGatewayContract: WrappedTokenGatewayV3 = this.getContractInstance(
+      this.wethGatewayAddress,
+    );
+    const txCallback: () => Promise<transactionType> = this.generateTxCallback({
+      rawTxMethod: async () =>
+        wethGatewayContract.populateTransaction.loopETHSingleAsset({
+          targetHealthFactor,
+          onBehalfOf: onBehalfOf ?? user,
+          numLoops,
+        }),
+      value: convertedAmount,
+      from: user,
     });
 
     return [

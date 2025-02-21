@@ -21,12 +21,13 @@ import type {
   OnEvent,
 } from './common';
 
-export declare namespace Looping {
+export declare namespace LoopDataTypes {
   export type LoopMultiSwapParamsStruct = {
     supplyToken: string;
     targetHealthFactor: BigNumberish;
     borrowToken: string;
     numLoops: BigNumberish;
+    onBehalfOf: string;
     initialAmount: BigNumberish;
     minAmountSupplied: BigNumberish;
     path: BytesLike;
@@ -37,6 +38,7 @@ export declare namespace Looping {
     number,
     string,
     number,
+    string,
     BigNumber,
     BigNumber,
     string,
@@ -45,6 +47,7 @@ export declare namespace Looping {
     targetHealthFactor: number;
     borrowToken: string;
     numLoops: number;
+    onBehalfOf: string;
     initialAmount: BigNumber;
     minAmountSupplied: BigNumber;
     path: string;
@@ -53,6 +56,7 @@ export declare namespace Looping {
   export type LoopSingleAssetParamsStruct = {
     token: string;
     targetHealthFactor: BigNumberish;
+    onBehalfOf: string;
     numLoops: BigNumberish;
     initialAmount: BigNumberish;
   };
@@ -60,11 +64,13 @@ export declare namespace Looping {
   export type LoopSingleAssetParamsStructOutput = [
     string,
     number,
+    string,
     number,
     BigNumber,
   ] & {
     token: string;
     targetHealthFactor: number;
+    onBehalfOf: string;
     numLoops: number;
     initialAmount: BigNumber;
   };
@@ -72,6 +78,7 @@ export declare namespace Looping {
   export type LoopSingleSwapParamsStruct = {
     supplyToken: string;
     targetHealthFactor: BigNumberish;
+    onBehalfOf: string;
     isSupplyTokenA: boolean;
     borrowToken: string;
     numLoops: BigNumberish;
@@ -83,6 +90,7 @@ export declare namespace Looping {
   export type LoopSingleSwapParamsStructOutput = [
     string,
     number,
+    string,
     boolean,
     string,
     number,
@@ -92,6 +100,7 @@ export declare namespace Looping {
   ] & {
     supplyToken: string;
     targetHealthFactor: number;
+    onBehalfOf: string;
     isSupplyTokenA: boolean;
     borrowToken: string;
     numLoops: number;
@@ -103,31 +112,22 @@ export declare namespace Looping {
 
 export interface LoopingInterface extends utils.Interface {
   functions: {
-    'aavePool()': FunctionFragment;
     'calculateBorrowAmount(uint256,address,address,uint256,uint256)': FunctionFragment;
     'calculateBorrowAmountSingleAsset(uint256,address,uint256,uint256)': FunctionFragment;
-    'loopMultiSwap((address,uint16,address,uint16,uint256,uint256,bytes))': FunctionFragment;
-    'loopSingleAsset((address,uint16,uint16,uint256))': FunctionFragment;
-    'loopSingleSwap((address,uint16,bool,address,uint16,address,uint256,uint256))': FunctionFragment;
-    'oracleDecimals()': FunctionFragment;
-    'priceOracle()': FunctionFragment;
-    'swapRouter()': FunctionFragment;
+    'loopMultiSwap((address,uint16,address,uint16,address,uint256,uint256,bytes))': FunctionFragment;
+    'loopSingleAsset((address,uint16,address,uint16,uint256))': FunctionFragment;
+    'loopSingleSwap((address,uint16,address,bool,address,uint16,address,uint256,uint256))': FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
-      | 'aavePool'
       | 'calculateBorrowAmount'
       | 'calculateBorrowAmountSingleAsset'
       | 'loopMultiSwap'
       | 'loopSingleAsset'
-      | 'loopSingleSwap'
-      | 'oracleDecimals'
-      | 'priceOracle'
-      | 'swapRouter',
+      | 'loopSingleSwap',
   ): FunctionFragment;
 
-  encodeFunctionData(functionFragment: 'aavePool', values?: undefined): string;
   encodeFunctionData(
     functionFragment: 'calculateBorrowAmount',
     values: [BigNumberish, string, string, BigNumberish, BigNumberish],
@@ -138,30 +138,17 @@ export interface LoopingInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: 'loopMultiSwap',
-    values: [Looping.LoopMultiSwapParamsStruct],
+    values: [LoopDataTypes.LoopMultiSwapParamsStruct],
   ): string;
   encodeFunctionData(
     functionFragment: 'loopSingleAsset',
-    values: [Looping.LoopSingleAssetParamsStruct],
+    values: [LoopDataTypes.LoopSingleAssetParamsStruct],
   ): string;
   encodeFunctionData(
     functionFragment: 'loopSingleSwap',
-    values: [Looping.LoopSingleSwapParamsStruct],
-  ): string;
-  encodeFunctionData(
-    functionFragment: 'oracleDecimals',
-    values?: undefined,
-  ): string;
-  encodeFunctionData(
-    functionFragment: 'priceOracle',
-    values?: undefined,
-  ): string;
-  encodeFunctionData(
-    functionFragment: 'swapRouter',
-    values?: undefined,
+    values: [LoopDataTypes.LoopSingleSwapParamsStruct],
   ): string;
 
-  decodeFunctionResult(functionFragment: 'aavePool', data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: 'calculateBorrowAmount',
     data: BytesLike,
@@ -182,15 +169,6 @@ export interface LoopingInterface extends utils.Interface {
     functionFragment: 'loopSingleSwap',
     data: BytesLike,
   ): Result;
-  decodeFunctionResult(
-    functionFragment: 'oracleDecimals',
-    data: BytesLike,
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: 'priceOracle',
-    data: BytesLike,
-  ): Result;
-  decodeFunctionResult(functionFragment: 'swapRouter', data: BytesLike): Result;
 
   events: {};
 }
@@ -222,8 +200,6 @@ export interface Looping extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    aavePool(overrides?: CallOverrides): Promise<[string]>;
-
     calculateBorrowAmount(
       supplyAmount: BigNumberish,
       supplyToken: string,
@@ -242,28 +218,20 @@ export interface Looping extends BaseContract {
     ): Promise<[BigNumber]>;
 
     loopMultiSwap(
-      params: Looping.LoopMultiSwapParamsStruct,
+      params: LoopDataTypes.LoopMultiSwapParamsStruct,
       overrides?: Overrides & { from?: string },
     ): Promise<ContractTransaction>;
 
     loopSingleAsset(
-      params: Looping.LoopSingleAssetParamsStruct,
+      params: LoopDataTypes.LoopSingleAssetParamsStruct,
       overrides?: Overrides & { from?: string },
     ): Promise<ContractTransaction>;
 
     loopSingleSwap(
-      params: Looping.LoopSingleSwapParamsStruct,
+      params: LoopDataTypes.LoopSingleSwapParamsStruct,
       overrides?: Overrides & { from?: string },
     ): Promise<ContractTransaction>;
-
-    oracleDecimals(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    priceOracle(overrides?: CallOverrides): Promise<[string]>;
-
-    swapRouter(overrides?: CallOverrides): Promise<[string]>;
   };
-
-  aavePool(overrides?: CallOverrides): Promise<string>;
 
   calculateBorrowAmount(
     supplyAmount: BigNumberish,
@@ -283,29 +251,21 @@ export interface Looping extends BaseContract {
   ): Promise<BigNumber>;
 
   loopMultiSwap(
-    params: Looping.LoopMultiSwapParamsStruct,
+    params: LoopDataTypes.LoopMultiSwapParamsStruct,
     overrides?: Overrides & { from?: string },
   ): Promise<ContractTransaction>;
 
   loopSingleAsset(
-    params: Looping.LoopSingleAssetParamsStruct,
+    params: LoopDataTypes.LoopSingleAssetParamsStruct,
     overrides?: Overrides & { from?: string },
   ): Promise<ContractTransaction>;
 
   loopSingleSwap(
-    params: Looping.LoopSingleSwapParamsStruct,
+    params: LoopDataTypes.LoopSingleSwapParamsStruct,
     overrides?: Overrides & { from?: string },
   ): Promise<ContractTransaction>;
 
-  oracleDecimals(overrides?: CallOverrides): Promise<BigNumber>;
-
-  priceOracle(overrides?: CallOverrides): Promise<string>;
-
-  swapRouter(overrides?: CallOverrides): Promise<string>;
-
   callStatic: {
-    aavePool(overrides?: CallOverrides): Promise<string>;
-
     calculateBorrowAmount(
       supplyAmount: BigNumberish,
       supplyToken: string,
@@ -324,32 +284,24 @@ export interface Looping extends BaseContract {
     ): Promise<BigNumber>;
 
     loopMultiSwap(
-      params: Looping.LoopMultiSwapParamsStruct,
+      params: LoopDataTypes.LoopMultiSwapParamsStruct,
       overrides?: CallOverrides,
     ): Promise<[BigNumber, BigNumber, BigNumber]>;
 
     loopSingleAsset(
-      params: Looping.LoopSingleAssetParamsStruct,
+      params: LoopDataTypes.LoopSingleAssetParamsStruct,
       overrides?: CallOverrides,
     ): Promise<[BigNumber, BigNumber, BigNumber]>;
 
     loopSingleSwap(
-      params: Looping.LoopSingleSwapParamsStruct,
+      params: LoopDataTypes.LoopSingleSwapParamsStruct,
       overrides?: CallOverrides,
     ): Promise<[BigNumber, BigNumber, BigNumber]>;
-
-    oracleDecimals(overrides?: CallOverrides): Promise<BigNumber>;
-
-    priceOracle(overrides?: CallOverrides): Promise<string>;
-
-    swapRouter(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {};
 
   estimateGas: {
-    aavePool(overrides?: CallOverrides): Promise<BigNumber>;
-
     calculateBorrowAmount(
       supplyAmount: BigNumberish,
       supplyToken: string,
@@ -368,30 +320,22 @@ export interface Looping extends BaseContract {
     ): Promise<BigNumber>;
 
     loopMultiSwap(
-      params: Looping.LoopMultiSwapParamsStruct,
+      params: LoopDataTypes.LoopMultiSwapParamsStruct,
       overrides?: Overrides & { from?: string },
     ): Promise<BigNumber>;
 
     loopSingleAsset(
-      params: Looping.LoopSingleAssetParamsStruct,
+      params: LoopDataTypes.LoopSingleAssetParamsStruct,
       overrides?: Overrides & { from?: string },
     ): Promise<BigNumber>;
 
     loopSingleSwap(
-      params: Looping.LoopSingleSwapParamsStruct,
+      params: LoopDataTypes.LoopSingleSwapParamsStruct,
       overrides?: Overrides & { from?: string },
     ): Promise<BigNumber>;
-
-    oracleDecimals(overrides?: CallOverrides): Promise<BigNumber>;
-
-    priceOracle(overrides?: CallOverrides): Promise<BigNumber>;
-
-    swapRouter(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    aavePool(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     calculateBorrowAmount(
       supplyAmount: BigNumberish,
       supplyToken: string,
@@ -410,24 +354,18 @@ export interface Looping extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     loopMultiSwap(
-      params: Looping.LoopMultiSwapParamsStruct,
+      params: LoopDataTypes.LoopMultiSwapParamsStruct,
       overrides?: Overrides & { from?: string },
     ): Promise<PopulatedTransaction>;
 
     loopSingleAsset(
-      params: Looping.LoopSingleAssetParamsStruct,
+      params: LoopDataTypes.LoopSingleAssetParamsStruct,
       overrides?: Overrides & { from?: string },
     ): Promise<PopulatedTransaction>;
 
     loopSingleSwap(
-      params: Looping.LoopSingleSwapParamsStruct,
+      params: LoopDataTypes.LoopSingleSwapParamsStruct,
       overrides?: Overrides & { from?: string },
     ): Promise<PopulatedTransaction>;
-
-    oracleDecimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    priceOracle(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    swapRouter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

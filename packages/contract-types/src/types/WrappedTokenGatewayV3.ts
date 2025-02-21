@@ -26,6 +26,163 @@ import type {
   OnEvent,
 } from './common';
 
+export declare namespace LoopDataTypes {
+  export type LoopETHSingleAssetParamsStruct = {
+    targetHealthFactor: BigNumberish;
+    onBehalfOf: string;
+    numLoops: BigNumberish;
+  };
+
+  export type LoopETHSingleAssetParamsStructOutput = [
+    number,
+    string,
+    number,
+  ] & { targetHealthFactor: number; onBehalfOf: string; numLoops: number };
+
+  export type LoopEntryETHMultiSwapParamsStruct = {
+    targetHealthFactor: BigNumberish;
+    onBehalfOf: string;
+    borrowToken: string;
+    numLoops: BigNumberish;
+    minAmountSupplied: BigNumberish;
+    path: BytesLike;
+  };
+
+  export type LoopEntryETHMultiSwapParamsStructOutput = [
+    number,
+    string,
+    string,
+    number,
+    BigNumber,
+    string,
+  ] & {
+    targetHealthFactor: number;
+    onBehalfOf: string;
+    borrowToken: string;
+    numLoops: number;
+    minAmountSupplied: BigNumber;
+    path: string;
+  };
+
+  export type LoopEntryETHSingleAssetParamsStruct = {
+    targetHealthFactor: BigNumberish;
+    onBehalfOf: string;
+    numLoops: BigNumberish;
+  };
+
+  export type LoopEntryETHSingleAssetParamsStructOutput = [
+    number,
+    string,
+    number,
+  ] & { targetHealthFactor: number; onBehalfOf: string; numLoops: number };
+
+  export type LoopEntryETHSingleSwapParamsStruct = {
+    targetHealthFactor: BigNumberish;
+    onBehalfOf: string;
+    isSupplyTokenA: boolean;
+    borrowToken: string;
+    numLoops: BigNumberish;
+    maverickPool: string;
+    minAmountSupplied: BigNumberish;
+  };
+
+  export type LoopEntryETHSingleSwapParamsStructOutput = [
+    number,
+    string,
+    boolean,
+    string,
+    number,
+    string,
+    BigNumber,
+  ] & {
+    targetHealthFactor: number;
+    onBehalfOf: string;
+    isSupplyTokenA: boolean;
+    borrowToken: string;
+    numLoops: number;
+    maverickPool: string;
+    minAmountSupplied: BigNumber;
+  };
+
+  export type LoopExitETHMultiSwapParamsStruct = {
+    supplyToken: string;
+    targetHealthFactor: BigNumberish;
+    onBehalfOf: string;
+    numLoops: BigNumberish;
+    minAmountSupplied: BigNumberish;
+    initialAmount: BigNumberish;
+    path: BytesLike;
+  };
+
+  export type LoopExitETHMultiSwapParamsStructOutput = [
+    string,
+    number,
+    string,
+    number,
+    BigNumber,
+    BigNumber,
+    string,
+  ] & {
+    supplyToken: string;
+    targetHealthFactor: number;
+    onBehalfOf: string;
+    numLoops: number;
+    minAmountSupplied: BigNumber;
+    initialAmount: BigNumber;
+    path: string;
+  };
+
+  export type LoopExitETHSingleAssetParamsStruct = {
+    targetHealthFactor: BigNumberish;
+    onBehalfOf: string;
+    numLoops: BigNumberish;
+    initialAmount: BigNumberish;
+  };
+
+  export type LoopExitETHSingleAssetParamsStructOutput = [
+    number,
+    string,
+    number,
+    BigNumber,
+  ] & {
+    targetHealthFactor: number;
+    onBehalfOf: string;
+    numLoops: number;
+    initialAmount: BigNumber;
+  };
+
+  export type LoopExitETHSingleSwapParamsStruct = {
+    supplyToken: string;
+    targetHealthFactor: BigNumberish;
+    onBehalfOf: string;
+    isSupplyTokenA: boolean;
+    numLoops: BigNumberish;
+    maverickPool: string;
+    minAmountSupplied: BigNumberish;
+    initialAmount: BigNumberish;
+  };
+
+  export type LoopExitETHSingleSwapParamsStructOutput = [
+    string,
+    number,
+    string,
+    boolean,
+    number,
+    string,
+    BigNumber,
+    BigNumber,
+  ] & {
+    supplyToken: string;
+    targetHealthFactor: number;
+    onBehalfOf: string;
+    isSupplyTokenA: boolean;
+    numLoops: number;
+    maverickPool: string;
+    minAmountSupplied: BigNumber;
+    initialAmount: BigNumber;
+  };
+}
+
 export interface WrappedTokenGatewayV3Interface extends utils.Interface {
   functions: {
     'borrowETH(address,uint256,uint16)': FunctionFragment;
@@ -33,6 +190,13 @@ export interface WrappedTokenGatewayV3Interface extends utils.Interface {
     'emergencyEtherTransfer(address,uint256)': FunctionFragment;
     'emergencyTokenTransfer(address,address,uint256)': FunctionFragment;
     'getWETHAddress()': FunctionFragment;
+    'loopETHSingleAsset((uint16,address,uint16))': FunctionFragment;
+    'loopEntryETHMultiSwap((uint16,address,address,uint16,uint256,bytes))': FunctionFragment;
+    'loopEntryETHSingleAsset((uint16,address,uint16))': FunctionFragment;
+    'loopEntryETHSingleSwap((uint16,address,bool,address,uint16,address,uint256))': FunctionFragment;
+    'loopExitETHMultiSwap((address,uint16,address,uint16,uint256,uint256,bytes))': FunctionFragment;
+    'loopExitETHSingleAsset((uint16,address,uint16,uint256))': FunctionFragment;
+    'loopExitETHSingleSwap((address,uint16,address,bool,uint16,address,uint256,uint256))': FunctionFragment;
     'owner()': FunctionFragment;
     'renounceOwnership()': FunctionFragment;
     'repayETH(address,uint256,address)': FunctionFragment;
@@ -48,6 +212,13 @@ export interface WrappedTokenGatewayV3Interface extends utils.Interface {
       | 'emergencyEtherTransfer'
       | 'emergencyTokenTransfer'
       | 'getWETHAddress'
+      | 'loopETHSingleAsset'
+      | 'loopEntryETHMultiSwap'
+      | 'loopEntryETHSingleAsset'
+      | 'loopEntryETHSingleSwap'
+      | 'loopExitETHMultiSwap'
+      | 'loopExitETHSingleAsset'
+      | 'loopExitETHSingleSwap'
       | 'owner'
       | 'renounceOwnership'
       | 'repayETH'
@@ -75,6 +246,34 @@ export interface WrappedTokenGatewayV3Interface extends utils.Interface {
   encodeFunctionData(
     functionFragment: 'getWETHAddress',
     values?: undefined,
+  ): string;
+  encodeFunctionData(
+    functionFragment: 'loopETHSingleAsset',
+    values: [LoopDataTypes.LoopETHSingleAssetParamsStruct],
+  ): string;
+  encodeFunctionData(
+    functionFragment: 'loopEntryETHMultiSwap',
+    values: [LoopDataTypes.LoopEntryETHMultiSwapParamsStruct],
+  ): string;
+  encodeFunctionData(
+    functionFragment: 'loopEntryETHSingleAsset',
+    values: [LoopDataTypes.LoopEntryETHSingleAssetParamsStruct],
+  ): string;
+  encodeFunctionData(
+    functionFragment: 'loopEntryETHSingleSwap',
+    values: [LoopDataTypes.LoopEntryETHSingleSwapParamsStruct],
+  ): string;
+  encodeFunctionData(
+    functionFragment: 'loopExitETHMultiSwap',
+    values: [LoopDataTypes.LoopExitETHMultiSwapParamsStruct],
+  ): string;
+  encodeFunctionData(
+    functionFragment: 'loopExitETHSingleAsset',
+    values: [LoopDataTypes.LoopExitETHSingleAssetParamsStruct],
+  ): string;
+  encodeFunctionData(
+    functionFragment: 'loopExitETHSingleSwap',
+    values: [LoopDataTypes.LoopExitETHSingleSwapParamsStruct],
   ): string;
   encodeFunctionData(functionFragment: 'owner', values?: undefined): string;
   encodeFunctionData(
@@ -118,6 +317,34 @@ export interface WrappedTokenGatewayV3Interface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: 'getWETHAddress',
+    data: BytesLike,
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: 'loopETHSingleAsset',
+    data: BytesLike,
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: 'loopEntryETHMultiSwap',
+    data: BytesLike,
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: 'loopEntryETHSingleAsset',
+    data: BytesLike,
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: 'loopEntryETHSingleSwap',
+    data: BytesLike,
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: 'loopExitETHMultiSwap',
+    data: BytesLike,
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: 'loopExitETHSingleAsset',
+    data: BytesLike,
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: 'loopExitETHSingleSwap',
     data: BytesLike,
   ): Result;
   decodeFunctionResult(functionFragment: 'owner', data: BytesLike): Result;
@@ -214,6 +441,41 @@ export interface WrappedTokenGatewayV3 extends BaseContract {
 
     getWETHAddress(overrides?: CallOverrides): Promise<[string]>;
 
+    loopETHSingleAsset(
+      params: LoopDataTypes.LoopETHSingleAssetParamsStruct,
+      overrides?: PayableOverrides & { from?: string },
+    ): Promise<ContractTransaction>;
+
+    loopEntryETHMultiSwap(
+      params: LoopDataTypes.LoopEntryETHMultiSwapParamsStruct,
+      overrides?: PayableOverrides & { from?: string },
+    ): Promise<ContractTransaction>;
+
+    loopEntryETHSingleAsset(
+      params: LoopDataTypes.LoopEntryETHSingleAssetParamsStruct,
+      overrides?: PayableOverrides & { from?: string },
+    ): Promise<ContractTransaction>;
+
+    loopEntryETHSingleSwap(
+      params: LoopDataTypes.LoopEntryETHSingleSwapParamsStruct,
+      overrides?: PayableOverrides & { from?: string },
+    ): Promise<ContractTransaction>;
+
+    loopExitETHMultiSwap(
+      params: LoopDataTypes.LoopExitETHMultiSwapParamsStruct,
+      overrides?: Overrides & { from?: string },
+    ): Promise<ContractTransaction>;
+
+    loopExitETHSingleAsset(
+      params: LoopDataTypes.LoopExitETHSingleAssetParamsStruct,
+      overrides?: Overrides & { from?: string },
+    ): Promise<ContractTransaction>;
+
+    loopExitETHSingleSwap(
+      params: LoopDataTypes.LoopExitETHSingleSwapParamsStruct,
+      overrides?: Overrides & { from?: string },
+    ): Promise<ContractTransaction>;
+
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     renounceOwnership(
@@ -280,6 +542,41 @@ export interface WrappedTokenGatewayV3 extends BaseContract {
 
   getWETHAddress(overrides?: CallOverrides): Promise<string>;
 
+  loopETHSingleAsset(
+    params: LoopDataTypes.LoopETHSingleAssetParamsStruct,
+    overrides?: PayableOverrides & { from?: string },
+  ): Promise<ContractTransaction>;
+
+  loopEntryETHMultiSwap(
+    params: LoopDataTypes.LoopEntryETHMultiSwapParamsStruct,
+    overrides?: PayableOverrides & { from?: string },
+  ): Promise<ContractTransaction>;
+
+  loopEntryETHSingleAsset(
+    params: LoopDataTypes.LoopEntryETHSingleAssetParamsStruct,
+    overrides?: PayableOverrides & { from?: string },
+  ): Promise<ContractTransaction>;
+
+  loopEntryETHSingleSwap(
+    params: LoopDataTypes.LoopEntryETHSingleSwapParamsStruct,
+    overrides?: PayableOverrides & { from?: string },
+  ): Promise<ContractTransaction>;
+
+  loopExitETHMultiSwap(
+    params: LoopDataTypes.LoopExitETHMultiSwapParamsStruct,
+    overrides?: Overrides & { from?: string },
+  ): Promise<ContractTransaction>;
+
+  loopExitETHSingleAsset(
+    params: LoopDataTypes.LoopExitETHSingleAssetParamsStruct,
+    overrides?: Overrides & { from?: string },
+  ): Promise<ContractTransaction>;
+
+  loopExitETHSingleSwap(
+    params: LoopDataTypes.LoopExitETHSingleSwapParamsStruct,
+    overrides?: Overrides & { from?: string },
+  ): Promise<ContractTransaction>;
+
   owner(overrides?: CallOverrides): Promise<string>;
 
   renounceOwnership(
@@ -345,6 +642,41 @@ export interface WrappedTokenGatewayV3 extends BaseContract {
     ): Promise<void>;
 
     getWETHAddress(overrides?: CallOverrides): Promise<string>;
+
+    loopETHSingleAsset(
+      params: LoopDataTypes.LoopETHSingleAssetParamsStruct,
+      overrides?: CallOverrides,
+    ): Promise<[BigNumber, BigNumber, BigNumber]>;
+
+    loopEntryETHMultiSwap(
+      params: LoopDataTypes.LoopEntryETHMultiSwapParamsStruct,
+      overrides?: CallOverrides,
+    ): Promise<[BigNumber, BigNumber, BigNumber]>;
+
+    loopEntryETHSingleAsset(
+      params: LoopDataTypes.LoopEntryETHSingleAssetParamsStruct,
+      overrides?: CallOverrides,
+    ): Promise<[BigNumber, BigNumber, BigNumber]>;
+
+    loopEntryETHSingleSwap(
+      params: LoopDataTypes.LoopEntryETHSingleSwapParamsStruct,
+      overrides?: CallOverrides,
+    ): Promise<[BigNumber, BigNumber, BigNumber]>;
+
+    loopExitETHMultiSwap(
+      params: LoopDataTypes.LoopExitETHMultiSwapParamsStruct,
+      overrides?: CallOverrides,
+    ): Promise<[BigNumber, BigNumber, BigNumber]>;
+
+    loopExitETHSingleAsset(
+      params: LoopDataTypes.LoopExitETHSingleAssetParamsStruct,
+      overrides?: CallOverrides,
+    ): Promise<[BigNumber, BigNumber, BigNumber]>;
+
+    loopExitETHSingleSwap(
+      params: LoopDataTypes.LoopExitETHSingleSwapParamsStruct,
+      overrides?: CallOverrides,
+    ): Promise<[BigNumber, BigNumber, BigNumber]>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -422,6 +754,41 @@ export interface WrappedTokenGatewayV3 extends BaseContract {
 
     getWETHAddress(overrides?: CallOverrides): Promise<BigNumber>;
 
+    loopETHSingleAsset(
+      params: LoopDataTypes.LoopETHSingleAssetParamsStruct,
+      overrides?: PayableOverrides & { from?: string },
+    ): Promise<BigNumber>;
+
+    loopEntryETHMultiSwap(
+      params: LoopDataTypes.LoopEntryETHMultiSwapParamsStruct,
+      overrides?: PayableOverrides & { from?: string },
+    ): Promise<BigNumber>;
+
+    loopEntryETHSingleAsset(
+      params: LoopDataTypes.LoopEntryETHSingleAssetParamsStruct,
+      overrides?: PayableOverrides & { from?: string },
+    ): Promise<BigNumber>;
+
+    loopEntryETHSingleSwap(
+      params: LoopDataTypes.LoopEntryETHSingleSwapParamsStruct,
+      overrides?: PayableOverrides & { from?: string },
+    ): Promise<BigNumber>;
+
+    loopExitETHMultiSwap(
+      params: LoopDataTypes.LoopExitETHMultiSwapParamsStruct,
+      overrides?: Overrides & { from?: string },
+    ): Promise<BigNumber>;
+
+    loopExitETHSingleAsset(
+      params: LoopDataTypes.LoopExitETHSingleAssetParamsStruct,
+      overrides?: Overrides & { from?: string },
+    ): Promise<BigNumber>;
+
+    loopExitETHSingleSwap(
+      params: LoopDataTypes.LoopExitETHSingleSwapParamsStruct,
+      overrides?: Overrides & { from?: string },
+    ): Promise<BigNumber>;
+
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     renounceOwnership(
@@ -488,6 +855,41 @@ export interface WrappedTokenGatewayV3 extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getWETHAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    loopETHSingleAsset(
+      params: LoopDataTypes.LoopETHSingleAssetParamsStruct,
+      overrides?: PayableOverrides & { from?: string },
+    ): Promise<PopulatedTransaction>;
+
+    loopEntryETHMultiSwap(
+      params: LoopDataTypes.LoopEntryETHMultiSwapParamsStruct,
+      overrides?: PayableOverrides & { from?: string },
+    ): Promise<PopulatedTransaction>;
+
+    loopEntryETHSingleAsset(
+      params: LoopDataTypes.LoopEntryETHSingleAssetParamsStruct,
+      overrides?: PayableOverrides & { from?: string },
+    ): Promise<PopulatedTransaction>;
+
+    loopEntryETHSingleSwap(
+      params: LoopDataTypes.LoopEntryETHSingleSwapParamsStruct,
+      overrides?: PayableOverrides & { from?: string },
+    ): Promise<PopulatedTransaction>;
+
+    loopExitETHMultiSwap(
+      params: LoopDataTypes.LoopExitETHMultiSwapParamsStruct,
+      overrides?: Overrides & { from?: string },
+    ): Promise<PopulatedTransaction>;
+
+    loopExitETHSingleAsset(
+      params: LoopDataTypes.LoopExitETHSingleAssetParamsStruct,
+      overrides?: Overrides & { from?: string },
+    ): Promise<PopulatedTransaction>;
+
+    loopExitETHSingleSwap(
+      params: LoopDataTypes.LoopExitETHSingleSwapParamsStruct,
+      overrides?: Overrides & { from?: string },
+    ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

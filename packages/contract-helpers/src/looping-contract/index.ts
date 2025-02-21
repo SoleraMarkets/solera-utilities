@@ -117,6 +117,7 @@ export class LoopingService extends BaseService<Looping> {
       rawTxMethod: async () =>
         loopingContract.populateTransaction.loopSingleSwap({
           supplyToken: supplyReserve,
+          onBehalfOf: user,
           targetHealthFactor,
           isSupplyTokenA,
           borrowToken: borrowReserve,
@@ -200,6 +201,7 @@ export class LoopingService extends BaseService<Looping> {
       rawTxMethod: async () =>
         loopingContract.populateTransaction.loopMultiSwap({
           supplyToken: supplyReserve,
+          onBehalfOf: user,
           targetHealthFactor,
           borrowToken: borrowReserve,
           numLoops,
@@ -279,6 +281,7 @@ export class LoopingService extends BaseService<Looping> {
       rawTxMethod: async () =>
         loopingContract.populateTransaction.loopSingleAsset({
           token: reserve,
+          onBehalfOf: user,
           initialAmount: amount,
           targetHealthFactor,
           numLoops,
