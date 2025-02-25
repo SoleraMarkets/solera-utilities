@@ -3,6 +3,7 @@ import { BigNumber, PopulatedTransaction, providers, utils } from 'ethers';
 import {
   BaseDebtToken,
   BaseDebtTokenInterface,
+  DelegationApprovedType,
 } from '../baseDebtToken-contract';
 import BaseService from '../commons/BaseService';
 import { ProtocolAction, tEthereumAddress } from '../commons/types';
@@ -36,11 +37,19 @@ import { Looping__factory } from './typechain/Looping__factory';
 export type LoopSwapTxBuilder = {
   generateTxData: (args: LoopSwapParamsType) => PopulatedTransaction;
   getApprovedAmount: ({ user, token }: TokenOwner) => Promise<ApproveType>;
+  getCreditApprovedAmount: ({
+    user,
+    token,
+  }: TokenOwner) => Promise<DelegationApprovedType>;
 };
 
 export type LoopSingleAssetTxBuilder = {
   generateTxData: (args: LoopSingleAssetParamsType) => PopulatedTransaction;
   getApprovedAmount: ({ user, token }: TokenOwner) => Promise<ApproveType>;
+  getCreditApprovedAmount: ({
+    user,
+    token,
+  }: TokenOwner) => Promise<DelegationApprovedType>;
 };
 
 export type LoopETHTxBuilder = {
@@ -50,6 +59,11 @@ export type LoopETHTxBuilder = {
   }: {
     user: tEthereumAddress;
   }) => Promise<ApproveType>;
+  getCreditApprovedAmount: ({
+    user,
+  }: {
+    user: tEthereumAddress;
+  }) => Promise<DelegationApprovedType>;
 };
 
 const WETH = '0x626613B473F7eF65747967017C11225436EFaEd7';
@@ -59,6 +73,8 @@ const NELIXIR = '0x9fbC367B9Bb966a2A537989817A088AFCaFFDC4c';
 const NYIELD = '0x892DFf5257B39f7afB7803dd7C81E8ECDB6af3E8';
 const PUSD = '0xdddD73F5Df1F0DC31373357beAC77545dC5A6f3F';
 const NTBILL = '0xE72Fe64840F4EF80E3Ec73a1c749491b5c938CB9';
+
+const WETH_V_TOKEN = '0x578899D60B4ea83537d7d5DD399C2f17Bd15F489';
 
 export class LoopingService extends BaseService<Looping> {
   readonly loopingContractAddress: string;
@@ -701,6 +717,22 @@ export class LoopingService extends BaseService<Looping> {
           amount: amount.toString(),
         };
       },
+      getCreditApprovedAmount: async (
+        props: TokenOwner,
+      ): Promise<DelegationApprovedType> => {
+        const spender = this.loopAddress;
+        const amount = await this.debtTokenService.approvedDelegationAmount({
+          ...props,
+          debtTokenAddress: props.token,
+          delegatee: spender,
+        });
+        return {
+          debtTokenAddress: props.token,
+          allowanceGiver: props.user,
+          allowanceReceiver: spender,
+          amount: amount.toString(),
+        };
+      },
     };
 
     this.loopSingleAssetTxBuilder = {
@@ -743,6 +775,22 @@ export class LoopingService extends BaseService<Looping> {
         return {
           ...props,
           spender,
+          amount: amount.toString(),
+        };
+      },
+      getCreditApprovedAmount: async (
+        props: TokenOwner,
+      ): Promise<DelegationApprovedType> => {
+        const spender = this.loopAddress;
+        const amount = await this.debtTokenService.approvedDelegationAmount({
+          ...props,
+          debtTokenAddress: props.token,
+          delegatee: spender,
+        });
+        return {
+          debtTokenAddress: props.token,
+          allowanceGiver: props.user,
+          allowanceReceiver: spender,
           amount: amount.toString(),
         };
       },
@@ -839,6 +887,22 @@ export class LoopingService extends BaseService<Looping> {
           ...props,
           token: WETH,
           spender,
+          amount: amount.toString(),
+        };
+      },
+      getCreditApprovedAmount: async (props: {
+        user: tEthereumAddress;
+      }): Promise<DelegationApprovedType> => {
+        const spender = this.loopAddress;
+        const amount = await this.debtTokenService.approvedDelegationAmount({
+          ...props,
+          debtTokenAddress: WETH_V_TOKEN,
+          delegatee: spender,
+        });
+        return {
+          debtTokenAddress: WETH_V_TOKEN,
+          allowanceGiver: props.user,
+          allowanceReceiver: spender,
           amount: amount.toString(),
         };
       },
