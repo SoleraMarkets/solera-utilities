@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.9.0](https://github.com/aave/aave-utilities/compare/@kevoh1516/solera-contract-helpers@3.8.3...@kevoh1516/solera-contract-helpers@3.9.0) (2025-02-25)
+
+
+### Features
+
+* add credit approval ([666661f](https://github.com/aave/aave-utilities/commit/666661fd288ec57b28fcfeb47cb33d262eb5a6f6))
+
+
+
+
+
 ## [3.8.3](https://github.com/aave/aave-utilities/compare/@kevoh1516/solera-contract-helpers@3.8.2...@kevoh1516/solera-contract-helpers@3.8.3) (2025-02-25)
 
 
