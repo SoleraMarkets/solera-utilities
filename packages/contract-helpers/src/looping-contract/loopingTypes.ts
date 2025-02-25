@@ -1,22 +1,9 @@
 import { tEthereumAddress } from '../commons/types';
 
-export type LoopSingleSwapParamsType = {
+export type LoopSwapParamsType = {
   user: tEthereumAddress;
   supplyReserve: tEthereumAddress;
   borrowReserve: tEthereumAddress;
-  maverickPool: tEthereumAddress;
-  isSupplyTokenA: boolean;
-  numLoops: number;
-  amount: string;
-  targetHealthFactor: string;
-  minAmountSupplied: string;
-};
-
-export type LoopMultiSwapParamsType = {
-  user: tEthereumAddress;
-  supplyReserve: tEthereumAddress;
-  borrowReserve: tEthereumAddress;
-  path: string;
   numLoops: number;
   amount: string;
   targetHealthFactor: string;
@@ -29,4 +16,24 @@ export type LoopSingleAssetParamsType = {
   numLoops: number;
   amount: string;
   targetHealthFactor: string;
+};
+
+export type LoopETHParamsType = {
+  user: tEthereumAddress;
+  reserve: tEthereumAddress;
+  numLoops: number;
+  amount: string;
+  targetHealthFactor: string;
+  unwrap: boolean;
+};
+
+export type PoolTokens = {
+  tokenA: tEthereumAddress;
+  tokenB: tEthereumAddress;
+};
+
+export type SwapPool = {
+  tokenA: tEthereumAddress;
+  tokenB: tEthereumAddress;
+  swapPool: tEthereumAddress;
 };
