@@ -66,13 +66,16 @@ export type LoopETHTxBuilder = {
   }) => Promise<DelegationApprovedType>;
 };
 
-const WETH = '0x626613B473F7eF65747967017C11225436EFaEd7'.toLowerCase();
-const NRWA = '0x81537d879ACc8a290a1846635a0cAA908f8ca3a6'.toLowerCase();
-const PETH = '0xD630fb6A07c9c723cf709d2DaA9B63325d0E0B73'.toLowerCase();
-const NELIXIR = '0x9fbC367B9Bb966a2A537989817A088AFCaFFDC4c'.toLowerCase();
-const NYIELD = '0x892DFf5257B39f7afB7803dd7C81E8ECDB6af3E8'.toLowerCase();
-const PUSD = '0xdddD73F5Df1F0DC31373357beAC77545dC5A6f3F'.toLowerCase();
-const NTBILL = '0xE72Fe64840F4EF80E3Ec73a1c749491b5c938CB9'.toLowerCase();
+export const WETH = '0x626613B473F7eF65747967017C11225436EFaEd7'.toLowerCase();
+export const NRWA = '0x81537d879ACc8a290a1846635a0cAA908f8ca3a6'.toLowerCase();
+export const PETH = '0xD630fb6A07c9c723cf709d2DaA9B63325d0E0B73'.toLowerCase();
+export const NELIXIR =
+  '0x9fbC367B9Bb966a2A537989817A088AFCaFFDC4c'.toLowerCase();
+export const NYIELD =
+  '0x892DFf5257B39f7afB7803dd7C81E8ECDB6af3E8'.toLowerCase();
+export const PUSD = '0xdddD73F5Df1F0DC31373357beAC77545dC5A6f3F'.toLowerCase();
+export const NTBILL =
+  '0xE72Fe64840F4EF80E3Ec73a1c749491b5c938CB9'.toLowerCase();
 
 const WETH_V_TOKEN = '0x578899D60B4ea83537d7d5DD399C2f17Bd15F489'.toLowerCase();
 
@@ -94,8 +97,8 @@ export class LoopingService extends BaseService<Looping> {
   readonly poolAddress: tEthereumAddress;
   readonly loopAddress: tEthereumAddress;
 
-  readonly maverickSingleSwap: Map<PoolTokens, tEthereumAddress>;
-  readonly maverickMultiSwap: Map<PoolTokens, string>;
+  readonly maverickSingleSwap: Map<string, tEthereumAddress>;
+  readonly maverickMultiSwap: Map<string, string>;
 
   loopSwapTxBuilder: LoopSwapTxBuilder;
   loopSingleAssetTxBuilder: LoopSingleAssetTxBuilder;
@@ -129,15 +132,15 @@ export class LoopingService extends BaseService<Looping> {
     this.maverickMultiSwap = new Map();
 
     this.maverickSingleSwap.set(
-      { tokenA: WETH, tokenB: NRWA },
+      this.getObjectKey({ tokenA: WETH, tokenB: NRWA }),
       '0x6EbE09DDb0edE205fAcE89AB0Bf29211cf885a92',
     );
     this.maverickSingleSwap.set(
-      { tokenA: WETH, tokenB: PETH },
+      this.getObjectKey({ tokenA: WETH, tokenB: PETH }),
       '0x2e1ACd5Ef12d161686d417837003415b569c3c16',
     );
     this.maverickMultiSwap.set(
-      { tokenA: WETH, tokenB: NELIXIR },
+      this.getObjectKey({ tokenA: WETH, tokenB: NELIXIR }),
       utils.solidityPack(
         ['address', 'bool', 'address', 'bool'],
         [
@@ -149,7 +152,7 @@ export class LoopingService extends BaseService<Looping> {
       ),
     );
     this.maverickMultiSwap.set(
-      { tokenA: NELIXIR, tokenB: WETH },
+      this.getObjectKey({ tokenA: NELIXIR, tokenB: WETH }),
       utils.solidityPack(
         ['address', 'bool', 'address', 'bool'],
         [
@@ -161,7 +164,7 @@ export class LoopingService extends BaseService<Looping> {
       ),
     );
     this.maverickMultiSwap.set(
-      { tokenA: WETH, tokenB: NYIELD },
+      this.getObjectKey({ tokenA: WETH, tokenB: NYIELD }),
       utils.solidityPack(
         ['address', 'bool', 'address', 'bool'],
         [
@@ -173,7 +176,7 @@ export class LoopingService extends BaseService<Looping> {
       ),
     );
     this.maverickMultiSwap.set(
-      { tokenA: NYIELD, tokenB: WETH },
+      this.getObjectKey({ tokenA: NYIELD, tokenB: WETH }),
       utils.solidityPack(
         ['address', 'bool', 'address', 'bool'],
         [
@@ -185,7 +188,7 @@ export class LoopingService extends BaseService<Looping> {
       ),
     );
     this.maverickMultiSwap.set(
-      { tokenA: WETH, tokenB: NTBILL },
+      this.getObjectKey({ tokenA: WETH, tokenB: NTBILL }),
       utils.solidityPack(
         ['address', 'bool', 'address', 'bool'],
         [
@@ -197,7 +200,7 @@ export class LoopingService extends BaseService<Looping> {
       ),
     );
     this.maverickMultiSwap.set(
-      { tokenA: NTBILL, tokenB: WETH },
+      this.getObjectKey({ tokenA: NTBILL, tokenB: WETH }),
       utils.solidityPack(
         ['address', 'bool', 'address', 'bool'],
         [
@@ -209,11 +212,11 @@ export class LoopingService extends BaseService<Looping> {
       ),
     );
     this.maverickSingleSwap.set(
-      { tokenA: WETH, tokenB: PUSD },
+      this.getObjectKey({ tokenA: WETH, tokenB: PUSD }),
       '0x92962AcCa4300791b0F5cFE2bfB3b6e62a852D83',
     );
     this.maverickMultiSwap.set(
-      { tokenA: NRWA, tokenB: PETH },
+      this.getObjectKey({ tokenA: NRWA, tokenB: PETH }),
       utils.solidityPack(
         ['address', 'bool', 'address', 'bool'],
         [
@@ -225,7 +228,7 @@ export class LoopingService extends BaseService<Looping> {
       ),
     );
     this.maverickMultiSwap.set(
-      { tokenA: PETH, tokenB: NRWA },
+      this.getObjectKey({ tokenA: PETH, tokenB: NRWA }),
       utils.solidityPack(
         ['address', 'bool', 'address', 'bool'],
         [
@@ -238,7 +241,7 @@ export class LoopingService extends BaseService<Looping> {
     );
 
     this.maverickMultiSwap.set(
-      { tokenA: NRWA, tokenB: NELIXIR },
+      this.getObjectKey({ tokenA: NRWA, tokenB: NELIXIR }),
       utils.solidityPack(
         ['address', 'bool', 'address', 'bool', 'address', 'bool'],
         [
@@ -252,7 +255,7 @@ export class LoopingService extends BaseService<Looping> {
       ),
     );
     this.maverickMultiSwap.set(
-      { tokenA: NELIXIR, tokenB: NRWA },
+      this.getObjectKey({ tokenA: NELIXIR, tokenB: NRWA }),
       utils.solidityPack(
         ['address', 'bool', 'address', 'bool', 'address', 'bool'],
         [
@@ -267,7 +270,7 @@ export class LoopingService extends BaseService<Looping> {
     );
 
     this.maverickMultiSwap.set(
-      { tokenA: NRWA, tokenB: NYIELD },
+      this.getObjectKey({ tokenA: NRWA, tokenB: NYIELD }),
       utils.solidityPack(
         ['address', 'bool', 'address', 'bool'],
         [
@@ -279,7 +282,7 @@ export class LoopingService extends BaseService<Looping> {
       ),
     );
     this.maverickMultiSwap.set(
-      { tokenA: NYIELD, tokenB: NRWA },
+      this.getObjectKey({ tokenA: NYIELD, tokenB: NRWA }),
       utils.solidityPack(
         ['address', 'bool', 'address', 'bool'],
         [
@@ -292,7 +295,7 @@ export class LoopingService extends BaseService<Looping> {
     );
 
     this.maverickMultiSwap.set(
-      { tokenA: NRWA, tokenB: NTBILL },
+      this.getObjectKey({ tokenA: NRWA, tokenB: NTBILL }),
       utils.solidityPack(
         ['address', 'bool', 'address', 'bool'],
         [
@@ -304,7 +307,7 @@ export class LoopingService extends BaseService<Looping> {
       ),
     );
     this.maverickMultiSwap.set(
-      { tokenA: NTBILL, tokenB: NRWA },
+      this.getObjectKey({ tokenA: NTBILL, tokenB: NRWA }),
       utils.solidityPack(
         ['address', 'bool', 'address', 'bool'],
         [
@@ -317,12 +320,12 @@ export class LoopingService extends BaseService<Looping> {
     );
 
     this.maverickSingleSwap.set(
-      { tokenA: NRWA, tokenB: PUSD },
+      this.getObjectKey({ tokenA: NRWA, tokenB: PUSD }),
       '0x9534362C3B5B0ab1770842888497CD299b2bEBCB',
     );
 
     this.maverickMultiSwap.set(
-      { tokenA: PETH, tokenB: NELIXIR },
+      this.getObjectKey({ tokenA: PETH, tokenB: NELIXIR }),
       utils.solidityPack(
         ['address', 'bool', 'address', 'bool'],
         [
@@ -334,7 +337,7 @@ export class LoopingService extends BaseService<Looping> {
       ),
     );
     this.maverickMultiSwap.set(
-      { tokenA: NELIXIR, tokenB: PETH },
+      this.getObjectKey({ tokenA: NELIXIR, tokenB: PETH }),
       utils.solidityPack(
         ['address', 'bool', 'address', 'bool'],
         [
@@ -347,7 +350,7 @@ export class LoopingService extends BaseService<Looping> {
     );
 
     this.maverickMultiSwap.set(
-      { tokenA: PETH, tokenB: NYIELD },
+      this.getObjectKey({ tokenA: PETH, tokenB: NYIELD }),
       utils.solidityPack(
         ['address', 'bool', 'address', 'bool'],
         [
@@ -359,7 +362,7 @@ export class LoopingService extends BaseService<Looping> {
       ),
     );
     this.maverickMultiSwap.set(
-      { tokenA: NYIELD, tokenB: PETH },
+      this.getObjectKey({ tokenA: NYIELD, tokenB: PETH }),
       utils.solidityPack(
         ['address', 'bool', 'address', 'bool'],
         [
@@ -372,7 +375,7 @@ export class LoopingService extends BaseService<Looping> {
     );
 
     this.maverickMultiSwap.set(
-      { tokenA: PETH, tokenB: NTBILL },
+      this.getObjectKey({ tokenA: PETH, tokenB: NTBILL }),
       utils.solidityPack(
         ['address', 'bool', 'address', 'bool'],
         [
@@ -384,7 +387,7 @@ export class LoopingService extends BaseService<Looping> {
       ),
     );
     this.maverickMultiSwap.set(
-      { tokenA: NTBILL, tokenB: PETH },
+      this.getObjectKey({ tokenA: NTBILL, tokenB: PETH }),
       utils.solidityPack(
         ['address', 'bool', 'address', 'bool'],
         [
@@ -397,12 +400,12 @@ export class LoopingService extends BaseService<Looping> {
     );
 
     this.maverickSingleSwap.set(
-      { tokenA: PETH, tokenB: PUSD },
+      this.getObjectKey({ tokenA: PETH, tokenB: PUSD }),
       '0xc6a6cA7a7C0198a9FC9c616aA30b1BEa2956a0cc',
     );
 
     this.maverickMultiSwap.set(
-      { tokenA: NELIXIR, tokenB: NYIELD },
+      this.getObjectKey({ tokenA: NELIXIR, tokenB: NYIELD }),
       utils.solidityPack(
         ['address', 'bool', 'address', 'bool', 'address', 'bool'],
         [
@@ -416,7 +419,7 @@ export class LoopingService extends BaseService<Looping> {
       ),
     );
     this.maverickMultiSwap.set(
-      { tokenA: NYIELD, tokenB: NELIXIR },
+      this.getObjectKey({ tokenA: NYIELD, tokenB: NELIXIR }),
       utils.solidityPack(
         ['address', 'bool', 'address', 'bool', 'address', 'bool'],
         [
@@ -431,7 +434,7 @@ export class LoopingService extends BaseService<Looping> {
     );
 
     this.maverickMultiSwap.set(
-      { tokenA: NELIXIR, tokenB: NTBILL },
+      this.getObjectKey({ tokenA: NELIXIR, tokenB: NTBILL }),
       utils.solidityPack(
         ['address', 'bool', 'address', 'bool', 'address', 'bool'],
         [
@@ -445,7 +448,7 @@ export class LoopingService extends BaseService<Looping> {
       ),
     );
     this.maverickMultiSwap.set(
-      { tokenA: NTBILL, tokenB: NELIXIR },
+      this.getObjectKey({ tokenA: NTBILL, tokenB: NELIXIR }),
       utils.solidityPack(
         ['address', 'bool', 'address', 'bool', 'address', 'bool'],
         [
@@ -460,7 +463,7 @@ export class LoopingService extends BaseService<Looping> {
     );
 
     this.maverickMultiSwap.set(
-      { tokenA: NELIXIR, tokenB: PUSD },
+      this.getObjectKey({ tokenA: NELIXIR, tokenB: PUSD }),
       utils.solidityPack(
         ['address', 'bool', 'address', 'bool'],
         [
@@ -472,7 +475,7 @@ export class LoopingService extends BaseService<Looping> {
       ),
     );
     this.maverickMultiSwap.set(
-      { tokenA: PUSD, tokenB: NELIXIR },
+      this.getObjectKey({ tokenA: PUSD, tokenB: NELIXIR }),
       utils.solidityPack(
         ['address', 'bool', 'address', 'bool'],
         [
@@ -485,12 +488,12 @@ export class LoopingService extends BaseService<Looping> {
     );
 
     this.maverickSingleSwap.set(
-      { tokenA: NYIELD, tokenB: PUSD },
+      this.getObjectKey({ tokenA: NYIELD, tokenB: PUSD }),
       '0xc6a6cA7a7C0198a9FC9c616aA30b1BEa2956a0cc',
     );
 
     this.maverickMultiSwap.set(
-      { tokenA: NYIELD, tokenB: NTBILL },
+      this.getObjectKey({ tokenA: NYIELD, tokenB: NTBILL }),
       utils.solidityPack(
         ['address', 'bool', 'address', 'bool'],
         [
@@ -502,7 +505,7 @@ export class LoopingService extends BaseService<Looping> {
       ),
     );
     this.maverickMultiSwap.set(
-      { tokenA: NTBILL, tokenB: NYIELD },
+      this.getObjectKey({ tokenA: NTBILL, tokenB: NYIELD }),
       utils.solidityPack(
         ['address', 'bool', 'address', 'bool'],
         [
@@ -515,7 +518,7 @@ export class LoopingService extends BaseService<Looping> {
     );
 
     this.maverickSingleSwap.set(
-      { tokenA: PUSD, tokenB: NTBILL },
+      this.getObjectKey({ tokenA: PUSD, tokenB: NTBILL }),
       '0x483b035C21F77DeB6875f741C7cCb85f22F8E5C3',
     );
 
@@ -533,22 +536,30 @@ export class LoopingService extends BaseService<Looping> {
           supplyReserve === API_ETH_MOCK_ADDRESS ? WETH : supplyReserve;
         const borrowWrapped =
           borrowReserve === API_ETH_MOCK_ADDRESS ? WETH : borrowReserve;
-        const singlePool = this.maverickSingleSwap.get({
-          tokenA: supplyWrapped,
-          tokenB: borrowWrapped,
-        });
-        const reverseSinglePool = this.maverickSingleSwap.get({
-          tokenA: borrowWrapped,
-          tokenB: supplyWrapped,
-        });
-        const multiPoolA = this.maverickMultiSwap.get({
-          tokenA: supplyWrapped,
-          tokenB: borrowWrapped,
-        });
-        const multiPoolB = this.maverickMultiSwap.get({
-          tokenA: borrowWrapped,
-          tokenB: supplyWrapped,
-        });
+        const singlePool = this.maverickSingleSwap.get(
+          this.getObjectKey({
+            tokenA: supplyWrapped,
+            tokenB: borrowWrapped,
+          }),
+        );
+        const reverseSinglePool = this.maverickSingleSwap.get(
+          this.getObjectKey({
+            tokenA: borrowWrapped,
+            tokenB: supplyWrapped,
+          }),
+        );
+        const multiPoolA = this.maverickMultiSwap.get(
+          this.getObjectKey({
+            tokenA: supplyWrapped,
+            tokenB: borrowWrapped,
+          }),
+        );
+        const multiPoolB = this.maverickMultiSwap.get(
+          this.getObjectKey({
+            tokenA: borrowWrapped,
+            tokenB: supplyWrapped,
+          }),
+        );
 
         const isSingleSwap = Boolean(singlePool) || Boolean(reverseSinglePool);
         const isMultiHopSwap = Boolean(multiPoolA) || Boolean(multiPoolB);
@@ -910,5 +921,9 @@ export class LoopingService extends BaseService<Looping> {
         };
       },
     };
+  }
+
+  private getObjectKey(obj: PoolTokens) {
+    return JSON.stringify(obj);
   }
 }
