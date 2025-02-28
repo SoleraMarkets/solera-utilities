@@ -125,6 +125,9 @@ export class LoopingService extends BaseService<Looping> {
     this.wethGatewayAddress = WETH_GATEWAY ?? '';
     this.loopAddress = contractAddress ?? '';
 
+    this.maverickSingleSwap = new Map();
+    this.maverickMultiSwap = new Map();
+
     this.maverickSingleSwap.set(
       { tokenA: WETH, tokenB: NRWA },
       '0x6EbE09DDb0edE205fAcE89AB0Bf29211cf885a92',
@@ -459,7 +462,7 @@ export class LoopingService extends BaseService<Looping> {
     this.maverickMultiSwap.set(
       { tokenA: NELIXIR, tokenB: PUSD },
       utils.solidityPack(
-        ['address', 'bool', 'address', 'bool', 'address', 'bool'],
+        ['address', 'bool', 'address', 'bool'],
         [
           '0xCef7E4547328130B58e07d171F56f5A705c86fc5',
           true,
@@ -471,7 +474,7 @@ export class LoopingService extends BaseService<Looping> {
     this.maverickMultiSwap.set(
       { tokenA: PUSD, tokenB: NELIXIR },
       utils.solidityPack(
-        ['address', 'bool', 'address', 'bool', 'address', 'bool'],
+        ['address', 'bool', 'address', 'bool'],
         [
           '0x4264FcaA686264B1A247Fa1Ae85078980b759E8A',
           false,
