@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.10.0](https://github.com/aave/aave-utilities/compare/@kevoh1516/solera-contract-helpers@3.9.3...@kevoh1516/solera-contract-helpers@3.10.0) (2025-03-06)
+
+
+### Features
+
+* nest vault looping ([3dcc32c](https://github.com/aave/aave-utilities/commit/3dcc32c2d2daacf84f163847cccae2c6d483812e))
+
+
+
+
+
 ## [3.9.3](https://github.com/aave/aave-utilities/compare/@kevoh1516/solera-contract-helpers@3.9.2...@kevoh1516/solera-contract-helpers@3.9.3) (2025-02-28)
 
 
