@@ -53,6 +53,62 @@ export declare namespace LoopDataTypes {
     path: string;
   };
 
+  export type LoopDataStruct = {
+    supplyAmount: BigNumberish;
+    borrowAmount: BigNumberish;
+    leftoverBorrowAmount: BigNumberish;
+  };
+
+  export type LoopDataStructOutput = [BigNumber, BigNumber, BigNumber] & {
+    supplyAmount: BigNumber;
+    borrowAmount: BigNumber;
+    leftoverBorrowAmount: BigNumber;
+  };
+
+  export type LoopNRWAParamsStruct = {
+    targetHealthFactor: BigNumberish;
+    onBehalfOf: string;
+    numLoops: BigNumberish;
+    minAmountSupplied: BigNumberish;
+    initialAmount: BigNumberish;
+  };
+
+  export type LoopNRWAParamsStructOutput = [
+    number,
+    string,
+    number,
+    BigNumber,
+    BigNumber,
+  ] & {
+    targetHealthFactor: number;
+    onBehalfOf: string;
+    numLoops: number;
+    minAmountSupplied: BigNumber;
+    initialAmount: BigNumber;
+  };
+
+  export type LoopPUSDParamsStruct = {
+    targetHealthFactor: BigNumberish;
+    onBehalfOf: string;
+    numLoops: BigNumberish;
+    minAmountSupplied: BigNumberish;
+    initialAmount: BigNumberish;
+  };
+
+  export type LoopPUSDParamsStructOutput = [
+    number,
+    string,
+    number,
+    BigNumber,
+    BigNumber,
+  ] & {
+    targetHealthFactor: number;
+    onBehalfOf: string;
+    numLoops: number;
+    minAmountSupplied: BigNumber;
+    initialAmount: BigNumber;
+  };
+
   export type LoopSingleAssetParamsStruct = {
     token: string;
     targetHealthFactor: BigNumberish;
@@ -112,33 +168,33 @@ export declare namespace LoopDataTypes {
 
 export interface LoopingInterface extends utils.Interface {
   functions: {
-    'calculateBorrowAmount(uint256,address,address,uint256,uint256)': FunctionFragment;
-    'calculateBorrowAmountSingleAsset(uint256,address,uint256,uint256)': FunctionFragment;
     'loopMultiSwap((address,uint16,address,uint16,address,uint256,uint256,bytes))': FunctionFragment;
+    'loopNRWA((uint16,address,uint16,uint256,uint256))': FunctionFragment;
+    'loopPUSD((uint16,address,uint16,uint256,uint256))': FunctionFragment;
     'loopSingleAsset((address,uint16,address,uint16,uint256))': FunctionFragment;
     'loopSingleSwap((address,uint16,address,bool,address,uint16,address,uint256,uint256))': FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
-      | 'calculateBorrowAmount'
-      | 'calculateBorrowAmountSingleAsset'
       | 'loopMultiSwap'
+      | 'loopNRWA'
+      | 'loopPUSD'
       | 'loopSingleAsset'
       | 'loopSingleSwap',
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: 'calculateBorrowAmount',
-    values: [BigNumberish, string, string, BigNumberish, BigNumberish],
-  ): string;
-  encodeFunctionData(
-    functionFragment: 'calculateBorrowAmountSingleAsset',
-    values: [BigNumberish, string, BigNumberish, BigNumberish],
-  ): string;
-  encodeFunctionData(
     functionFragment: 'loopMultiSwap',
     values: [LoopDataTypes.LoopMultiSwapParamsStruct],
+  ): string;
+  encodeFunctionData(
+    functionFragment: 'loopNRWA',
+    values: [LoopDataTypes.LoopNRWAParamsStruct],
+  ): string;
+  encodeFunctionData(
+    functionFragment: 'loopPUSD',
+    values: [LoopDataTypes.LoopPUSDParamsStruct],
   ): string;
   encodeFunctionData(
     functionFragment: 'loopSingleAsset',
@@ -150,17 +206,11 @@ export interface LoopingInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(
-    functionFragment: 'calculateBorrowAmount',
-    data: BytesLike,
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: 'calculateBorrowAmountSingleAsset',
-    data: BytesLike,
-  ): Result;
-  decodeFunctionResult(
     functionFragment: 'loopMultiSwap',
     data: BytesLike,
   ): Result;
+  decodeFunctionResult(functionFragment: 'loopNRWA', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'loopPUSD', data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: 'loopSingleAsset',
     data: BytesLike,
@@ -200,25 +250,18 @@ export interface Looping extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    calculateBorrowAmount(
-      supplyAmount: BigNumberish,
-      supplyToken: string,
-      borrowToken: string,
-      ltv: BigNumberish,
-      targetHealthFactor: BigNumberish,
-      overrides?: CallOverrides,
-    ): Promise<[BigNumber]>;
-
-    calculateBorrowAmountSingleAsset(
-      amount: BigNumberish,
-      token: string,
-      ltv: BigNumberish,
-      targetHealthFactor: BigNumberish,
-      overrides?: CallOverrides,
-    ): Promise<[BigNumber]>;
-
     loopMultiSwap(
       params: LoopDataTypes.LoopMultiSwapParamsStruct,
+      overrides?: Overrides & { from?: string },
+    ): Promise<ContractTransaction>;
+
+    loopNRWA(
+      params: LoopDataTypes.LoopNRWAParamsStruct,
+      overrides?: Overrides & { from?: string },
+    ): Promise<ContractTransaction>;
+
+    loopPUSD(
+      params: LoopDataTypes.LoopPUSDParamsStruct,
       overrides?: Overrides & { from?: string },
     ): Promise<ContractTransaction>;
 
@@ -233,25 +276,18 @@ export interface Looping extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
-  calculateBorrowAmount(
-    supplyAmount: BigNumberish,
-    supplyToken: string,
-    borrowToken: string,
-    ltv: BigNumberish,
-    targetHealthFactor: BigNumberish,
-    overrides?: CallOverrides,
-  ): Promise<BigNumber>;
-
-  calculateBorrowAmountSingleAsset(
-    amount: BigNumberish,
-    token: string,
-    ltv: BigNumberish,
-    targetHealthFactor: BigNumberish,
-    overrides?: CallOverrides,
-  ): Promise<BigNumber>;
-
   loopMultiSwap(
     params: LoopDataTypes.LoopMultiSwapParamsStruct,
+    overrides?: Overrides & { from?: string },
+  ): Promise<ContractTransaction>;
+
+  loopNRWA(
+    params: LoopDataTypes.LoopNRWAParamsStruct,
+    overrides?: Overrides & { from?: string },
+  ): Promise<ContractTransaction>;
+
+  loopPUSD(
+    params: LoopDataTypes.LoopPUSDParamsStruct,
     overrides?: Overrides & { from?: string },
   ): Promise<ContractTransaction>;
 
@@ -266,61 +302,47 @@ export interface Looping extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    calculateBorrowAmount(
-      supplyAmount: BigNumberish,
-      supplyToken: string,
-      borrowToken: string,
-      ltv: BigNumberish,
-      targetHealthFactor: BigNumberish,
-      overrides?: CallOverrides,
-    ): Promise<BigNumber>;
-
-    calculateBorrowAmountSingleAsset(
-      amount: BigNumberish,
-      token: string,
-      ltv: BigNumberish,
-      targetHealthFactor: BigNumberish,
-      overrides?: CallOverrides,
-    ): Promise<BigNumber>;
-
     loopMultiSwap(
       params: LoopDataTypes.LoopMultiSwapParamsStruct,
       overrides?: CallOverrides,
-    ): Promise<[BigNumber, BigNumber, BigNumber]>;
+    ): Promise<LoopDataTypes.LoopDataStructOutput>;
+
+    loopNRWA(
+      params: LoopDataTypes.LoopNRWAParamsStruct,
+      overrides?: CallOverrides,
+    ): Promise<LoopDataTypes.LoopDataStructOutput>;
+
+    loopPUSD(
+      params: LoopDataTypes.LoopPUSDParamsStruct,
+      overrides?: CallOverrides,
+    ): Promise<LoopDataTypes.LoopDataStructOutput>;
 
     loopSingleAsset(
       params: LoopDataTypes.LoopSingleAssetParamsStruct,
       overrides?: CallOverrides,
-    ): Promise<[BigNumber, BigNumber, BigNumber]>;
+    ): Promise<LoopDataTypes.LoopDataStructOutput>;
 
     loopSingleSwap(
       params: LoopDataTypes.LoopSingleSwapParamsStruct,
       overrides?: CallOverrides,
-    ): Promise<[BigNumber, BigNumber, BigNumber]>;
+    ): Promise<LoopDataTypes.LoopDataStructOutput>;
   };
 
   filters: {};
 
   estimateGas: {
-    calculateBorrowAmount(
-      supplyAmount: BigNumberish,
-      supplyToken: string,
-      borrowToken: string,
-      ltv: BigNumberish,
-      targetHealthFactor: BigNumberish,
-      overrides?: CallOverrides,
-    ): Promise<BigNumber>;
-
-    calculateBorrowAmountSingleAsset(
-      amount: BigNumberish,
-      token: string,
-      ltv: BigNumberish,
-      targetHealthFactor: BigNumberish,
-      overrides?: CallOverrides,
-    ): Promise<BigNumber>;
-
     loopMultiSwap(
       params: LoopDataTypes.LoopMultiSwapParamsStruct,
+      overrides?: Overrides & { from?: string },
+    ): Promise<BigNumber>;
+
+    loopNRWA(
+      params: LoopDataTypes.LoopNRWAParamsStruct,
+      overrides?: Overrides & { from?: string },
+    ): Promise<BigNumber>;
+
+    loopPUSD(
+      params: LoopDataTypes.LoopPUSDParamsStruct,
       overrides?: Overrides & { from?: string },
     ): Promise<BigNumber>;
 
@@ -336,25 +358,18 @@ export interface Looping extends BaseContract {
   };
 
   populateTransaction: {
-    calculateBorrowAmount(
-      supplyAmount: BigNumberish,
-      supplyToken: string,
-      borrowToken: string,
-      ltv: BigNumberish,
-      targetHealthFactor: BigNumberish,
-      overrides?: CallOverrides,
-    ): Promise<PopulatedTransaction>;
-
-    calculateBorrowAmountSingleAsset(
-      amount: BigNumberish,
-      token: string,
-      ltv: BigNumberish,
-      targetHealthFactor: BigNumberish,
-      overrides?: CallOverrides,
-    ): Promise<PopulatedTransaction>;
-
     loopMultiSwap(
       params: LoopDataTypes.LoopMultiSwapParamsStruct,
+      overrides?: Overrides & { from?: string },
+    ): Promise<PopulatedTransaction>;
+
+    loopNRWA(
+      params: LoopDataTypes.LoopNRWAParamsStruct,
+      overrides?: Overrides & { from?: string },
+    ): Promise<PopulatedTransaction>;
+
+    loopPUSD(
+      params: LoopDataTypes.LoopPUSDParamsStruct,
       overrides?: Overrides & { from?: string },
     ): Promise<PopulatedTransaction>;
 

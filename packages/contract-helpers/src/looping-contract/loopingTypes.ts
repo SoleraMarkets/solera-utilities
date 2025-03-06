@@ -32,8 +32,17 @@ export type PoolTokens = {
   tokenB: tEthereumAddress;
 };
 
-export type SwapPool = {
-  tokenA: tEthereumAddress;
-  tokenB: tEthereumAddress;
-  swapPool: tEthereumAddress;
+export type SwapConfig = {
+  swapType: 'single' | 'multi' | 'pusd' | 'nrwa' | null;
+  singleSwapConfig?: SingleSwapConfig;
+  multiSwapConfig?: MultiSwapConfig;
+};
+
+export type SingleSwapConfig = {
+  pool: string;
+  isSupplyTokenA: boolean;
+};
+
+export type MultiSwapConfig = {
+  path: string;
 };
