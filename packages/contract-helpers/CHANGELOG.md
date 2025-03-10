@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.10.1](https://github.com/aave/aave-utilities/compare/@kevoh1516/solera-contract-helpers@3.10.0...@kevoh1516/solera-contract-helpers@3.10.1) (2025-03-10)
+
+
+### Bug Fixes
+
+* nyield pusd pool ([be070d0](https://github.com/aave/aave-utilities/commit/be070d058db2e5338fa4440ccb160363ce32f2b8))
+
+
+
+
+
 # [3.10.0](https://github.com/aave/aave-utilities/compare/@kevoh1516/solera-contract-helpers@3.9.3...@kevoh1516/solera-contract-helpers@3.10.0) (2025-03-06)
 
 
