@@ -489,7 +489,7 @@ export class LoopingService extends BaseService<Looping> {
 
     this.maverickSingleSwap.set(
       this.getObjectKey({ tokenA: NYIELD, tokenB: PUSD }),
-      '0xc6a6cA7a7C0198a9FC9c616aA30b1BEa2956a0cc',
+      '0x3B4b1655e50c130686b5da39E4b255e8Dd7e2010',
     );
 
     this.maverickMultiSwap.set(
