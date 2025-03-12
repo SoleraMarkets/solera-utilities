@@ -81,9 +81,9 @@ describe('LoopingService', () => {
       const path = utils.solidityPack(
         ['address', 'bool', 'address', 'bool'],
         [
-          '0x6EbE09DDb0edE205fAcE89AB0Bf29211cf885a92',
-          false,
           '0x2e1ACd5Ef12d161686d417837003415b569c3c16',
+          false,
+          '0x6EbE09DDb0edE205fAcE89AB0Bf29211cf885a92',
           true,
         ],
       );
@@ -208,10 +208,10 @@ describe('LoopingService', () => {
       const path = utils.solidityPack(
         ['address', 'bool', 'address', 'bool'],
         [
-          '0x92962AcCa4300791b0F5cFE2bfB3b6e62a852D83',
-          true,
           '0x483b035C21F77DeB6875f741C7cCb85f22F8E5C3',
-          true,
+          false,
+          '0x92962AcCa4300791b0F5cFE2bfB3b6e62a852D83',
+          false,
         ],
       );
 
@@ -338,10 +338,10 @@ describe('LoopingService', () => {
     const path = utils.solidityPack(
       ['address', 'bool', 'address', 'bool'],
       [
-        '0x483b035C21F77DeB6875f741C7cCb85f22F8E5C3',
-        false,
         '0x92962AcCa4300791b0F5cFE2bfB3b6e62a852D83',
-        false,
+        true,
+        '0x483b035C21F77DeB6875f741C7cCb85f22F8E5C3',
+        true,
       ],
     );
 

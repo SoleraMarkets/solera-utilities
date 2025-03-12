@@ -806,11 +806,7 @@ export class LoopingService extends BaseService<Looping> {
       this.getObjectKey({ tokenA: borrow, tokenB: supply }),
     );
 
-    // Check for multi-hop swap
-    const multiPoolA = this.maverickMultiSwap.get(
-      this.getObjectKey({ tokenA: supply, tokenB: borrow }),
-    );
-    const multiPoolB = this.maverickMultiSwap.get(
+    const multiPool = this.maverickMultiSwap.get(
       this.getObjectKey({ tokenA: borrow, tokenB: supply }),
     );
 
@@ -824,11 +820,11 @@ export class LoopingService extends BaseService<Looping> {
       };
     }
 
-    if (multiPoolA || multiPoolB) {
+    if (multiPool) {
       return {
         swapType: 'multi',
         multiSwapConfig: {
-          path: multiPoolA ?? multiPoolB ?? '',
+          path: multiPool ?? '',
         },
       };
     }
