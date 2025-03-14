@@ -36,7 +36,11 @@ import { Looping__factory } from './typechain/factories';
 
 export type LoopSwapTxBuilder = {
   generateTxData: (args: LoopSwapParamsType) => PopulatedTransaction;
-  getApprovedAmount: ({ user, token }: TokenOwner) => Promise<ApproveType>;
+  getApprovedAmount: ({
+    user,
+    token,
+    unWrapped,
+  }: TokenOwner & { unWrapped: boolean }) => Promise<ApproveType>;
   getCreditApprovedAmount: ({
     user,
     token,
@@ -582,11 +586,12 @@ export class LoopingService extends BaseService<Looping> {
           isSupplyingPUSD: swapType === 'pusd',
         });
       },
-      getApprovedAmount: async (props: TokenOwner): Promise<ApproveType> => {
-        const spender =
-          props.token.toLowerCase() === API_ETH_MOCK_ADDRESS.toLowerCase()
-            ? this.wethGatewayAddress
-            : this.loopAddress;
+      getApprovedAmount: async (
+        props: TokenOwner & { unWrapped: boolean },
+      ): Promise<ApproveType> => {
+        const spender = props.unWrapped
+          ? this.wethGatewayAddress
+          : this.loopAddress;
         const amount = await this.erc20Service.approvedAmount({
           ...props,
           spender,
