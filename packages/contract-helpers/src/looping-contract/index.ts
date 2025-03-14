@@ -542,9 +542,13 @@ export class LoopingService extends BaseService<Looping> {
       }: LoopSwapParamsType): PopulatedTransaction => {
         // Normalize token addresses for WETH
         const supplyWrapped =
-          supplyReserve === API_ETH_MOCK_ADDRESS ? WETH : supplyReserve;
+          supplyReserve === API_ETH_MOCK_ADDRESS.toLowerCase()
+            ? WETH
+            : supplyReserve;
         const borrowWrapped =
-          borrowReserve === API_ETH_MOCK_ADDRESS ? WETH : borrowReserve;
+          borrowReserve === API_ETH_MOCK_ADDRESS.toLowerCase()
+            ? WETH
+            : borrowReserve;
 
         // Determine swap type and pool
         const { swapType, singleSwapConfig, multiSwapConfig } =
@@ -690,7 +694,7 @@ export class LoopingService extends BaseService<Looping> {
         targetHealthFactor,
         unwrap,
       }: LoopETHParamsType): PopulatedTransaction => {
-        const isSupplyingEth = reserve === API_ETH_MOCK_ADDRESS;
+        const isSupplyingEth = reserve === API_ETH_MOCK_ADDRESS.toLowerCase();
 
         let actionTx: PopulatedTransaction;
         if (isSupplyingEth && unwrap) {
@@ -938,8 +942,8 @@ export class LoopingService extends BaseService<Looping> {
       minAmountSupplied,
     } = config;
 
-    const isSupplyingEth = supplyReserve === API_ETH_MOCK_ADDRESS;
-    const isBorrowingEth = borrowReserve === API_ETH_MOCK_ADDRESS;
+    const isSupplyingEth = supplyReserve === API_ETH_MOCK_ADDRESS.toLowerCase();
+    const isBorrowingEth = borrowReserve === API_ETH_MOCK_ADDRESS.toLowerCase();
 
     const gasLimit = BigNumber.from(
       gasLimitRecommendations[ProtocolAction.default].limit,
@@ -1040,8 +1044,8 @@ export class LoopingService extends BaseService<Looping> {
       minAmountSupplied,
     } = config;
 
-    const isSupplyingEth = supplyReserve === API_ETH_MOCK_ADDRESS;
-    const isBorrowingEth = borrowReserve === API_ETH_MOCK_ADDRESS;
+    const isSupplyingEth = supplyReserve === API_ETH_MOCK_ADDRESS.toLowerCase();
+    const isBorrowingEth = borrowReserve === API_ETH_MOCK_ADDRESS.toLowerCase();
 
     const gasLimit = BigNumber.from(
       gasLimitRecommendations[ProtocolAction.default].limit,

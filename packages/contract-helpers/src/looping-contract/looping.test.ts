@@ -227,7 +227,7 @@ describe('LoopingService', () => {
 
       const tx = instance.loopSwapTxBuilder.generateTxData({
         user,
-        supplyReserve: API_ETH_MOCK_ADDRESS,
+        supplyReserve: API_ETH_MOCK_ADDRESS.toLowerCase(),
         borrowReserve: PUSD,
         numLoops,
         amount,
@@ -269,7 +269,7 @@ describe('LoopingService', () => {
 
       const tx = instance.loopSwapTxBuilder.generateTxData({
         user,
-        supplyReserve: API_ETH_MOCK_ADDRESS,
+        supplyReserve: API_ETH_MOCK_ADDRESS.toLowerCase(),
         borrowReserve: NTBILL,
         numLoops,
         amount,
@@ -319,7 +319,7 @@ describe('LoopingService', () => {
 
       const tx = instance.loopETHTxBuilder.generateTxData({
         user,
-        reserve: API_ETH_MOCK_ADDRESS,
+        reserve: API_ETH_MOCK_ADDRESS.toLowerCase(),
         numLoops,
         amount,
         targetHealthFactor,
@@ -358,7 +358,7 @@ describe('LoopingService', () => {
     const tx = instance.loopSwapTxBuilder.generateTxData({
       user,
       supplyReserve: PUSD,
-      borrowReserve: API_ETH_MOCK_ADDRESS,
+      borrowReserve: API_ETH_MOCK_ADDRESS.toLowerCase(),
       numLoops,
       amount,
       targetHealthFactor,
@@ -400,7 +400,7 @@ describe('LoopingService', () => {
     const tx = instance.loopSwapTxBuilder.generateTxData({
       user,
       supplyReserve: NTBILL,
-      borrowReserve: API_ETH_MOCK_ADDRESS,
+      borrowReserve: API_ETH_MOCK_ADDRESS.toLowerCase(),
       numLoops,
       amount,
       targetHealthFactor,
@@ -485,7 +485,7 @@ describe('LoopingService', () => {
 
     const tx = instance.loopETHTxBuilder.generateTxData({
       user,
-      reserve: API_ETH_MOCK_ADDRESS,
+      reserve: API_ETH_MOCK_ADDRESS.toLowerCase(),
       numLoops,
       amount,
       targetHealthFactor,
