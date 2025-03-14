@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.12.0](https://github.com/aave/aave-utilities/compare/@kevoh1516/solera-contract-helpers@3.11.0...@kevoh1516/solera-contract-helpers@3.12.0) (2025-03-14)
+
+
+### Features
+
+* special case for wrapped approval ([c529f0f](https://github.com/aave/aave-utilities/commit/c529f0fab75641ea4bbe41b9b080fd4526b72cfb))
+
+
+
+
+
 # [3.11.0](https://github.com/aave/aave-utilities/compare/@kevoh1516/solera-contract-helpers@3.10.2...@kevoh1516/solera-contract-helpers@3.11.0) (2025-03-14)
 
 
