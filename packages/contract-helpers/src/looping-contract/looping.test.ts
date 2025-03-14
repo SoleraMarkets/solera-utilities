@@ -56,6 +56,78 @@ describe('LoopingService', () => {
       expect(tx.data).toEqual(expectedTxData);
     });
 
+    it('Expects to generate tx data for PUSD->NRWA looping', () => {
+      const instance = new LoopingService(provider, LOOPING_CONTRACT_ADDRESS, {
+        POOL: POOL_ADDRESS,
+        WETH_GATEWAY: WETH_GATEWAY_ADDRESS,
+      });
+      expect(instance instanceof LoopingService).toEqual(true);
+
+      const targetHealthFactor = '12000';
+      const numLoops = 2;
+      const minAmountSupplied = '0';
+      const amount = '100000';
+
+      const tx = instance.loopSwapTxBuilder.generateTxData({
+        user,
+        supplyReserve: PUSD,
+        borrowReserve: NRWA,
+        numLoops,
+        amount,
+        targetHealthFactor,
+        minAmountSupplied,
+      });
+
+      const expectedTxData =
+        Looping__factory.createInterface().encodeFunctionData('loopPUSD', [
+          {
+            targetHealthFactor,
+            onBehalfOf: user,
+            numLoops,
+            initialAmount: amount,
+            minAmountSupplied,
+          },
+        ]);
+
+      expect(tx.data).toEqual(expectedTxData);
+    });
+
+    it('Expects to generate tx data for NRWA->PUSD looping', () => {
+      const instance = new LoopingService(provider, LOOPING_CONTRACT_ADDRESS, {
+        POOL: POOL_ADDRESS,
+        WETH_GATEWAY: WETH_GATEWAY_ADDRESS,
+      });
+      expect(instance instanceof LoopingService).toEqual(true);
+
+      const targetHealthFactor = '12000';
+      const numLoops = 2;
+      const minAmountSupplied = '0';
+      const amount = '100000';
+
+      const tx = instance.loopSwapTxBuilder.generateTxData({
+        user,
+        supplyReserve: NRWA,
+        borrowReserve: PUSD,
+        numLoops,
+        amount,
+        targetHealthFactor,
+        minAmountSupplied,
+      });
+
+      const expectedTxData =
+        Looping__factory.createInterface().encodeFunctionData('loopNRWA', [
+          {
+            targetHealthFactor,
+            onBehalfOf: user,
+            numLoops,
+            initialAmount: amount,
+            minAmountSupplied,
+          },
+        ]);
+
+      expect(tx.data).toEqual(expectedTxData);
+    });
+
     it('Expects to generate tx data for multi swap looping', () => {
       const instance = new LoopingService(provider, LOOPING_CONTRACT_ADDRESS, {
         POOL: POOL_ADDRESS,
