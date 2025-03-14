@@ -56,8 +56,12 @@ export type LoopETHTxBuilder = {
   generateTxData: (args: LoopETHParamsType) => PopulatedTransaction;
   getApprovedAmount: ({
     user,
+    isSupplyUnWrapped,
+    isBorrowUnWrapped,
   }: {
     user: tEthereumAddress;
+    isSupplyUnWrapped: boolean;
+    isBorrowUnWrapped: boolean;
   }) => Promise<ApproveType>;
   getCreditApprovedAmount: ({
     user,
@@ -752,8 +756,16 @@ export class LoopingService extends BaseService<Looping> {
       },
       getApprovedAmount: async (props: {
         user: tEthereumAddress;
+        isSupplyUnWrapped: boolean;
+        isBorrowUnWrapped: boolean;
       }): Promise<ApproveType> => {
-        const spender = this.loopAddress;
+        let spender;
+        if (!props.isSupplyUnWrapped && props.isBorrowUnWrapped) {
+          spender = this.wethGatewayAddress;
+        } else {
+          spender = this.loopAddress;
+        }
+
         const amount = await this.erc20Service.approvedAmount({
           ...props,
           token: WETH,
