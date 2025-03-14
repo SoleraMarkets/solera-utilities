@@ -1,6 +1,6 @@
 import { BigNumber, providers, utils } from 'ethers';
 import { API_ETH_MOCK_ADDRESS } from '../commons/utils';
-import { WrappedTokenGatewayV3__factory } from '../v3-wethgateway-contract/typechain/WrappedTokenGatewayV3__factory';
+import { WrappedTokenGatewayV3__factory } from '../v3-wethgateway-contract/typechain/factories/WrappedTokenGatewayV3__factory';
 import { Looping__factory } from './typechain/factories';
 import { LoopingService, NRWA, NTBILL, PETH, PUSD, WETH } from './index';
 
@@ -237,7 +237,7 @@ describe('LoopingService', () => {
 
       const expectedTxData =
         WrappedTokenGatewayV3__factory.createInterface().encodeFunctionData(
-          'loopEntryETHSingleSwap',
+          'loopEntryPLUMESingleSwap',
           [
             {
               onBehalfOf: user,
@@ -289,7 +289,7 @@ describe('LoopingService', () => {
 
       const expectedTxData =
         WrappedTokenGatewayV3__factory.createInterface().encodeFunctionData(
-          'loopEntryETHMultiSwap',
+          'loopEntryPLUMEMultiSwap',
           [
             {
               onBehalfOf: user,
@@ -328,7 +328,7 @@ describe('LoopingService', () => {
 
       const expectedTxData =
         WrappedTokenGatewayV3__factory.createInterface().encodeFunctionData(
-          'loopEntryETHSingleAsset',
+          'loopEntryPLUMESingleAsset',
           [
             {
               targetHealthFactor,
@@ -367,7 +367,7 @@ describe('LoopingService', () => {
 
     const expectedTxData =
       WrappedTokenGatewayV3__factory.createInterface().encodeFunctionData(
-        'loopExitETHSingleSwap',
+        'loopExitPLUMESingleSwap',
         [
           {
             onBehalfOf: user,
@@ -419,7 +419,7 @@ describe('LoopingService', () => {
 
     const expectedTxData =
       WrappedTokenGatewayV3__factory.createInterface().encodeFunctionData(
-        'loopExitETHMultiSwap',
+        'loopExitPLUMEMultiSwap',
         [
           {
             onBehalfOf: user,
@@ -458,7 +458,7 @@ describe('LoopingService', () => {
 
     const expectedTxData =
       WrappedTokenGatewayV3__factory.createInterface().encodeFunctionData(
-        'loopExitETHSingleAsset',
+        'loopExitPLUMESingleAsset',
         [
           {
             targetHealthFactor,
@@ -494,7 +494,7 @@ describe('LoopingService', () => {
 
     const expectedTxData =
       WrappedTokenGatewayV3__factory.createInterface().encodeFunctionData(
-        'loopETHSingleAsset',
+        'loopPLUMESingleAsset',
         [
           {
             targetHealthFactor,

@@ -23,7 +23,7 @@ import {
   PoolInterface,
 } from '../v3-pool-contract';
 import { WrappedTokenGatewayV3Interface } from '../v3-wethgateway-contract/typechain/WrappedTokenGatewayV3';
-import { WrappedTokenGatewayV3__factory } from '../v3-wethgateway-contract/typechain/WrappedTokenGatewayV3__factory';
+import { WrappedTokenGatewayV3__factory } from '../v3-wethgateway-contract/typechain/factories/WrappedTokenGatewayV3__factory';
 import {
   LoopETHParamsType,
   LoopSingleAssetParamsType,
@@ -686,7 +686,7 @@ export class LoopingService extends BaseService<Looping> {
         let actionTx: PopulatedTransaction;
         if (isSupplyingEth && unwrap) {
           const txData = this.wethGatewayInstance.encodeFunctionData(
-            'loopETHSingleAsset',
+            'loopPLUMESingleAsset',
             [
               {
                 targetHealthFactor,
@@ -706,7 +706,7 @@ export class LoopingService extends BaseService<Looping> {
           };
         } else if (isSupplyingEth && !unwrap) {
           const txData = this.wethGatewayInstance.encodeFunctionData(
-            'loopEntryETHSingleAsset',
+            'loopEntryPLUMESingleAsset',
             [
               {
                 targetHealthFactor,
@@ -726,7 +726,7 @@ export class LoopingService extends BaseService<Looping> {
           };
         } else if (!isSupplyingEth && unwrap) {
           const txData = this.wethGatewayInstance.encodeFunctionData(
-            'loopExitETHSingleAsset',
+            'loopExitPLUMESingleAsset',
             [
               {
                 targetHealthFactor,
@@ -952,7 +952,7 @@ export class LoopingService extends BaseService<Looping> {
     } else if (isSupplyingEth && !isBorrowingEth) {
       // Case 2: ETH->Token single-swap
       txData = this.wethGatewayInstance.encodeFunctionData(
-        'loopEntryETHSingleSwap',
+        'loopEntryPLUMESingleSwap',
         [
           {
             targetHealthFactor,
@@ -970,7 +970,7 @@ export class LoopingService extends BaseService<Looping> {
     } else {
       // Case 3: Token->ETH single-swap
       txData = this.wethGatewayInstance.encodeFunctionData(
-        'loopExitETHSingleSwap',
+        'loopExitPLUMESingleSwap',
         [
           {
             supplyToken: supplyReserve,
@@ -1052,7 +1052,7 @@ export class LoopingService extends BaseService<Looping> {
     } else if (isSupplyingEth && !isBorrowingEth) {
       // Case 2: ETH->Token multi-swap
       txData = this.wethGatewayInstance.encodeFunctionData(
-        'loopEntryETHMultiSwap',
+        'loopEntryPLUMEMultiSwap',
         [
           {
             targetHealthFactor,
@@ -1069,7 +1069,7 @@ export class LoopingService extends BaseService<Looping> {
     } else {
       // Case 3: Token->ETH multi-swap
       txData = this.wethGatewayInstance.encodeFunctionData(
-        'loopExitETHMultiSwap',
+        'loopExitPLUMEMultiSwap',
         [
           {
             supplyToken: supplyReserve,

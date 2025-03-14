@@ -24,7 +24,7 @@ import {
   WrappedTokenGatewayV3,
   WrappedTokenGatewayV3Interface,
 } from './typechain/WrappedTokenGatewayV3';
-import { WrappedTokenGatewayV3__factory } from './typechain/WrappedTokenGatewayV3__factory';
+import { WrappedTokenGatewayV3__factory } from './typechain/factories/WrappedTokenGatewayV3__factory';
 
 export type WETHDepositParamsType = {
   lendingPool: tEthereumAddress;
@@ -188,11 +188,14 @@ export class WETHGatewayService
     this.generateDepositEthTxData = (
       args: WETHDepositParamsType,
     ): PopulatedTransaction => {
-      const txData = this.wethGatewayInstance.encodeFunctionData('depositETH', [
-        args.lendingPool,
-        args.onBehalfOf ?? args.user,
-        args.referralCode ?? '0',
-      ]);
+      const txData = this.wethGatewayInstance.encodeFunctionData(
+        'depositPLUME',
+        [
+          args.lendingPool,
+          args.onBehalfOf ?? args.user,
+          args.referralCode ?? '0',
+        ],
+      );
       const actionTx: PopulatedTransaction = {
         data: txData,
         to: this.wethGatewayAddress,
@@ -208,11 +211,10 @@ export class WETHGatewayService
     this.generateBorrowEthTxData = (
       args: WETHBorrowParamsType,
     ): PopulatedTransaction => {
-      const txData = this.wethGatewayInstance.encodeFunctionData('borrowETH', [
-        args.lendingPool,
-        args.amount,
-        args.referralCode ?? '0',
-      ]);
+      const txData = this.wethGatewayInstance.encodeFunctionData(
+        'borrowPLUME',
+        [args.lendingPool, args.amount, args.referralCode ?? '0'],
+      );
       const actionTx: PopulatedTransaction = {
         data: txData,
         to: this.wethGatewayAddress,
@@ -230,7 +232,7 @@ export class WETHGatewayService
       user,
       onBehalfOf,
     }) => {
-      const txData = this.wethGatewayInstance.encodeFunctionData('repayETH', [
+      const txData = this.wethGatewayInstance.encodeFunctionData('repayPLUME', [
         lendingPool,
         amount,
         onBehalfOf ?? user,
@@ -270,7 +272,7 @@ export class WETHGatewayService
     );
     const txCallback: () => Promise<transactionType> = this.generateTxCallback({
       rawTxMethod: async () =>
-        wethGatewayContract.populateTransaction.depositETH(
+        wethGatewayContract.populateTransaction.depositPLUME(
           lendingPool,
           onBehalfOf ?? user,
           referralCode ?? '0',
@@ -337,7 +339,7 @@ export class WETHGatewayService
 
     const txCallback: () => Promise<transactionType> = this.generateTxCallback({
       rawTxMethod: async () =>
-        wethGatewayContract.populateTransaction.borrowETH(
+        wethGatewayContract.populateTransaction.borrowPLUME(
           lendingPool,
           convertedAmount,
           referralCode ?? '0',
@@ -403,7 +405,7 @@ export class WETHGatewayService
 
     const txCallback: () => Promise<transactionType> = this.generateTxCallback({
       rawTxMethod: async () =>
-        wethGatewayContract.populateTransaction.withdrawETH(
+        wethGatewayContract.populateTransaction.withdrawPLUME(
           lendingPool,
           convertedAmount,
           onBehalfOf ?? user,
@@ -439,7 +441,7 @@ export class WETHGatewayService
 
     const txCallback: () => Promise<transactionType> = this.generateTxCallback({
       rawTxMethod: async () =>
-        wethGatewayContract.populateTransaction.repayETH(
+        wethGatewayContract.populateTransaction.repayPLUME(
           lendingPool,
           convertedAmount,
           onBehalfOf ?? user,
@@ -476,7 +478,7 @@ export class WETHGatewayService
     );
     const txCallback: () => Promise<transactionType> = this.generateTxCallback({
       rawTxMethod: async () =>
-        wethGatewayContract.populateTransaction.loopEntryETHSingleSwap({
+        wethGatewayContract.populateTransaction.loopEntryPLUMESingleSwap({
           targetHealthFactor,
           onBehalfOf: onBehalfOf ?? user,
           isSupplyTokenA,
@@ -515,7 +517,7 @@ export class WETHGatewayService
     );
     const txCallback: () => Promise<transactionType> = this.generateTxCallback({
       rawTxMethod: async () =>
-        wethGatewayContract.populateTransaction.loopEntryETHMultiSwap({
+        wethGatewayContract.populateTransaction.loopEntryPLUMEMultiSwap({
           targetHealthFactor,
           onBehalfOf: onBehalfOf ?? user,
           borrowToken,
@@ -550,7 +552,7 @@ export class WETHGatewayService
     );
     const txCallback: () => Promise<transactionType> = this.generateTxCallback({
       rawTxMethod: async () =>
-        wethGatewayContract.populateTransaction.loopEntryETHSingleAsset({
+        wethGatewayContract.populateTransaction.loopEntryPLUMESingleAsset({
           targetHealthFactor,
           onBehalfOf: onBehalfOf ?? user,
           numLoops,
@@ -590,7 +592,7 @@ export class WETHGatewayService
     );
     const txCallback: () => Promise<transactionType> = this.generateTxCallback({
       rawTxMethod: async () =>
-        wethGatewayContract.populateTransaction.loopExitETHSingleSwap({
+        wethGatewayContract.populateTransaction.loopExitPLUMESingleSwap({
           targetHealthFactor,
           onBehalfOf: onBehalfOf ?? user,
           isSupplyTokenA,
@@ -633,7 +635,7 @@ export class WETHGatewayService
     );
     const txCallback: () => Promise<transactionType> = this.generateTxCallback({
       rawTxMethod: async () =>
-        wethGatewayContract.populateTransaction.loopExitETHMultiSwap({
+        wethGatewayContract.populateTransaction.loopExitPLUMEMultiSwap({
           targetHealthFactor,
           onBehalfOf: onBehalfOf ?? user,
           supplyToken,
@@ -668,7 +670,7 @@ export class WETHGatewayService
     );
     const txCallback: () => Promise<transactionType> = this.generateTxCallback({
       rawTxMethod: async () =>
-        wethGatewayContract.populateTransaction.loopExitETHSingleAsset({
+        wethGatewayContract.populateTransaction.loopExitPLUMESingleAsset({
           targetHealthFactor,
           onBehalfOf: onBehalfOf ?? user,
           numLoops,
@@ -700,7 +702,7 @@ export class WETHGatewayService
     );
     const txCallback: () => Promise<transactionType> = this.generateTxCallback({
       rawTxMethod: async () =>
-        wethGatewayContract.populateTransaction.loopETHSingleAsset({
+        wethGatewayContract.populateTransaction.loopPLUMESingleAsset({
           targetHealthFactor,
           onBehalfOf: onBehalfOf ?? user,
           numLoops,
