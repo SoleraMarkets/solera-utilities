@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.12.2](https://github.com/aave/aave-utilities/compare/@kevoh1516/solera-contract-helpers@3.12.1...@kevoh1516/solera-contract-helpers@3.12.2) (2025-03-14)
+
+
+### Bug Fixes
+
+* eth mock address lowercase ([40bc325](https://github.com/aave/aave-utilities/commit/40bc32571f1e334d38cdb8d0d50b889255a16806))
+
+
+
+
+
 ## [3.12.1](https://github.com/aave/aave-utilities/compare/@kevoh1516/solera-contract-helpers@3.12.0...@kevoh1516/solera-contract-helpers@3.12.1) (2025-03-14)
 
 
