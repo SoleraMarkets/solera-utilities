@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.11.0](https://github.com/aave/aave-utilities/compare/@kevoh1516/solera-contract-helpers@3.10.2...@kevoh1516/solera-contract-helpers@3.11.0) (2025-03-14)
+
+
+### Bug Fixes
+
+* nest vault testing ([6c95968](https://github.com/aave/aave-utilities/commit/6c95968f584bdf832c061155dcb4714a5437b3f7))
+
+
+### Features
+
+* eth plume rename ([640a446](https://github.com/aave/aave-utilities/commit/640a446869e688c53fc5805124bb24cc0b84ebe8))
+
+
+
+
+
 ## [3.10.2](https://github.com/aave/aave-utilities/compare/@kevoh1516/solera-contract-helpers@3.10.1...@kevoh1516/solera-contract-helpers@3.10.2) (2025-03-12)
 
 
