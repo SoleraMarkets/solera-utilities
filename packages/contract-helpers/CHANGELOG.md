@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.13.0](https://github.com/aave/aave-utilities/compare/@kevoh1516/solera-contract-helpers@3.12.3...@kevoh1516/solera-contract-helpers@3.13.0) (2025-03-25)
+
+
+### Features
+
+* staking native plume ([15641d2](https://github.com/aave/aave-utilities/commit/15641d23b718760facd3ca42d5af78fa823f6663))
+
+
+
+
+
 ## [3.12.3](https://github.com/aave/aave-utilities/compare/@kevoh1516/solera-contract-helpers@3.12.2...@kevoh1516/solera-contract-helpers@3.12.3) (2025-03-25)
 
 
