@@ -120,11 +120,11 @@ export class PoolBundle
   ) {
     super(provider, IPool__factory);
 
-    const { POOL, WETH_GATEWAY, L2_ENCODER } = lendingPoolConfig ?? {};
+    const { POOL, WRAPPED_TOKEN_GATEWAY, L2_ENCODER } = lendingPoolConfig ?? {};
 
     this.poolAddress = POOL ?? '';
     this.l2EncoderAddress = L2_ENCODER ?? '';
-    this.wethGatewayAddress = WETH_GATEWAY ?? '';
+    this.wethGatewayAddress = WRAPPED_TOKEN_GATEWAY ?? '';
     this.v3PoolService = new Pool(provider, lendingPoolConfig);
 
     // initialize services
@@ -134,7 +134,7 @@ export class PoolBundle
     this.wethGatewayService = new WETHGatewayService(
       provider,
       this.erc20Service,
-      WETH_GATEWAY,
+      WRAPPED_TOKEN_GATEWAY,
     );
 
     this.l2PoolService = new L2Pool(provider, {

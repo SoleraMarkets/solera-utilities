@@ -126,7 +126,7 @@ export interface PoolInterface {
 
 export type LendingPoolMarketConfigV3 = {
   POOL: tEthereumAddress;
-  WETH_GATEWAY?: tEthereumAddress;
+  WRAPPED_TOKEN_GATEWAY?: tEthereumAddress;
   FLASH_LIQUIDATION_ADAPTER?: tEthereumAddress;
   REPAY_WITH_COLLATERAL_ADAPTER?: tEthereumAddress;
   SWAP_COLLATERAL_ADAPTER?: tEthereumAddress;
@@ -204,7 +204,7 @@ export class Pool extends BaseService<IPool> implements PoolInterface {
       FLASH_LIQUIDATION_ADAPTER,
       REPAY_WITH_COLLATERAL_ADAPTER,
       SWAP_COLLATERAL_ADAPTER,
-      WETH_GATEWAY,
+      WRAPPED_TOKEN_GATEWAY,
       L2_ENCODER,
     } = lendingPoolConfig ?? {};
 
@@ -221,7 +221,7 @@ export class Pool extends BaseService<IPool> implements PoolInterface {
     this.wethGatewayService = new WETHGatewayService(
       provider,
       this.erc20Service,
-      WETH_GATEWAY,
+      WRAPPED_TOKEN_GATEWAY,
     );
     this.liquiditySwapAdapterService = new LiquiditySwapAdapterService(
       provider,

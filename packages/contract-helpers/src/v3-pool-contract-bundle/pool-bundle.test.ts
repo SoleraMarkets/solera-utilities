@@ -21,7 +21,7 @@ describe('PoolBundle', () => {
     .spyOn(provider, 'getGasPrice')
     .mockImplementation(async () => Promise.resolve(BigNumber.from(1)));
   const POOL = '0x0000000000000000000000000000000000000001';
-  const WETH_GATEWAY = '0x0000000000000000000000000000000000000002';
+  const WRAPPED_TOKEN_GATEWAY = '0x0000000000000000000000000000000000000002';
   const USER = '0x0000000000000000000000000000000000000003';
   const TOKEN = '0x0000000000000000000000000000000000000004';
   const FLASH_LIQUIDATION_ADAPTER =
@@ -61,7 +61,7 @@ describe('PoolBundle', () => {
       FLASH_LIQUIDATION_ADAPTER,
       REPAY_WITH_COLLATERAL_ADAPTER,
       SWAP_COLLATERAL_ADAPTER,
-      WETH_GATEWAY,
+      WRAPPED_TOKEN_GATEWAY,
       L2_ENCODER,
     };
     it('Expects to initialize correctly with all params', () => {
@@ -80,7 +80,7 @@ describe('PoolBundle', () => {
       FLASH_LIQUIDATION_ADAPTER,
       REPAY_WITH_COLLATERAL_ADAPTER,
       SWAP_COLLATERAL_ADAPTER,
-      WETH_GATEWAY,
+      WRAPPED_TOKEN_GATEWAY,
       L2_ENCODER,
     };
 
@@ -111,7 +111,7 @@ describe('PoolBundle', () => {
         token: API_ETH_MOCK_ADDRESS,
       });
       expect(result.amount).toEqual('1');
-      expect(result.spender).toEqual(WETH_GATEWAY);
+      expect(result.spender).toEqual(WRAPPED_TOKEN_GATEWAY);
       expect(result.token).toEqual(API_ETH_MOCK_ADDRESS);
       expect(result.user).toEqual(USER);
     });
@@ -161,13 +161,13 @@ describe('PoolBundle', () => {
           amount: '1',
         },
       );
-      expect(result.to).toEqual(WETH_GATEWAY);
+      expect(result.to).toEqual(WRAPPED_TOKEN_GATEWAY);
       expect(result.from).toEqual(USER);
       expect(result.value).toEqual(BigNumber.from('1'));
       expect(result.data).toEqual(
         '0x7eee8a22000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000030000000000000000000000000000000000000000000000000000000000000000',
       );
-      expect(differentParamsSameResult.to).toEqual(WETH_GATEWAY);
+      expect(differentParamsSameResult.to).toEqual(WRAPPED_TOKEN_GATEWAY);
       expect(differentParamsSameResult.from).toEqual(USER);
       expect(differentParamsSameResult.data).toEqual(
         '0x7eee8a22000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000030000000000000000000000000000000000000000000000000000000000000000',
@@ -401,7 +401,7 @@ describe('PoolBundle', () => {
       FLASH_LIQUIDATION_ADAPTER,
       REPAY_WITH_COLLATERAL_ADAPTER,
       SWAP_COLLATERAL_ADAPTER,
-      WETH_GATEWAY,
+      WRAPPED_TOKEN_GATEWAY,
       L2_ENCODER,
     };
 
@@ -486,11 +486,11 @@ describe('PoolBundle', () => {
       );
       const variableTxData =
         '0xb8971325000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000';
-      expect(result.to).toEqual(WETH_GATEWAY);
+      expect(result.to).toEqual(WRAPPED_TOKEN_GATEWAY);
       expect(result.from).toEqual(USER);
       expect(result.value).toEqual(undefined);
       expect(result.data).toEqual(variableTxData);
-      expect(differentParamsSameResult.to).toEqual(WETH_GATEWAY);
+      expect(differentParamsSameResult.to).toEqual(WRAPPED_TOKEN_GATEWAY);
       expect(differentParamsSameResult.from).toEqual(USER);
       expect(differentParamsSameResult.data).toEqual(variableTxData);
     });
@@ -610,7 +610,7 @@ describe('PoolBundle', () => {
       FLASH_LIQUIDATION_ADAPTER,
       REPAY_WITH_COLLATERAL_ADAPTER,
       SWAP_COLLATERAL_ADAPTER,
-      WETH_GATEWAY,
+      WRAPPED_TOKEN_GATEWAY,
       L2_ENCODER,
     };
 
@@ -691,13 +691,13 @@ describe('PoolBundle', () => {
         amount: '1',
         interestRateMode: InterestRate.Variable,
       });
-      expect(result.to).toEqual(WETH_GATEWAY);
+      expect(result.to).toEqual(WRAPPED_TOKEN_GATEWAY);
       expect(result.from).toEqual(USER);
       expect(result.value).toEqual(BigNumber.from('1'));
       expect(result.data).toEqual(
         '0xcc720c1f000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000003',
       );
-      expect(differentParamsSameResult.to).toEqual(WETH_GATEWAY);
+      expect(differentParamsSameResult.to).toEqual(WRAPPED_TOKEN_GATEWAY);
       expect(differentParamsSameResult.from).toEqual(USER);
       expect(differentParamsSameResult.data).toEqual(
         '0xcc720c1f000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000003',
@@ -860,7 +860,7 @@ describe('PoolBundle', () => {
       FLASH_LIQUIDATION_ADAPTER,
       REPAY_WITH_COLLATERAL_ADAPTER,
       SWAP_COLLATERAL_ADAPTER,
-      WETH_GATEWAY,
+      WRAPPED_TOKEN_GATEWAY,
       L2_ENCODER,
     };
 

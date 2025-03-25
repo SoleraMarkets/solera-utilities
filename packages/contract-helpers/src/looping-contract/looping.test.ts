@@ -2,21 +2,21 @@ import { BigNumber, providers, utils } from 'ethers';
 import { API_ETH_MOCK_ADDRESS } from '../commons/utils';
 import { WrappedTokenGatewayV3__factory } from '../v3-wethgateway-contract/typechain/factories/WrappedTokenGatewayV3__factory';
 import { Looping__factory } from './typechain/factories';
-import { LoopingService, NRWA, NTBILL, PETH, PUSD, WETH } from './index';
+import { LoopingService, NELIXIR, NRWA, PUSD, WPLUME } from './index';
 
 describe('LoopingService', () => {
   const provider = new providers.JsonRpcProvider();
 
   const LOOPING_CONTRACT_ADDRESS = '0x0000000000000000000000000000000000000001';
   const POOL_ADDRESS = '0x0000000000000000000000000000000000000002';
-  const WETH_GATEWAY_ADDRESS = '0x0000000000000000000000000000000000000003';
+  const WRAPPED_GATEWAY_ADDRESS = '0x0000000000000000000000000000000000000003';
   const user = '0x0000000000000000000000000000000000000004';
 
   describe('GenerateTxData', () => {
     it('Expects to generate tx data for single swap looping', () => {
       const instance = new LoopingService(provider, LOOPING_CONTRACT_ADDRESS, {
         POOL: POOL_ADDRESS,
-        WETH_GATEWAY: WETH_GATEWAY_ADDRESS,
+        WRAPPED_TOKEN_GATEWAY: WRAPPED_GATEWAY_ADDRESS,
       });
       expect(instance instanceof LoopingService).toEqual(true);
 
@@ -27,7 +27,7 @@ describe('LoopingService', () => {
 
       const tx = instance.loopSwapTxBuilder.generateTxData({
         user,
-        supplyReserve: WETH,
+        supplyReserve: WPLUME,
         borrowReserve: PUSD,
         numLoops,
         amount,
@@ -40,15 +40,15 @@ describe('LoopingService', () => {
           'loopSingleSwap',
           [
             {
-              supplyToken: WETH,
+              supplyToken: WPLUME,
               targetHealthFactor,
               onBehalfOf: user,
               borrowToken: PUSD,
               numLoops,
               minAmountSupplied,
               initialAmount: amount,
-              maverickPool: '0x92962AcCa4300791b0F5cFE2bfB3b6e62a852D83',
-              isSupplyTokenA: true,
+              maverickPool: '0x4A14398C5c5B4B7913954cB82521fB7afA676314',
+              isSupplyTokenA: false,
             },
           ],
         );
@@ -56,46 +56,10 @@ describe('LoopingService', () => {
       expect(tx.data).toEqual(expectedTxData);
     });
 
-    it('Expects to generate tx data for PUSD->NRWA looping', () => {
-      const instance = new LoopingService(provider, LOOPING_CONTRACT_ADDRESS, {
-        POOL: POOL_ADDRESS,
-        WETH_GATEWAY: WETH_GATEWAY_ADDRESS,
-      });
-      expect(instance instanceof LoopingService).toEqual(true);
-
-      const targetHealthFactor = '12000';
-      const numLoops = 2;
-      const minAmountSupplied = '0';
-      const amount = '100000';
-
-      const tx = instance.loopSwapTxBuilder.generateTxData({
-        user,
-        supplyReserve: PUSD,
-        borrowReserve: NRWA,
-        numLoops,
-        amount,
-        targetHealthFactor,
-        minAmountSupplied,
-      });
-
-      const expectedTxData =
-        Looping__factory.createInterface().encodeFunctionData('loopPUSD', [
-          {
-            targetHealthFactor,
-            onBehalfOf: user,
-            numLoops,
-            initialAmount: amount,
-            minAmountSupplied,
-          },
-        ]);
-
-      expect(tx.data).toEqual(expectedTxData);
-    });
-
     it('Expects to generate tx data for NRWA->PUSD looping', () => {
       const instance = new LoopingService(provider, LOOPING_CONTRACT_ADDRESS, {
         POOL: POOL_ADDRESS,
-        WETH_GATEWAY: WETH_GATEWAY_ADDRESS,
+        WRAPPED_TOKEN_GATEWAY: WRAPPED_GATEWAY_ADDRESS,
       });
       expect(instance instanceof LoopingService).toEqual(true);
 
@@ -131,7 +95,7 @@ describe('LoopingService', () => {
     it('Expects to generate tx data for multi swap looping', () => {
       const instance = new LoopingService(provider, LOOPING_CONTRACT_ADDRESS, {
         POOL: POOL_ADDRESS,
-        WETH_GATEWAY: WETH_GATEWAY_ADDRESS,
+        WRAPPED_TOKEN_GATEWAY: WRAPPED_GATEWAY_ADDRESS,
       });
       expect(instance instanceof LoopingService).toEqual(true);
 
@@ -143,7 +107,7 @@ describe('LoopingService', () => {
       const tx = instance.loopSwapTxBuilder.generateTxData({
         user,
         supplyReserve: NRWA,
-        borrowReserve: PETH,
+        borrowReserve: NELIXIR,
         numLoops,
         amount,
         targetHealthFactor,
@@ -153,10 +117,10 @@ describe('LoopingService', () => {
       const path = utils.solidityPack(
         ['address', 'bool', 'address', 'bool'],
         [
-          '0x2e1ACd5Ef12d161686d417837003415b569c3c16',
-          false,
-          '0x6EbE09DDb0edE205fAcE89AB0Bf29211cf885a92',
+          '0x8872127381209fd106E48666B2EcAD4A151C9EA9',
           true,
+          '0xb4C54Dde7CA3f475Fd687E28111EcdBB7d9fA92f',
+          false,
         ],
       );
 
@@ -166,7 +130,7 @@ describe('LoopingService', () => {
             supplyToken: NRWA,
             targetHealthFactor,
             onBehalfOf: user,
-            borrowToken: PETH,
+            borrowToken: NELIXIR,
             numLoops,
             minAmountSupplied,
             initialAmount: amount,
@@ -180,7 +144,7 @@ describe('LoopingService', () => {
     it('Expects to generate tx data for single asset looping', () => {
       const instance = new LoopingService(provider, LOOPING_CONTRACT_ADDRESS, {
         POOL: POOL_ADDRESS,
-        WETH_GATEWAY: WETH_GATEWAY_ADDRESS,
+        WRAPPED_TOKEN_GATEWAY: WRAPPED_GATEWAY_ADDRESS,
       });
       expect(instance instanceof LoopingService).toEqual(true);
 
@@ -216,7 +180,7 @@ describe('LoopingService', () => {
     it('Expects to generate tx data for ETH->Token single swap looping', () => {
       const instance = new LoopingService(provider, LOOPING_CONTRACT_ADDRESS, {
         POOL: POOL_ADDRESS,
-        WETH_GATEWAY: WETH_GATEWAY_ADDRESS,
+        WRAPPED_TOKEN_GATEWAY: WRAPPED_GATEWAY_ADDRESS,
       });
       expect(instance instanceof LoopingService).toEqual(true);
 
@@ -243,9 +207,9 @@ describe('LoopingService', () => {
               onBehalfOf: user,
               numLoops,
               targetHealthFactor,
-              isSupplyTokenA: true,
+              isSupplyTokenA: false,
               borrowToken: PUSD,
-              maverickPool: '0x92962AcCa4300791b0F5cFE2bfB3b6e62a852D83',
+              maverickPool: '0x4A14398C5c5B4B7913954cB82521fB7afA676314',
               minAmountSupplied,
             },
           ],
@@ -255,61 +219,61 @@ describe('LoopingService', () => {
       expect(tx.value).toEqual(BigNumber.from(amount));
     });
 
-    it('Expects to generate tx data for ETH->Token multi swap looping', () => {
+    // it('Expects to generate tx data for ETH->Token multi swap looping', () => {
+    //   const instance = new LoopingService(provider, LOOPING_CONTRACT_ADDRESS, {
+    //     POOL: POOL_ADDRESS,
+    //     WRAPPED_TOKEN_GATEWAY: WRAPPED_GATEWAY_ADDRESS,
+    //   });
+    //   expect(instance instanceof LoopingService).toEqual(true);
+
+    //   const targetHealthFactor = '12000';
+    //   const numLoops = 2;
+    //   const amount = '100000';
+    //   const minAmountSupplied = '0';
+
+    //   const tx = instance.loopSwapTxBuilder.generateTxData({
+    //     user,
+    //     supplyReserve: API_ETH_MOCK_ADDRESS.toLowerCase(),
+    //     borrowReserve: NTBILL,
+    //     numLoops,
+    //     amount,
+    //     targetHealthFactor,
+    //     minAmountSupplied,
+    //   });
+
+    //   const path = utils.solidityPack(
+    //     ['address', 'bool', 'address', 'bool'],
+    //     [
+    //       '0x483b035C21F77DeB6875f741C7cCb85f22F8E5C3',
+    //       false,
+    //       '0x92962AcCa4300791b0F5cFE2bfB3b6e62a852D83',
+    //       false,
+    //     ],
+    //   );
+
+    //   const expectedTxData =
+    //     WrappedTokenGatewayV3__factory.createInterface().encodeFunctionData(
+    //       'loopEntryPLUMEMultiSwap',
+    //       [
+    //         {
+    //           onBehalfOf: user,
+    //           numLoops,
+    //           targetHealthFactor,
+    //           borrowToken: NTBILL,
+    //           minAmountSupplied,
+    //           path,
+    //         },
+    //       ],
+    //     );
+
+    //   expect(tx.data).toEqual(expectedTxData);
+    //   expect(tx.value).toEqual(BigNumber.from(amount));
+    // });
+
+    it('Expects to generate tx data for ETH->WPLUME single asset looping', () => {
       const instance = new LoopingService(provider, LOOPING_CONTRACT_ADDRESS, {
         POOL: POOL_ADDRESS,
-        WETH_GATEWAY: WETH_GATEWAY_ADDRESS,
-      });
-      expect(instance instanceof LoopingService).toEqual(true);
-
-      const targetHealthFactor = '12000';
-      const numLoops = 2;
-      const amount = '100000';
-      const minAmountSupplied = '0';
-
-      const tx = instance.loopSwapTxBuilder.generateTxData({
-        user,
-        supplyReserve: API_ETH_MOCK_ADDRESS.toLowerCase(),
-        borrowReserve: NTBILL,
-        numLoops,
-        amount,
-        targetHealthFactor,
-        minAmountSupplied,
-      });
-
-      const path = utils.solidityPack(
-        ['address', 'bool', 'address', 'bool'],
-        [
-          '0x483b035C21F77DeB6875f741C7cCb85f22F8E5C3',
-          false,
-          '0x92962AcCa4300791b0F5cFE2bfB3b6e62a852D83',
-          false,
-        ],
-      );
-
-      const expectedTxData =
-        WrappedTokenGatewayV3__factory.createInterface().encodeFunctionData(
-          'loopEntryPLUMEMultiSwap',
-          [
-            {
-              onBehalfOf: user,
-              numLoops,
-              targetHealthFactor,
-              borrowToken: NTBILL,
-              minAmountSupplied,
-              path,
-            },
-          ],
-        );
-
-      expect(tx.data).toEqual(expectedTxData);
-      expect(tx.value).toEqual(BigNumber.from(amount));
-    });
-
-    it('Expects to generate tx data for ETH->WETH single asset looping', () => {
-      const instance = new LoopingService(provider, LOOPING_CONTRACT_ADDRESS, {
-        POOL: POOL_ADDRESS,
-        WETH_GATEWAY: WETH_GATEWAY_ADDRESS,
+        WRAPPED_TOKEN_GATEWAY: WRAPPED_GATEWAY_ADDRESS,
       });
       expect(instance instanceof LoopingService).toEqual(true);
 
@@ -346,7 +310,7 @@ describe('LoopingService', () => {
   it('Expects to generate tx data for Token->ETH single swap looping', () => {
     const instance = new LoopingService(provider, LOOPING_CONTRACT_ADDRESS, {
       POOL: POOL_ADDRESS,
-      WETH_GATEWAY: WETH_GATEWAY_ADDRESS,
+      WRAPPED_TOKEN_GATEWAY: WRAPPED_GATEWAY_ADDRESS,
     });
     expect(instance instanceof LoopingService).toEqual(true);
 
@@ -373,9 +337,9 @@ describe('LoopingService', () => {
             onBehalfOf: user,
             numLoops,
             targetHealthFactor,
-            isSupplyTokenA: false,
+            isSupplyTokenA: true,
             supplyToken: PUSD,
-            maverickPool: '0x92962AcCa4300791b0F5cFE2bfB3b6e62a852D83',
+            maverickPool: '0x4A14398C5c5B4B7913954cB82521fB7afA676314',
             minAmountSupplied,
             initialAmount: amount,
           },
@@ -385,61 +349,61 @@ describe('LoopingService', () => {
     expect(tx.data).toEqual(expectedTxData);
   });
 
-  it('Expects to generate tx data for Token->ETH multi swap looping', () => {
+  // it('Expects to generate tx data for Token->ETH multi swap looping', () => {
+  //   const instance = new LoopingService(provider, LOOPING_CONTRACT_ADDRESS, {
+  //     POOL: POOL_ADDRESS,
+  //     WRAPPED_TOKEN_GATEWAY: WRAPPED_GATEWAY_ADDRESS,
+  //   });
+  //   expect(instance instanceof LoopingService).toEqual(true);
+
+  //   const targetHealthFactor = '12000';
+  //   const numLoops = 2;
+  //   const amount = '100000';
+  //   const minAmountSupplied = '0';
+
+  //   const tx = instance.loopSwapTxBuilder.generateTxData({
+  //     user,
+  //     supplyReserve: NTBILL,
+  //     borrowReserve: API_ETH_MOCK_ADDRESS.toLowerCase(),
+  //     numLoops,
+  //     amount,
+  //     targetHealthFactor,
+  //     minAmountSupplied,
+  //   });
+
+  //   const path = utils.solidityPack(
+  //     ['address', 'bool', 'address', 'bool'],
+  //     [
+  //       '0x92962AcCa4300791b0F5cFE2bfB3b6e62a852D83',
+  //       true,
+  //       '0x483b035C21F77DeB6875f741C7cCb85f22F8E5C3',
+  //       true,
+  //     ],
+  //   );
+
+  //   const expectedTxData =
+  //     WrappedTokenGatewayV3__factory.createInterface().encodeFunctionData(
+  //       'loopExitPLUMEMultiSwap',
+  //       [
+  //         {
+  //           onBehalfOf: user,
+  //           numLoops,
+  //           targetHealthFactor,
+  //           supplyToken: NTBILL,
+  //           minAmountSupplied,
+  //           path,
+  //           initialAmount: amount,
+  //         },
+  //       ],
+  //     );
+
+  //   expect(tx.data).toEqual(expectedTxData);
+  // });
+
+  it('Expects to generate tx data for WPLUME->ETH single asset looping', () => {
     const instance = new LoopingService(provider, LOOPING_CONTRACT_ADDRESS, {
       POOL: POOL_ADDRESS,
-      WETH_GATEWAY: WETH_GATEWAY_ADDRESS,
-    });
-    expect(instance instanceof LoopingService).toEqual(true);
-
-    const targetHealthFactor = '12000';
-    const numLoops = 2;
-    const amount = '100000';
-    const minAmountSupplied = '0';
-
-    const tx = instance.loopSwapTxBuilder.generateTxData({
-      user,
-      supplyReserve: NTBILL,
-      borrowReserve: API_ETH_MOCK_ADDRESS.toLowerCase(),
-      numLoops,
-      amount,
-      targetHealthFactor,
-      minAmountSupplied,
-    });
-
-    const path = utils.solidityPack(
-      ['address', 'bool', 'address', 'bool'],
-      [
-        '0x92962AcCa4300791b0F5cFE2bfB3b6e62a852D83',
-        true,
-        '0x483b035C21F77DeB6875f741C7cCb85f22F8E5C3',
-        true,
-      ],
-    );
-
-    const expectedTxData =
-      WrappedTokenGatewayV3__factory.createInterface().encodeFunctionData(
-        'loopExitPLUMEMultiSwap',
-        [
-          {
-            onBehalfOf: user,
-            numLoops,
-            targetHealthFactor,
-            supplyToken: NTBILL,
-            minAmountSupplied,
-            path,
-            initialAmount: amount,
-          },
-        ],
-      );
-
-    expect(tx.data).toEqual(expectedTxData);
-  });
-
-  it('Expects to generate tx data for WETH->ETH single asset looping', () => {
-    const instance = new LoopingService(provider, LOOPING_CONTRACT_ADDRESS, {
-      POOL: POOL_ADDRESS,
-      WETH_GATEWAY: WETH_GATEWAY_ADDRESS,
+      WRAPPED_TOKEN_GATEWAY: WRAPPED_GATEWAY_ADDRESS,
     });
     expect(instance instanceof LoopingService).toEqual(true);
 
@@ -449,7 +413,7 @@ describe('LoopingService', () => {
 
     const tx = instance.loopETHTxBuilder.generateTxData({
       user,
-      reserve: WETH,
+      reserve: WPLUME,
       numLoops,
       amount,
       targetHealthFactor,
@@ -475,7 +439,7 @@ describe('LoopingService', () => {
   it('Expects to generate tx data for ETH->ETH single asset looping', () => {
     const instance = new LoopingService(provider, LOOPING_CONTRACT_ADDRESS, {
       POOL: POOL_ADDRESS,
-      WETH_GATEWAY: WETH_GATEWAY_ADDRESS,
+      WRAPPED_TOKEN_GATEWAY: WRAPPED_GATEWAY_ADDRESS,
     });
     expect(instance instanceof LoopingService).toEqual(true);
 

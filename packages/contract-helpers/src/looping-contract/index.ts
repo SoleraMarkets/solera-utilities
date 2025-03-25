@@ -74,18 +74,16 @@ export type LoopETHTxBuilder = {
   }) => Promise<DelegationApprovedType>;
 };
 
-export const WETH = '0x626613B473F7eF65747967017C11225436EFaEd7'.toLowerCase();
-export const NRWA = '0x81537d879ACc8a290a1846635a0cAA908f8ca3a6'.toLowerCase();
-export const PETH = '0xD630fb6A07c9c723cf709d2DaA9B63325d0E0B73'.toLowerCase();
-export const NELIXIR =
-  '0x9fbC367B9Bb966a2A537989817A088AFCaFFDC4c'.toLowerCase();
-export const NYIELD =
-  '0x892DFf5257B39f7afB7803dd7C81E8ECDB6af3E8'.toLowerCase();
-export const PUSD = '0xdddD73F5Df1F0DC31373357beAC77545dC5A6f3F'.toLowerCase();
-export const NTBILL =
-  '0xE72Fe64840F4EF80E3Ec73a1c749491b5c938CB9'.toLowerCase();
+// export const WETH = '0x626613b473f7ef65747967017c11225436efaed7';
+export const WPLUME = '0xea237441c92cae6fc17caaf9a7acb3f953be4bd1';
+export const NRWA = '0x11a8d8694b656112d9a94285223772f4aad269fc';
+// export const PETH = '0xD630fb6A07c9c723cf709d2DaA9B63325d0E0B73'.toLowerCase();
+export const NELIXIR = '0x9fbc367b9bb966a2a537989817a088afcaffdc4c';
+export const NYIELD = '0x892dff5257b39f7afb7803dd7c81e8ecdb6af3e8';
+export const PUSD = '0xdddd73f5df1f0dc31373357beac77545dc5a6f3f';
+export const NTBILL = '0xe72fe64840f4ef80e3ec73a1c749491b5c938cb9';
 
-const WETH_V_TOKEN = '0x578899D60B4ea83537d7d5DD399C2f17Bd15F489'.toLowerCase();
+const WPLUME_V_TOKEN = '0x578899D60B4ea83537d7d5DD399C2f17Bd15F489'; // change later
 
 export class LoopingService extends BaseService<Looping> {
   readonly loopingContractAddress: string;
@@ -101,7 +99,7 @@ export class LoopingService extends BaseService<Looping> {
   readonly loopingInstance: LoopingInterface;
   readonly wethGatewayInstance: WrappedTokenGatewayV3Interface;
 
-  readonly wethGatewayAddress: tEthereumAddress;
+  readonly wrappedTokenGatewayAddress: tEthereumAddress;
   readonly poolAddress: tEthereumAddress;
   readonly loopAddress: tEthereumAddress;
 
@@ -119,7 +117,7 @@ export class LoopingService extends BaseService<Looping> {
   ) {
     super(provider, Looping__factory);
 
-    const { POOL, WETH_GATEWAY } = lendingPoolConfig ?? {};
+    const { POOL, WRAPPED_TOKEN_GATEWAY } = lendingPoolConfig ?? {};
 
     this.erc20Service = new ERC20Service(provider);
 
@@ -133,146 +131,82 @@ export class LoopingService extends BaseService<Looping> {
     this.wethGatewayInstance = WrappedTokenGatewayV3__factory.createInterface();
 
     this.poolAddress = POOL ?? '';
-    this.wethGatewayAddress = WETH_GATEWAY ?? '';
+    this.wrappedTokenGatewayAddress = WRAPPED_TOKEN_GATEWAY ?? '';
     this.loopAddress = contractAddress ?? '';
 
     this.maverickSingleSwap = new Map();
     this.maverickMultiSwap = new Map();
 
     this.maverickSingleSwap.set(
-      this.getObjectKey({ tokenA: WETH, tokenB: NRWA }),
-      '0x6EbE09DDb0edE205fAcE89AB0Bf29211cf885a92',
+      this.getObjectKey({ tokenA: NRWA, tokenB: WPLUME }),
+      '0x95CD298a03bd1e060992297025A7FDA5912DFc13',
+    );
+    // this.maverickSingleSwap.set(
+    //   this.getObjectKey({ tokenA: WPLUME, tokenB: PETH }),
+    //   '0x2e1ACd5Ef12d161686d417837003415b569c3c16',
+    // );
+    this.maverickSingleSwap.set(
+      this.getObjectKey({ tokenA: NELIXIR, tokenB: WPLUME }),
+      '0x10B02Da17F82F263252C6Ac9E2f785Cb9fE4d544',
     );
     this.maverickSingleSwap.set(
-      this.getObjectKey({ tokenA: WETH, tokenB: PETH }),
-      '0x2e1ACd5Ef12d161686d417837003415b569c3c16',
-    );
-    this.maverickMultiSwap.set(
-      this.getObjectKey({ tokenA: WETH, tokenB: NELIXIR }),
-      utils.solidityPack(
-        ['address', 'bool', 'address', 'bool'],
-        [
-          '0x40528F831D013cca16Fae64a7b4A1fA9b6ae86B7',
-          false,
-          '0xCef7E4547328130B58e07d171F56f5A705c86fc5',
-          true,
-        ],
-      ),
-    );
-    this.maverickMultiSwap.set(
-      this.getObjectKey({ tokenA: NELIXIR, tokenB: WETH }),
-      utils.solidityPack(
-        ['address', 'bool', 'address', 'bool'],
-        [
-          '0xCef7E4547328130B58e07d171F56f5A705c86fc5',
-          false,
-          '0x40528F831D013cca16Fae64a7b4A1fA9b6ae86B7',
-          true,
-        ],
-      ),
-    );
-    this.maverickMultiSwap.set(
-      this.getObjectKey({ tokenA: WETH, tokenB: NYIELD }),
-      utils.solidityPack(
-        ['address', 'bool', 'address', 'bool'],
-        [
-          '0x92962AcCa4300791b0F5cFE2bfB3b6e62a852D83',
-          true,
-          '0xbD2Dc0def95Ab16615dEC0744995027971FA8b8C',
-          false,
-        ],
-      ),
-    );
-    this.maverickMultiSwap.set(
-      this.getObjectKey({ tokenA: NYIELD, tokenB: WETH }),
-      utils.solidityPack(
-        ['address', 'bool', 'address', 'bool'],
-        [
-          '0xbD2Dc0def95Ab16615dEC0744995027971FA8b8C',
-          true,
-          '0x92962AcCa4300791b0F5cFE2bfB3b6e62a852D83',
-          false,
-        ],
-      ),
-    );
-    this.maverickMultiSwap.set(
-      this.getObjectKey({ tokenA: WETH, tokenB: NTBILL }),
-      utils.solidityPack(
-        ['address', 'bool', 'address', 'bool'],
-        [
-          '0x92962AcCa4300791b0F5cFE2bfB3b6e62a852D83',
-          true,
-          '0x483b035C21F77DeB6875f741C7cCb85f22F8E5C3',
-          true,
-        ],
-      ),
-    );
-    this.maverickMultiSwap.set(
-      this.getObjectKey({ tokenA: NTBILL, tokenB: WETH }),
-      utils.solidityPack(
-        ['address', 'bool', 'address', 'bool'],
-        [
-          '0x483b035C21F77DeB6875f741C7cCb85f22F8E5C3',
-          false,
-          '0x92962AcCa4300791b0F5cFE2bfB3b6e62a852D83',
-          false,
-        ],
-      ),
+      this.getObjectKey({ tokenA: NYIELD, tokenB: WPLUME }),
+      '0x20462dA42BA8D773138D417C42F116Ba77DDe908',
     );
     this.maverickSingleSwap.set(
-      this.getObjectKey({ tokenA: WETH, tokenB: PUSD }),
-      '0x92962AcCa4300791b0F5cFE2bfB3b6e62a852D83',
+      this.getObjectKey({ tokenA: NTBILL, tokenB: WPLUME }),
+      '0x098Dbf700286109e3BcD1465F00A6554488Ec148',
     );
-    this.maverickMultiSwap.set(
-      this.getObjectKey({ tokenA: NRWA, tokenB: PETH }),
-      utils.solidityPack(
-        ['address', 'bool', 'address', 'bool'],
-        [
-          '0x6EbE09DDb0edE205fAcE89AB0Bf29211cf885a92',
-          false,
-          '0x2e1ACd5Ef12d161686d417837003415b569c3c16',
-          true,
-        ],
-      ),
+    this.maverickSingleSwap.set(
+      this.getObjectKey({ tokenA: PUSD, tokenB: WPLUME }),
+      '0x4A14398C5c5B4B7913954cB82521fB7afA676314',
     );
-    this.maverickMultiSwap.set(
-      this.getObjectKey({ tokenA: PETH, tokenB: NRWA }),
-      utils.solidityPack(
-        ['address', 'bool', 'address', 'bool'],
-        [
-          '0x2e1ACd5Ef12d161686d417837003415b569c3c16',
-          false,
-          '0x6EbE09DDb0edE205fAcE89AB0Bf29211cf885a92',
-          true,
-        ],
-      ),
-    );
+    // this.maverickMultiSwap.set(
+    //   this.getObjectKey({ tokenA: NRWA, tokenB: PETH }),
+    //   utils.solidityPack(
+    //     ['address', 'bool', 'address', 'bool'],
+    //     [
+    //       '0x6EbE09DDb0edE205fAcE89AB0Bf29211cf885a92',
+    //       false,
+    //       '0x2e1ACd5Ef12d161686d417837003415b569c3c16',
+    //       true,
+    //     ],
+    //   ),
+    // );
+    // this.maverickMultiSwap.set(
+    //   this.getObjectKey({ tokenA: PETH, tokenB: NRWA }),
+    //   utils.solidityPack(
+    //     ['address', 'bool', 'address', 'bool'],
+    //     [
+    //       '0x2e1ACd5Ef12d161686d417837003415b569c3c16',
+    //       false,
+    //       '0x6EbE09DDb0edE205fAcE89AB0Bf29211cf885a92',
+    //       true,
+    //     ],
+    //   ),
+    // );
 
     this.maverickMultiSwap.set(
       this.getObjectKey({ tokenA: NRWA, tokenB: NELIXIR }),
       utils.solidityPack(
-        ['address', 'bool', 'address', 'bool', 'address', 'bool'],
+        ['address', 'bool', 'address', 'bool'],
         [
-          '0x6EbE09DDb0edE205fAcE89AB0Bf29211cf885a92',
-          false,
-          '0x40528F831D013cca16Fae64a7b4A1fA9b6ae86B7',
-          false,
-          '0xCef7E4547328130B58e07d171F56f5A705c86fc5',
+          '0xb4C54Dde7CA3f475Fd687E28111EcdBB7d9fA92f',
           true,
+          '0x8872127381209fd106E48666B2EcAD4A151C9EA9',
+          false,
         ],
       ),
     );
     this.maverickMultiSwap.set(
       this.getObjectKey({ tokenA: NELIXIR, tokenB: NRWA }),
       utils.solidityPack(
-        ['address', 'bool', 'address', 'bool', 'address', 'bool'],
+        ['address', 'bool', 'address', 'bool'],
         [
-          '0xCef7E4547328130B58e07d171F56f5A705c86fc5',
+          '0x8872127381209fd106E48666B2EcAD4A151C9EA9',
+          true,
+          '0xb4C54Dde7CA3f475Fd687E28111EcdBB7d9fA92f',
           false,
-          '0x40528F831D013cca16Fae64a7b4A1fA9b6ae86B7',
-          true,
-          '0x6EbE09DDb0edE205fAcE89AB0Bf29211cf885a92',
-          true,
         ],
       ),
     );
@@ -282,9 +216,9 @@ export class LoopingService extends BaseService<Looping> {
       utils.solidityPack(
         ['address', 'bool', 'address', 'bool'],
         [
-          '0x9534362C3B5B0ab1770842888497CD299b2bEBCB',
+          '0xb4C54Dde7CA3f475Fd687E28111EcdBB7d9fA92f',
           true,
-          '0xbD2Dc0def95Ab16615dEC0744995027971FA8b8C',
+          '0x45D5e8eB57b2079A615Bd9fB6A6ec574b3749826',
           false,
         ],
       ),
@@ -294,9 +228,9 @@ export class LoopingService extends BaseService<Looping> {
       utils.solidityPack(
         ['address', 'bool', 'address', 'bool'],
         [
-          '0xbD2Dc0def95Ab16615dEC0744995027971FA8b8C',
+          '0x45D5e8eB57b2079A615Bd9fB6A6ec574b3749826',
           true,
-          '0x9534362C3B5B0ab1770842888497CD299b2bEBCB',
+          '0xb4C54Dde7CA3f475Fd687E28111EcdBB7d9fA92f',
           false,
         ],
       ),
@@ -307,9 +241,9 @@ export class LoopingService extends BaseService<Looping> {
       utils.solidityPack(
         ['address', 'bool', 'address', 'bool'],
         [
-          '0x9534362C3B5B0ab1770842888497CD299b2bEBCB',
+          '0xb4C54Dde7CA3f475Fd687E28111EcdBB7d9fA92f',
           true,
-          '0x483b035C21F77DeB6875f741C7cCb85f22F8E5C3',
+          '0xB1Ac405847eaA909a67a7e5d67D61115303F6Fa0',
           true,
         ],
       ),
@@ -319,9 +253,9 @@ export class LoopingService extends BaseService<Looping> {
       utils.solidityPack(
         ['address', 'bool', 'address', 'bool'],
         [
-          '0x483b035C21F77DeB6875f741C7cCb85f22F8E5C3',
+          '0xB1Ac405847eaA909a67a7e5d67D61115303F6Fa0',
           false,
-          '0x9534362C3B5B0ab1770842888497CD299b2bEBCB',
+          '0xb4C54Dde7CA3f475Fd687E28111EcdBB7d9fA92f',
           false,
         ],
       ),
@@ -329,99 +263,97 @@ export class LoopingService extends BaseService<Looping> {
 
     this.maverickSingleSwap.set(
       this.getObjectKey({ tokenA: NRWA, tokenB: PUSD }),
-      '0x9534362C3B5B0ab1770842888497CD299b2bEBCB',
+      '0xb4C54Dde7CA3f475Fd687E28111EcdBB7d9fA92f',
     );
 
-    this.maverickMultiSwap.set(
-      this.getObjectKey({ tokenA: PETH, tokenB: NELIXIR }),
-      utils.solidityPack(
-        ['address', 'bool', 'address', 'bool'],
-        [
-          '0xc48694997a6b7559a2A4C6B0bBA8ffd121Fa60a8',
-          false,
-          '0xCef7E4547328130B58e07d171F56f5A705c86fc5',
-          true,
-        ],
-      ),
-    );
-    this.maverickMultiSwap.set(
-      this.getObjectKey({ tokenA: NELIXIR, tokenB: PETH }),
-      utils.solidityPack(
-        ['address', 'bool', 'address', 'bool'],
-        [
-          '0xCef7E4547328130B58e07d171F56f5A705c86fc5',
-          false,
-          '0xc48694997a6b7559a2A4C6B0bBA8ffd121Fa60a8',
-          true,
-        ],
-      ),
-    );
+    // this.maverickMultiSwap.set(
+    //   this.getObjectKey({ tokenA: PETH, tokenB: NELIXIR }),
+    //   utils.solidityPack(
+    //     ['address', 'bool', 'address', 'bool'],
+    //     [
+    //       '0xc48694997a6b7559a2A4C6B0bBA8ffd121Fa60a8',
+    //       false,
+    //       '0xCef7E4547328130B58e07d171F56f5A705c86fc5',
+    //       true,
+    //     ],
+    //   ),
+    // );
+    // this.maverickMultiSwap.set(
+    //   this.getObjectKey({ tokenA: NELIXIR, tokenB: PETH }),
+    //   utils.solidityPack(
+    //     ['address', 'bool', 'address', 'bool'],
+    //     [
+    //       '0xCef7E4547328130B58e07d171F56f5A705c86fc5',
+    //       false,
+    //       '0xc48694997a6b7559a2A4C6B0bBA8ffd121Fa60a8',
+    //       true,
+    //     ],
+    //   ),
+    // );
 
-    this.maverickMultiSwap.set(
-      this.getObjectKey({ tokenA: PETH, tokenB: NYIELD }),
-      utils.solidityPack(
-        ['address', 'bool', 'address', 'bool'],
-        [
-          '0xc6a6cA7a7C0198a9FC9c616aA30b1BEa2956a0cc',
-          true,
-          '0x3B4b1655e50c130686b5da39E4b255e8Dd7e2010',
-          false,
-        ],
-      ),
-    );
-    this.maverickMultiSwap.set(
-      this.getObjectKey({ tokenA: NYIELD, tokenB: PETH }),
-      utils.solidityPack(
-        ['address', 'bool', 'address', 'bool'],
-        [
-          '0x3B4b1655e50c130686b5da39E4b255e8Dd7e2010',
-          true,
-          '0xc6a6cA7a7C0198a9FC9c616aA30b1BEa2956a0cc',
-          false,
-        ],
-      ),
-    );
+    // this.maverickMultiSwap.set(
+    //   this.getObjectKey({ tokenA: PETH, tokenB: NYIELD }),
+    //   utils.solidityPack(
+    //     ['address', 'bool', 'address', 'bool'],
+    //     [
+    //       '0xc6a6cA7a7C0198a9FC9c616aA30b1BEa2956a0cc',
+    //       true,
+    //       '0x3B4b1655e50c130686b5da39E4b255e8Dd7e2010',
+    //       false,
+    //     ],
+    //   ),
+    // );
+    // this.maverickMultiSwap.set(
+    //   this.getObjectKey({ tokenA: NYIELD, tokenB: PETH }),
+    //   utils.solidityPack(
+    //     ['address', 'bool', 'address', 'bool'],
+    //     [
+    //       '0x3B4b1655e50c130686b5da39E4b255e8Dd7e2010',
+    //       true,
+    //       '0xc6a6cA7a7C0198a9FC9c616aA30b1BEa2956a0cc',
+    //       false,
+    //     ],
+    //   ),
+    // );
 
-    this.maverickMultiSwap.set(
-      this.getObjectKey({ tokenA: PETH, tokenB: NTBILL }),
-      utils.solidityPack(
-        ['address', 'bool', 'address', 'bool'],
-        [
-          '0xc6a6cA7a7C0198a9FC9c616aA30b1BEa2956a0cc',
-          true,
-          '0x483b035C21F77DeB6875f741C7cCb85f22F8E5C3',
-          true,
-        ],
-      ),
-    );
-    this.maverickMultiSwap.set(
-      this.getObjectKey({ tokenA: NTBILL, tokenB: PETH }),
-      utils.solidityPack(
-        ['address', 'bool', 'address', 'bool'],
-        [
-          '0x483b035C21F77DeB6875f741C7cCb85f22F8E5C3',
-          true,
-          '0xc6a6cA7a7C0198a9FC9c616aA30b1BEa2956a0cc',
-          true,
-        ],
-      ),
-    );
+    // this.maverickMultiSwap.set(
+    //   this.getObjectKey({ tokenA: PETH, tokenB: NTBILL }),
+    //   utils.solidityPack(
+    //     ['address', 'bool', 'address', 'bool'],
+    //     [
+    //       '0xc6a6cA7a7C0198a9FC9c616aA30b1BEa2956a0cc',
+    //       true,
+    //       '0x483b035C21F77DeB6875f741C7cCb85f22F8E5C3',
+    //       true,
+    //     ],
+    //   ),
+    // );
+    // this.maverickMultiSwap.set(
+    //   this.getObjectKey({ tokenA: NTBILL, tokenB: PETH }),
+    //   utils.solidityPack(
+    //     ['address', 'bool', 'address', 'bool'],
+    //     [
+    //       '0x483b035C21F77DeB6875f741C7cCb85f22F8E5C3',
+    //       true,
+    //       '0xc6a6cA7a7C0198a9FC9c616aA30b1BEa2956a0cc',
+    //       true,
+    //     ],
+    //   ),
+    // );
 
-    this.maverickSingleSwap.set(
-      this.getObjectKey({ tokenA: PETH, tokenB: PUSD }),
-      '0xc6a6cA7a7C0198a9FC9c616aA30b1BEa2956a0cc',
-    );
+    // this.maverickSingleSwap.set(
+    //   this.getObjectKey({ tokenA: PETH, tokenB: PUSD }),
+    //   '0xc6a6cA7a7C0198a9FC9c616aA30b1BEa2956a0cc',
+    // );
 
     this.maverickMultiSwap.set(
       this.getObjectKey({ tokenA: NELIXIR, tokenB: NYIELD }),
       utils.solidityPack(
-        ['address', 'bool', 'address', 'bool', 'address', 'bool'],
+        ['address', 'bool', 'address', 'bool'],
         [
-          '0xCef7E4547328130B58e07d171F56f5A705c86fc5',
-          false,
-          '0x4264FcaA686264B1A247Fa1Ae85078980b759E8A',
+          '0x8872127381209fd106E48666B2EcAD4A151C9EA9',
           true,
-          '0xbD2Dc0def95Ab16615dEC0744995027971FA8b8C',
+          '0x45D5e8eB57b2079A615Bd9fB6A6ec574b3749826',
           false,
         ],
       ),
@@ -429,14 +361,12 @@ export class LoopingService extends BaseService<Looping> {
     this.maverickMultiSwap.set(
       this.getObjectKey({ tokenA: NYIELD, tokenB: NELIXIR }),
       utils.solidityPack(
-        ['address', 'bool', 'address', 'bool', 'address', 'bool'],
+        ['address', 'bool', 'address', 'bool'],
         [
-          '0xbD2Dc0def95Ab16615dEC0744995027971FA8b8C',
+          '0x45D5e8eB57b2079A615Bd9fB6A6ec574b3749826',
           true,
-          '0x4264FcaA686264B1A247Fa1Ae85078980b759E8A',
+          '0x8872127381209fd106E48666B2EcAD4A151C9EA9',
           false,
-          '0xCef7E4547328130B58e07d171F56f5A705c86fc5',
-          true,
         ],
       ),
     );
@@ -444,13 +374,11 @@ export class LoopingService extends BaseService<Looping> {
     this.maverickMultiSwap.set(
       this.getObjectKey({ tokenA: NELIXIR, tokenB: NTBILL }),
       utils.solidityPack(
-        ['address', 'bool', 'address', 'bool', 'address', 'bool'],
+        ['address', 'bool', 'address', 'bool'],
         [
-          '0xCef7E4547328130B58e07d171F56f5A705c86fc5',
-          false,
-          '0x4264FcaA686264B1A247Fa1Ae85078980b759E8A',
+          '0x8872127381209fd106E48666B2EcAD4A151C9EA9',
           true,
-          '0x483b035C21F77DeB6875f741C7cCb85f22F8E5C3',
+          '0xB1Ac405847eaA909a67a7e5d67D61115303F6Fa0',
           true,
         ],
       ),
@@ -458,46 +386,24 @@ export class LoopingService extends BaseService<Looping> {
     this.maverickMultiSwap.set(
       this.getObjectKey({ tokenA: NTBILL, tokenB: NELIXIR }),
       utils.solidityPack(
-        ['address', 'bool', 'address', 'bool', 'address', 'bool'],
-        [
-          '0x483b035C21F77DeB6875f741C7cCb85f22F8E5C3',
-          false,
-          '0x4264FcaA686264B1A247Fa1Ae85078980b759E8A',
-          false,
-          '0xCef7E4547328130B58e07d171F56f5A705c86fc5',
-          true,
-        ],
-      ),
-    );
-
-    this.maverickMultiSwap.set(
-      this.getObjectKey({ tokenA: NELIXIR, tokenB: PUSD }),
-      utils.solidityPack(
         ['address', 'bool', 'address', 'bool'],
         [
-          '0xCef7E4547328130B58e07d171F56f5A705c86fc5',
-          true,
-          '0x4264FcaA686264B1A247Fa1Ae85078980b759E8A',
-          true,
-        ],
-      ),
-    );
-    this.maverickMultiSwap.set(
-      this.getObjectKey({ tokenA: PUSD, tokenB: NELIXIR }),
-      utils.solidityPack(
-        ['address', 'bool', 'address', 'bool'],
-        [
-          '0x4264FcaA686264B1A247Fa1Ae85078980b759E8A',
+          '0xB1Ac405847eaA909a67a7e5d67D61115303F6Fa0',
           false,
-          '0xCef7E4547328130B58e07d171F56f5A705c86fc5',
+          '0x8872127381209fd106E48666B2EcAD4A151C9EA9',
           false,
         ],
       ),
     );
 
     this.maverickSingleSwap.set(
+      this.getObjectKey({ tokenA: NELIXIR, tokenB: PUSD }),
+      '0x8872127381209fd106E48666B2EcAD4A151C9EA9',
+    );
+
+    this.maverickSingleSwap.set(
       this.getObjectKey({ tokenA: NYIELD, tokenB: PUSD }),
-      '0x3B4b1655e50c130686b5da39E4b255e8Dd7e2010',
+      '0x45D5e8eB57b2079A615Bd9fB6A6ec574b3749826',
     );
 
     this.maverickMultiSwap.set(
@@ -505,9 +411,9 @@ export class LoopingService extends BaseService<Looping> {
       utils.solidityPack(
         ['address', 'bool', 'address', 'bool'],
         [
-          '0x3B4b1655e50c130686b5da39E4b255e8Dd7e2010',
+          '0x45D5e8eB57b2079A615Bd9fB6A6ec574b3749826',
           true,
-          '0x483b035C21F77DeB6875f741C7cCb85f22F8E5C3',
+          '0xB1Ac405847eaA909a67a7e5d67D61115303F6Fa0',
           true,
         ],
       ),
@@ -517,9 +423,9 @@ export class LoopingService extends BaseService<Looping> {
       utils.solidityPack(
         ['address', 'bool', 'address', 'bool'],
         [
-          '0x483b035C21F77DeB6875f741C7cCb85f22F8E5C3',
+          '0xB1Ac405847eaA909a67a7e5d67D61115303F6Fa0',
           false,
-          '0x3B4b1655e50c130686b5da39E4b255e8Dd7e2010',
+          '0x45D5e8eB57b2079A615Bd9fB6A6ec574b3749826',
           false,
         ],
       ),
@@ -527,7 +433,7 @@ export class LoopingService extends BaseService<Looping> {
 
     this.maverickSingleSwap.set(
       this.getObjectKey({ tokenA: PUSD, tokenB: NTBILL }),
-      '0x483b035C21F77DeB6875f741C7cCb85f22F8E5C3',
+      '0xB1Ac405847eaA909a67a7e5d67D61115303F6Fa0',
     );
 
     this.loopSwapTxBuilder = {
@@ -543,11 +449,11 @@ export class LoopingService extends BaseService<Looping> {
         // Normalize token addresses for WETH
         const supplyWrapped =
           supplyReserve === API_ETH_MOCK_ADDRESS.toLowerCase()
-            ? WETH
+            ? WPLUME
             : supplyReserve;
         const borrowWrapped =
           borrowReserve === API_ETH_MOCK_ADDRESS.toLowerCase()
-            ? WETH
+            ? WPLUME
             : borrowReserve;
 
         // Determine swap type and pool
@@ -581,20 +487,23 @@ export class LoopingService extends BaseService<Looping> {
           });
         }
 
-        return this.createNestVaultTransaction({
-          user,
-          numLoops,
-          amount,
-          targetHealthFactor,
-          minAmountSupplied,
-          isSupplyingPUSD: swapType === 'pusd',
-        });
+        if (swapType === 'nrwa') {
+          return this.createNestVaultTransaction({
+            user,
+            numLoops,
+            amount,
+            targetHealthFactor,
+            minAmountSupplied,
+          });
+        }
+
+        throw new Error('no loop path found');
       },
       getApprovedAmount: async (
         props: TokenOwner & { unWrapped: boolean },
       ): Promise<ApproveType> => {
         const spender = props.unWrapped
-          ? this.wethGatewayAddress
+          ? this.wrappedTokenGatewayAddress
           : this.loopAddress;
         const amount = await this.erc20Service.approvedAmount({
           ...props,
@@ -710,7 +619,7 @@ export class LoopingService extends BaseService<Looping> {
           );
           actionTx = {
             data: txData,
-            to: this.wethGatewayAddress,
+            to: this.wrappedTokenGatewayAddress,
             from: user,
             value: BigNumber.from(amount),
             gasLimit: BigNumber.from(
@@ -730,7 +639,7 @@ export class LoopingService extends BaseService<Looping> {
           );
           actionTx = {
             data: txData,
-            to: this.wethGatewayAddress,
+            to: this.wrappedTokenGatewayAddress,
             from: user,
             value: BigNumber.from(amount),
             gasLimit: BigNumber.from(
@@ -751,7 +660,7 @@ export class LoopingService extends BaseService<Looping> {
           );
           actionTx = {
             data: txData,
-            to: this.wethGatewayAddress,
+            to: this.wrappedTokenGatewayAddress,
             from: user,
             gasLimit: BigNumber.from(
               gasLimitRecommendations[ProtocolAction.default].limit,
@@ -770,19 +679,19 @@ export class LoopingService extends BaseService<Looping> {
       }): Promise<ApproveType> => {
         let spender;
         if (!props.isSupplyUnWrapped && props.isBorrowUnWrapped) {
-          spender = this.wethGatewayAddress;
+          spender = this.wrappedTokenGatewayAddress;
         } else {
           spender = this.loopAddress;
         }
 
         const amount = await this.erc20Service.approvedAmount({
           ...props,
-          token: WETH,
+          token: WPLUME,
           spender,
         });
         return {
           ...props,
-          token: WETH,
+          token: WPLUME,
           spender,
           amount: amount.toString(),
         };
@@ -793,11 +702,11 @@ export class LoopingService extends BaseService<Looping> {
         const spender = this.loopAddress;
         const amount = await this.debtTokenService.approvedDelegationAmount({
           ...props,
-          debtTokenAddress: WETH_V_TOKEN,
+          debtTokenAddress: WPLUME_V_TOKEN,
           delegatee: spender,
         });
         return {
-          debtTokenAddress: WETH_V_TOKEN,
+          debtTokenAddress: WPLUME_V_TOKEN,
           allowanceGiver: props.user,
           allowanceReceiver: spender,
           amount: amount.toString(),
@@ -807,12 +716,6 @@ export class LoopingService extends BaseService<Looping> {
   }
 
   private determineSwapConfig(supply: string, borrow: string): SwapConfig {
-    if (supply === PUSD && borrow === NRWA) {
-      return {
-        swapType: 'pusd',
-      };
-    }
-
     if (supply === NRWA && borrow === PUSD) {
       return {
         swapType: 'nrwa',
@@ -857,52 +760,30 @@ export class LoopingService extends BaseService<Looping> {
 
   private createNestVaultTransaction(config: {
     user: string;
-    isSupplyingPUSD: boolean;
     numLoops: number;
     amount: string;
     targetHealthFactor: string;
     minAmountSupplied: string;
   }): PopulatedTransaction {
-    const {
-      user,
-      isSupplyingPUSD,
-      numLoops,
-      amount,
-      targetHealthFactor,
-      minAmountSupplied,
-    } = config;
+    const { user, numLoops, amount, targetHealthFactor, minAmountSupplied } =
+      config;
 
     const gasLimit = BigNumber.from(
       gasLimitRecommendations[ProtocolAction.default].limit,
     );
 
-    let txData: string;
-    let to: string;
     let value: BigNumber | undefined;
 
-    if (isSupplyingPUSD) {
-      txData = this.loopingInstance.encodeFunctionData('loopPUSD', [
-        {
-          targetHealthFactor,
-          onBehalfOf: user,
-          numLoops,
-          minAmountSupplied,
-          initialAmount: amount,
-        },
-      ]);
-      to = this.loopingContractAddress;
-    } else {
-      txData = this.loopingInstance.encodeFunctionData('loopNRWA', [
-        {
-          targetHealthFactor,
-          onBehalfOf: user,
-          numLoops,
-          minAmountSupplied,
-          initialAmount: amount,
-        },
-      ]);
-      to = this.loopingContractAddress;
-    }
+    const txData = this.loopingInstance.encodeFunctionData('loopNRWA', [
+      {
+        targetHealthFactor,
+        onBehalfOf: user,
+        numLoops,
+        minAmountSupplied,
+        initialAmount: amount,
+      },
+    ]);
+    const to = this.loopingContractAddress;
 
     // Build and return the transaction
     const actionTx: PopulatedTransaction = {
@@ -986,7 +867,7 @@ export class LoopingService extends BaseService<Looping> {
           },
         ],
       );
-      to = this.wethGatewayAddress;
+      to = this.wrappedTokenGatewayAddress;
       value = BigNumber.from(amount);
     } else {
       // Case 3: Token->ETH single-swap
@@ -1005,7 +886,7 @@ export class LoopingService extends BaseService<Looping> {
           },
         ],
       );
-      to = this.wethGatewayAddress;
+      to = this.wrappedTokenGatewayAddress;
     }
 
     // Build and return the transaction
@@ -1085,7 +966,7 @@ export class LoopingService extends BaseService<Looping> {
           },
         ],
       );
-      to = this.wethGatewayAddress;
+      to = this.wrappedTokenGatewayAddress;
       value = BigNumber.from(amount);
     } else {
       // Case 3: Token->ETH multi-swap
@@ -1103,7 +984,7 @@ export class LoopingService extends BaseService<Looping> {
           },
         ],
       );
-      to = this.wethGatewayAddress;
+      to = this.wrappedTokenGatewayAddress;
     }
 
     // Build and return the transaction
