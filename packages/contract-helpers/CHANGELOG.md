@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.14.1](https://github.com/aave/aave-utilities/compare/@kevoh1516/solera-contract-helpers@3.14.0...@kevoh1516/solera-contract-helpers@3.14.1) (2025-03-26)
+
+
+### Bug Fixes
+
+* plume chain id ([d656829](https://github.com/aave/aave-utilities/commit/d656829bcd812a132b80d1de25e4c542228087ba))
+
+
+
+
+
 # [3.14.0](https://github.com/aave/aave-utilities/compare/@kevoh1516/solera-contract-helpers@3.13.0...@kevoh1516/solera-contract-helpers@3.14.0) (2025-03-26)
 
 
