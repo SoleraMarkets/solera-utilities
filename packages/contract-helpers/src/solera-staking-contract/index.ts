@@ -95,7 +95,7 @@ export class SoleraStakingService extends BaseService<SoleraStaking> {
     return txs;
   }
 
-  public async requestRedeem(
+  public async requestRedeemPLUME(
     user: tEthereumAddress,
     amount: string,
     minAmount: string,
@@ -159,7 +159,7 @@ export class SoleraStakingService extends BaseService<SoleraStaking> {
     return txs;
   }
 
-  public async redeem(
+  public async redeemPLUME(
     user: tEthereumAddress,
     index: number,
   ): Promise<EthereumTransactionTypeExtended[]> {
