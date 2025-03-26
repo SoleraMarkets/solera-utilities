@@ -61,6 +61,14 @@ export class SoleraStakingService extends BaseService<SoleraStaking> {
     return stakingContract.getWithdrawRequests(user);
   }
 
+  public async getUnderlyingAsset(): Promise<tEthereumAddress> {
+    const stakingContract: SoleraStaking = this.getContractInstance(
+      this.stakingContractAddress,
+    );
+
+    return stakingContract.underlyingAsset();
+  }
+
   public async depositPLUME(
     user: tEthereumAddress,
     amount: string,
