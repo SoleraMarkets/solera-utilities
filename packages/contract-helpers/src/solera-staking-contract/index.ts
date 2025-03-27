@@ -133,10 +133,6 @@ export class SoleraStakingService extends BaseService<SoleraStaking> {
       this.stakingContractAddress,
     );
     const convertedAmount: string = valueToWei(amount, stakeTokenDecimals);
-    const convertedMinAmount: string = valueToWei(
-      minAmount,
-      stakeTokenDecimals,
-    );
 
     const plumeGatewayContract = PLUMEGateway__factory.connect(
       this.plumeGatewayAddress,
@@ -148,7 +144,7 @@ export class SoleraStakingService extends BaseService<SoleraStaking> {
         plumeGatewayContract.populateTransaction.requestRedeemPLUME(
           convertedAmount,
           user,
-          convertedMinAmount,
+          minAmount,
         ),
       from: user,
       action: ProtocolAction.soleraRequestUnstake,
