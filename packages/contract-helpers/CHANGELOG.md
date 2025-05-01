@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.15.3](https://github.com/aave/aave-utilities/compare/@kevoh1516/solera-contract-helpers@3.15.2...@kevoh1516/solera-contract-helpers@3.15.3) (2025-05-01)
+
+
+### Bug Fixes
+
+* case bugs ([0b0a7e4](https://github.com/aave/aave-utilities/commit/0b0a7e40910f82a122cd14a35ee6e0c171bf569b))
+
+
+
+
+
 ## [3.15.2](https://github.com/aave/aave-utilities/compare/@kevoh1516/solera-contract-helpers@3.15.1...@kevoh1516/solera-contract-helpers@3.15.2) (2025-05-01)
 
 
