@@ -76,7 +76,7 @@ export type LoopETHTxBuilder = {
 
 // export const WETH = '0x626613b473f7ef65747967017c11225436efaed7';
 export const WPLUME = '0xea237441c92cae6fc17caaf9a7acb3f953be4bd1';
-export const NRWA = '0x11a8d8694b656112d9a94285223772f4aad269fc';
+export const NRWA = '0x593cCcA4c4bf58b7526a4C164cEEf4003C6388db';
 // export const PETH = '0xD630fb6A07c9c723cf709d2DaA9B63325d0E0B73'.toLowerCase();
 export const NELIXIR = '0x9fbc367b9bb966a2a537989817a088afcaffdc4c';
 export const NYIELD = '0x892dff5257b39f7afb7803dd7c81e8ecdb6af3e8';
@@ -139,7 +139,7 @@ export class LoopingService extends BaseService<Looping> {
 
     this.maverickSingleSwap.set(
       this.getObjectKey({ tokenA: NRWA, tokenB: WPLUME }),
-      '0x95CD298a03bd1e060992297025A7FDA5912DFc13',
+      '0x4A7DB1628e23881890079C43deFA9dC96d7008B0',
     );
     // this.maverickSingleSwap.set(
     //   this.getObjectKey({ tokenA: WPLUME, tokenB: PETH }),
@@ -191,9 +191,9 @@ export class LoopingService extends BaseService<Looping> {
       utils.solidityPack(
         ['address', 'bool', 'address', 'bool'],
         [
-          '0xb4C54Dde7CA3f475Fd687E28111EcdBB7d9fA92f',
+          '0x2fB3f735f685a9d8c0Ffc35912E4aCb1796752AD',
           true,
-          '0x8872127381209fd106E48666B2EcAD4A151C9EA9',
+          '0x8696Fd163c619d4323B257F8CAc51Fe92eF769D2',
           false,
         ],
       ),
@@ -203,34 +203,9 @@ export class LoopingService extends BaseService<Looping> {
       utils.solidityPack(
         ['address', 'bool', 'address', 'bool'],
         [
-          '0x8872127381209fd106E48666B2EcAD4A151C9EA9',
+          '0x8696Fd163c619d4323B257F8CAc51Fe92eF769D2',
           true,
-          '0xb4C54Dde7CA3f475Fd687E28111EcdBB7d9fA92f',
-          false,
-        ],
-      ),
-    );
-
-    this.maverickMultiSwap.set(
-      this.getObjectKey({ tokenA: NRWA, tokenB: NYIELD }),
-      utils.solidityPack(
-        ['address', 'bool', 'address', 'bool'],
-        [
-          '0xb4C54Dde7CA3f475Fd687E28111EcdBB7d9fA92f',
-          true,
-          '0x45D5e8eB57b2079A615Bd9fB6A6ec574b3749826',
-          false,
-        ],
-      ),
-    );
-    this.maverickMultiSwap.set(
-      this.getObjectKey({ tokenA: NYIELD, tokenB: NRWA }),
-      utils.solidityPack(
-        ['address', 'bool', 'address', 'bool'],
-        [
-          '0x45D5e8eB57b2079A615Bd9fB6A6ec574b3749826',
-          true,
-          '0xb4C54Dde7CA3f475Fd687E28111EcdBB7d9fA92f',
+          '0x2fB3f735f685a9d8c0Ffc35912E4aCb1796752AD',
           false,
         ],
       ),
@@ -241,9 +216,9 @@ export class LoopingService extends BaseService<Looping> {
       utils.solidityPack(
         ['address', 'bool', 'address', 'bool'],
         [
-          '0xb4C54Dde7CA3f475Fd687E28111EcdBB7d9fA92f',
+          '0x2fB3f735f685a9d8c0Ffc35912E4aCb1796752AD',
           true,
-          '0xB1Ac405847eaA909a67a7e5d67D61115303F6Fa0',
+          '0x4b127c92456C76dB6089274312988eCB00104641',
           true,
         ],
       ),
@@ -253,9 +228,9 @@ export class LoopingService extends BaseService<Looping> {
       utils.solidityPack(
         ['address', 'bool', 'address', 'bool'],
         [
-          '0xB1Ac405847eaA909a67a7e5d67D61115303F6Fa0',
+          '0x4b127c92456C76dB6089274312988eCB00104641',
           false,
-          '0xb4C54Dde7CA3f475Fd687E28111EcdBB7d9fA92f',
+          '0x2fB3f735f685a9d8c0Ffc35912E4aCb1796752AD',
           false,
         ],
       ),
@@ -263,7 +238,7 @@ export class LoopingService extends BaseService<Looping> {
 
     this.maverickSingleSwap.set(
       this.getObjectKey({ tokenA: NRWA, tokenB: PUSD }),
-      '0xb4C54Dde7CA3f475Fd687E28111EcdBB7d9fA92f',
+      '0x2fB3f735f685a9d8c0Ffc35912E4aCb1796752AD',
     );
 
     // this.maverickMultiSwap.set(

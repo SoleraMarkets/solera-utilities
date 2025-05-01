@@ -117,9 +117,9 @@ describe('LoopingService', () => {
       const path = utils.solidityPack(
         ['address', 'bool', 'address', 'bool'],
         [
-          '0x8872127381209fd106E48666B2EcAD4A151C9EA9',
+          '0x8696Fd163c619d4323B257F8CAc51Fe92eF769D2',
           true,
-          '0xb4C54Dde7CA3f475Fd687E28111EcdBB7d9fA92f',
+          '0x2fB3f735f685a9d8c0Ffc35912E4aCb1796752AD',
           false,
         ],
       );
