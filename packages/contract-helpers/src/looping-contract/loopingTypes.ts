@@ -27,11 +27,6 @@ export type LoopETHParamsType = {
   unwrap: boolean;
 };
 
-export type PoolTokens = {
-  tokenA: tEthereumAddress;
-  tokenB: tEthereumAddress;
-};
-
 export type SwapConfig = {
   swapType: 'single' | 'multi' | 'pusd' | 'nrwa' | null;
   singleSwapConfig?: SingleSwapConfig;

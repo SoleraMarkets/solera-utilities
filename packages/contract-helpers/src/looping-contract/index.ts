@@ -1,4 +1,4 @@
-import { BigNumber, PopulatedTransaction, providers, utils } from 'ethers';
+import { BigNumber, PopulatedTransaction, providers } from 'ethers';
 import {
   BaseDebtToken,
   BaseDebtTokenInterface,
@@ -28,9 +28,10 @@ import {
   LoopETHParamsType,
   LoopSingleAssetParamsType,
   LoopSwapParamsType,
-  PoolTokens,
   SwapConfig,
 } from './loopingTypes';
+import { findMultiHopPool, findSingleHopPool } from './pools';
+import { NRWA, PUSD, WPLUME } from './tokens';
 import { Looping, LoopingInterface } from './typechain/Looping';
 import { Looping__factory } from './typechain/factories';
 
@@ -74,15 +75,6 @@ export type LoopETHTxBuilder = {
   }) => Promise<DelegationApprovedType>;
 };
 
-// export const WETH = '0x626613b473f7ef65747967017c11225436efaed7';
-export const WPLUME = '0xea237441c92cae6fc17caaf9a7acb3f953be4bd1';
-export const NRWA = '0x593cCcA4c4bf58b7526a4C164cEEf4003C6388db';
-// export const PETH = '0xD630fb6A07c9c723cf709d2DaA9B63325d0E0B73'.toLowerCase();
-export const NELIXIR = '0x9fbc367b9bb966a2a537989817a088afcaffdc4c';
-export const NYIELD = '0x892dff5257b39f7afb7803dd7c81e8ecdb6af3e8';
-export const PUSD = '0xdddd73f5df1f0dc31373357beac77545dc5a6f3f';
-export const NTBILL = '0xe72fe64840f4ef80e3ec73a1c749491b5c938cb9';
-
 const WPLUME_V_TOKEN = '0x578899D60B4ea83537d7d5DD399C2f17Bd15F489'; // change later
 
 export class LoopingService extends BaseService<Looping> {
@@ -102,9 +94,6 @@ export class LoopingService extends BaseService<Looping> {
   readonly wrappedTokenGatewayAddress: tEthereumAddress;
   readonly poolAddress: tEthereumAddress;
   readonly loopAddress: tEthereumAddress;
-
-  readonly maverickSingleSwap: Map<string, tEthereumAddress>;
-  readonly maverickMultiSwap: Map<string, string>;
 
   loopSwapTxBuilder: LoopSwapTxBuilder;
   loopSingleAssetTxBuilder: LoopSingleAssetTxBuilder;
@@ -134,283 +123,6 @@ export class LoopingService extends BaseService<Looping> {
     this.wrappedTokenGatewayAddress = WRAPPED_TOKEN_GATEWAY ?? '';
     this.loopAddress = contractAddress ?? '';
 
-    this.maverickSingleSwap = new Map();
-    this.maverickMultiSwap = new Map();
-
-    this.maverickSingleSwap.set(
-      this.getObjectKey({ tokenA: NRWA, tokenB: WPLUME }),
-      '0x4A7DB1628e23881890079C43deFA9dC96d7008B0',
-    );
-    // this.maverickSingleSwap.set(
-    //   this.getObjectKey({ tokenA: WPLUME, tokenB: PETH }),
-    //   '0x2e1ACd5Ef12d161686d417837003415b569c3c16',
-    // );
-    this.maverickSingleSwap.set(
-      this.getObjectKey({ tokenA: NELIXIR, tokenB: WPLUME }),
-      '0x10B02Da17F82F263252C6Ac9E2f785Cb9fE4d544',
-    );
-    this.maverickSingleSwap.set(
-      this.getObjectKey({ tokenA: NYIELD, tokenB: WPLUME }),
-      '0x20462dA42BA8D773138D417C42F116Ba77DDe908',
-    );
-    this.maverickSingleSwap.set(
-      this.getObjectKey({ tokenA: NTBILL, tokenB: WPLUME }),
-      '0x098Dbf700286109e3BcD1465F00A6554488Ec148',
-    );
-    this.maverickSingleSwap.set(
-      this.getObjectKey({ tokenA: PUSD, tokenB: WPLUME }),
-      '0x4A14398C5c5B4B7913954cB82521fB7afA676314',
-    );
-    // this.maverickMultiSwap.set(
-    //   this.getObjectKey({ tokenA: NRWA, tokenB: PETH }),
-    //   utils.solidityPack(
-    //     ['address', 'bool', 'address', 'bool'],
-    //     [
-    //       '0x6EbE09DDb0edE205fAcE89AB0Bf29211cf885a92',
-    //       false,
-    //       '0x2e1ACd5Ef12d161686d417837003415b569c3c16',
-    //       true,
-    //     ],
-    //   ),
-    // );
-    // this.maverickMultiSwap.set(
-    //   this.getObjectKey({ tokenA: PETH, tokenB: NRWA }),
-    //   utils.solidityPack(
-    //     ['address', 'bool', 'address', 'bool'],
-    //     [
-    //       '0x2e1ACd5Ef12d161686d417837003415b569c3c16',
-    //       false,
-    //       '0x6EbE09DDb0edE205fAcE89AB0Bf29211cf885a92',
-    //       true,
-    //     ],
-    //   ),
-    // );
-
-    this.maverickMultiSwap.set(
-      this.getObjectKey({ tokenA: NRWA, tokenB: NELIXIR }),
-      utils.solidityPack(
-        ['address', 'bool', 'address', 'bool'],
-        [
-          '0x2fB3f735f685a9d8c0Ffc35912E4aCb1796752AD',
-          true,
-          '0x8696Fd163c619d4323B257F8CAc51Fe92eF769D2',
-          false,
-        ],
-      ),
-    );
-    this.maverickMultiSwap.set(
-      this.getObjectKey({ tokenA: NELIXIR, tokenB: NRWA }),
-      utils.solidityPack(
-        ['address', 'bool', 'address', 'bool'],
-        [
-          '0x8696Fd163c619d4323B257F8CAc51Fe92eF769D2',
-          true,
-          '0x2fB3f735f685a9d8c0Ffc35912E4aCb1796752AD',
-          false,
-        ],
-      ),
-    );
-
-    this.maverickMultiSwap.set(
-      this.getObjectKey({ tokenA: NRWA, tokenB: NTBILL }),
-      utils.solidityPack(
-        ['address', 'bool', 'address', 'bool'],
-        [
-          '0x2fB3f735f685a9d8c0Ffc35912E4aCb1796752AD',
-          true,
-          '0x4b127c92456C76dB6089274312988eCB00104641',
-          true,
-        ],
-      ),
-    );
-    this.maverickMultiSwap.set(
-      this.getObjectKey({ tokenA: NTBILL, tokenB: NRWA }),
-      utils.solidityPack(
-        ['address', 'bool', 'address', 'bool'],
-        [
-          '0x4b127c92456C76dB6089274312988eCB00104641',
-          false,
-          '0x2fB3f735f685a9d8c0Ffc35912E4aCb1796752AD',
-          false,
-        ],
-      ),
-    );
-
-    this.maverickSingleSwap.set(
-      this.getObjectKey({ tokenA: NRWA, tokenB: PUSD }),
-      '0x2fB3f735f685a9d8c0Ffc35912E4aCb1796752AD',
-    );
-
-    // this.maverickMultiSwap.set(
-    //   this.getObjectKey({ tokenA: PETH, tokenB: NELIXIR }),
-    //   utils.solidityPack(
-    //     ['address', 'bool', 'address', 'bool'],
-    //     [
-    //       '0xc48694997a6b7559a2A4C6B0bBA8ffd121Fa60a8',
-    //       false,
-    //       '0xCef7E4547328130B58e07d171F56f5A705c86fc5',
-    //       true,
-    //     ],
-    //   ),
-    // );
-    // this.maverickMultiSwap.set(
-    //   this.getObjectKey({ tokenA: NELIXIR, tokenB: PETH }),
-    //   utils.solidityPack(
-    //     ['address', 'bool', 'address', 'bool'],
-    //     [
-    //       '0xCef7E4547328130B58e07d171F56f5A705c86fc5',
-    //       false,
-    //       '0xc48694997a6b7559a2A4C6B0bBA8ffd121Fa60a8',
-    //       true,
-    //     ],
-    //   ),
-    // );
-
-    // this.maverickMultiSwap.set(
-    //   this.getObjectKey({ tokenA: PETH, tokenB: NYIELD }),
-    //   utils.solidityPack(
-    //     ['address', 'bool', 'address', 'bool'],
-    //     [
-    //       '0xc6a6cA7a7C0198a9FC9c616aA30b1BEa2956a0cc',
-    //       true,
-    //       '0x3B4b1655e50c130686b5da39E4b255e8Dd7e2010',
-    //       false,
-    //     ],
-    //   ),
-    // );
-    // this.maverickMultiSwap.set(
-    //   this.getObjectKey({ tokenA: NYIELD, tokenB: PETH }),
-    //   utils.solidityPack(
-    //     ['address', 'bool', 'address', 'bool'],
-    //     [
-    //       '0x3B4b1655e50c130686b5da39E4b255e8Dd7e2010',
-    //       true,
-    //       '0xc6a6cA7a7C0198a9FC9c616aA30b1BEa2956a0cc',
-    //       false,
-    //     ],
-    //   ),
-    // );
-
-    // this.maverickMultiSwap.set(
-    //   this.getObjectKey({ tokenA: PETH, tokenB: NTBILL }),
-    //   utils.solidityPack(
-    //     ['address', 'bool', 'address', 'bool'],
-    //     [
-    //       '0xc6a6cA7a7C0198a9FC9c616aA30b1BEa2956a0cc',
-    //       true,
-    //       '0x483b035C21F77DeB6875f741C7cCb85f22F8E5C3',
-    //       true,
-    //     ],
-    //   ),
-    // );
-    // this.maverickMultiSwap.set(
-    //   this.getObjectKey({ tokenA: NTBILL, tokenB: PETH }),
-    //   utils.solidityPack(
-    //     ['address', 'bool', 'address', 'bool'],
-    //     [
-    //       '0x483b035C21F77DeB6875f741C7cCb85f22F8E5C3',
-    //       true,
-    //       '0xc6a6cA7a7C0198a9FC9c616aA30b1BEa2956a0cc',
-    //       true,
-    //     ],
-    //   ),
-    // );
-
-    // this.maverickSingleSwap.set(
-    //   this.getObjectKey({ tokenA: PETH, tokenB: PUSD }),
-    //   '0xc6a6cA7a7C0198a9FC9c616aA30b1BEa2956a0cc',
-    // );
-
-    this.maverickMultiSwap.set(
-      this.getObjectKey({ tokenA: NELIXIR, tokenB: NYIELD }),
-      utils.solidityPack(
-        ['address', 'bool', 'address', 'bool'],
-        [
-          '0x8872127381209fd106E48666B2EcAD4A151C9EA9',
-          true,
-          '0x45D5e8eB57b2079A615Bd9fB6A6ec574b3749826',
-          false,
-        ],
-      ),
-    );
-    this.maverickMultiSwap.set(
-      this.getObjectKey({ tokenA: NYIELD, tokenB: NELIXIR }),
-      utils.solidityPack(
-        ['address', 'bool', 'address', 'bool'],
-        [
-          '0x45D5e8eB57b2079A615Bd9fB6A6ec574b3749826',
-          true,
-          '0x8872127381209fd106E48666B2EcAD4A151C9EA9',
-          false,
-        ],
-      ),
-    );
-
-    this.maverickMultiSwap.set(
-      this.getObjectKey({ tokenA: NELIXIR, tokenB: NTBILL }),
-      utils.solidityPack(
-        ['address', 'bool', 'address', 'bool'],
-        [
-          '0x8872127381209fd106E48666B2EcAD4A151C9EA9',
-          true,
-          '0xB1Ac405847eaA909a67a7e5d67D61115303F6Fa0',
-          true,
-        ],
-      ),
-    );
-    this.maverickMultiSwap.set(
-      this.getObjectKey({ tokenA: NTBILL, tokenB: NELIXIR }),
-      utils.solidityPack(
-        ['address', 'bool', 'address', 'bool'],
-        [
-          '0xB1Ac405847eaA909a67a7e5d67D61115303F6Fa0',
-          false,
-          '0x8872127381209fd106E48666B2EcAD4A151C9EA9',
-          false,
-        ],
-      ),
-    );
-
-    this.maverickSingleSwap.set(
-      this.getObjectKey({ tokenA: NELIXIR, tokenB: PUSD }),
-      '0x8872127381209fd106E48666B2EcAD4A151C9EA9',
-    );
-
-    this.maverickSingleSwap.set(
-      this.getObjectKey({ tokenA: NYIELD, tokenB: PUSD }),
-      '0x45D5e8eB57b2079A615Bd9fB6A6ec574b3749826',
-    );
-
-    this.maverickMultiSwap.set(
-      this.getObjectKey({ tokenA: NYIELD, tokenB: NTBILL }),
-      utils.solidityPack(
-        ['address', 'bool', 'address', 'bool'],
-        [
-          '0x45D5e8eB57b2079A615Bd9fB6A6ec574b3749826',
-          true,
-          '0xB1Ac405847eaA909a67a7e5d67D61115303F6Fa0',
-          true,
-        ],
-      ),
-    );
-    this.maverickMultiSwap.set(
-      this.getObjectKey({ tokenA: NTBILL, tokenB: NYIELD }),
-      utils.solidityPack(
-        ['address', 'bool', 'address', 'bool'],
-        [
-          '0xB1Ac405847eaA909a67a7e5d67D61115303F6Fa0',
-          false,
-          '0x45D5e8eB57b2079A615Bd9fB6A6ec574b3749826',
-          false,
-        ],
-      ),
-    );
-
-    this.maverickSingleSwap.set(
-      this.getObjectKey({ tokenA: PUSD, tokenB: NTBILL }),
-      '0xB1Ac405847eaA909a67a7e5d67D61115303F6Fa0',
-    );
-
     this.loopSwapTxBuilder = {
       generateTxData: ({
         user,
@@ -423,11 +135,11 @@ export class LoopingService extends BaseService<Looping> {
       }: LoopSwapParamsType): PopulatedTransaction => {
         // Normalize token addresses for WETH
         const supplyWrapped =
-          supplyReserve === API_ETH_MOCK_ADDRESS.toLowerCase()
+          supplyReserve.toLowerCase() === API_ETH_MOCK_ADDRESS.toLowerCase()
             ? WPLUME
             : supplyReserve;
         const borrowWrapped =
-          borrowReserve === API_ETH_MOCK_ADDRESS.toLowerCase()
+          borrowReserve.toLowerCase() === API_ETH_MOCK_ADDRESS.toLowerCase()
             ? WPLUME
             : borrowReserve;
 
@@ -569,6 +281,7 @@ export class LoopingService extends BaseService<Looping> {
       },
     };
 
+    // Handles cases where native PLUME is involved
     this.loopETHTxBuilder = {
       generateTxData: ({
         user,
@@ -578,7 +291,8 @@ export class LoopingService extends BaseService<Looping> {
         targetHealthFactor,
         unwrap,
       }: LoopETHParamsType): PopulatedTransaction => {
-        const isSupplyingEth = reserve === API_ETH_MOCK_ADDRESS.toLowerCase();
+        const isSupplyingEth =
+          reserve.toLowerCase() === API_ETH_MOCK_ADDRESS.toLowerCase();
 
         let actionTx: PopulatedTransaction;
         if (isSupplyingEth && unwrap) {
@@ -691,30 +405,27 @@ export class LoopingService extends BaseService<Looping> {
   }
 
   private determineSwapConfig(supply: string, borrow: string): SwapConfig {
-    if (supply === NRWA && borrow === PUSD) {
+    if (
+      supply.toLowerCase() === NRWA.toLowerCase() &&
+      borrow.toLowerCase() === PUSD.toLowerCase()
+    ) {
       return {
         swapType: 'nrwa',
       };
     }
 
     // Check for single swap
-    const singlePool = this.maverickSingleSwap.get(
-      this.getObjectKey({ tokenA: supply, tokenB: borrow }),
-    );
-    const reverseSinglePool = this.maverickSingleSwap.get(
-      this.getObjectKey({ tokenA: borrow, tokenB: supply }),
-    );
+    const singlePool = findSingleHopPool(supply, borrow);
+    const isReversed = singlePool?.tokenA.toLowerCase() === borrow;
 
-    const multiPool = this.maverickMultiSwap.get(
-      this.getObjectKey({ tokenA: borrow, tokenB: supply }),
-    );
+    const multiPool = findMultiHopPool(borrow, supply);
 
-    if (singlePool || reverseSinglePool) {
+    if (singlePool) {
       return {
         swapType: 'single',
         singleSwapConfig: {
-          pool: singlePool ?? reverseSinglePool ?? '',
-          isSupplyTokenA: Boolean(singlePool),
+          pool: singlePool.poolAddress,
+          isSupplyTokenA: Boolean(!isReversed),
         },
       };
     }
@@ -723,7 +434,7 @@ export class LoopingService extends BaseService<Looping> {
       return {
         swapType: 'multi',
         multiSwapConfig: {
-          path: multiPool ?? '',
+          path: multiPool.path ?? '',
         },
       };
     }
@@ -798,8 +509,10 @@ export class LoopingService extends BaseService<Looping> {
       minAmountSupplied,
     } = config;
 
-    const isSupplyingEth = supplyReserve === API_ETH_MOCK_ADDRESS.toLowerCase();
-    const isBorrowingEth = borrowReserve === API_ETH_MOCK_ADDRESS.toLowerCase();
+    const isSupplyingEth =
+      supplyReserve.toLowerCase() === API_ETH_MOCK_ADDRESS.toLowerCase();
+    const isBorrowingEth =
+      borrowReserve.toLowerCase() === API_ETH_MOCK_ADDRESS.toLowerCase();
 
     const gasLimit = BigNumber.from(
       gasLimitRecommendations[ProtocolAction.default].limit,
@@ -975,9 +688,5 @@ export class LoopingService extends BaseService<Looping> {
     }
 
     return actionTx;
-  }
-
-  private getObjectKey(obj: PoolTokens) {
-    return JSON.stringify(obj);
   }
 }
