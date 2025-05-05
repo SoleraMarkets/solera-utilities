@@ -31,7 +31,7 @@ import {
   SwapConfig,
 } from './loopingTypes';
 import { findMultiHopPool, findSingleHopPool } from './pools';
-import { NRWA, PUSD, WPLUME } from './tokens';
+import { NELIXIR, NRWA, NTBILL, PUSD, WPLUME } from './tokens';
 import { Looping, LoopingInterface } from './typechain/Looping';
 import { Looping__factory } from './typechain/factories';
 
@@ -75,7 +75,7 @@ export type LoopETHTxBuilder = {
   }) => Promise<DelegationApprovedType>;
 };
 
-const WPLUME_V_TOKEN = '0x578899D60B4ea83537d7d5DD399C2f17Bd15F489'; // change later
+const WPLUME_V_TOKEN = '0x578899D60B4ea83537d7d5DD399C2f17Bd15F489';
 
 export class LoopingService extends BaseService<Looping> {
   readonly loopingContractAddress: string;
@@ -175,7 +175,27 @@ export class LoopingService extends BaseService<Looping> {
         }
 
         if (swapType === 'nrwa') {
-          return this.createNestVaultTransaction({
+          return this.createNRWATransaction({
+            user,
+            numLoops,
+            amount,
+            targetHealthFactor,
+            minAmountSupplied,
+          });
+        }
+
+        if (swapType === 'nelixir') {
+          return this.createNELIXIRTransaction({
+            user,
+            numLoops,
+            amount,
+            targetHealthFactor,
+            minAmountSupplied,
+          });
+        }
+
+        if (swapType === 'ntbill') {
+          return this.createNTBILLTransaction({
             user,
             numLoops,
             amount,
@@ -414,6 +434,24 @@ export class LoopingService extends BaseService<Looping> {
       };
     }
 
+    if (
+      supply.toLowerCase() === NELIXIR.toLowerCase() &&
+      borrow.toLowerCase() === PUSD.toLowerCase()
+    ) {
+      return {
+        swapType: 'nelixir',
+      };
+    }
+
+    if (
+      supply.toLowerCase() === NTBILL.toLowerCase() &&
+      borrow.toLowerCase() === PUSD.toLowerCase()
+    ) {
+      return {
+        swapType: 'ntbill',
+      };
+    }
+
     // Check for single swap
     const singlePool = findSingleHopPool(supply, borrow);
     const isReversed = singlePool?.tokenA.toLowerCase() === borrow;
@@ -444,7 +482,7 @@ export class LoopingService extends BaseService<Looping> {
     };
   }
 
-  private createNestVaultTransaction(config: {
+  private createNRWATransaction(config: {
     user: string;
     numLoops: number;
     amount: string;
@@ -461,6 +499,90 @@ export class LoopingService extends BaseService<Looping> {
     let value: BigNumber | undefined;
 
     const txData = this.loopingInstance.encodeFunctionData('loopNRWA', [
+      {
+        targetHealthFactor,
+        onBehalfOf: user,
+        numLoops,
+        minAmountSupplied,
+        initialAmount: amount,
+      },
+    ]);
+    const to = this.loopingContractAddress;
+
+    // Build and return the transaction
+    const actionTx: PopulatedTransaction = {
+      data: txData,
+      to,
+      from: user,
+      gasLimit,
+    };
+
+    if (value) {
+      actionTx.value = value;
+    }
+
+    return actionTx;
+  }
+
+  private createNELIXIRTransaction(config: {
+    user: string;
+    numLoops: number;
+    amount: string;
+    targetHealthFactor: string;
+    minAmountSupplied: string;
+  }): PopulatedTransaction {
+    const { user, numLoops, amount, targetHealthFactor, minAmountSupplied } =
+      config;
+
+    const gasLimit = BigNumber.from(
+      gasLimitRecommendations[ProtocolAction.default].limit,
+    );
+
+    let value: BigNumber | undefined;
+
+    const txData = this.loopingInstance.encodeFunctionData('loopNELIXIR', [
+      {
+        targetHealthFactor,
+        onBehalfOf: user,
+        numLoops,
+        minAmountSupplied,
+        initialAmount: amount,
+      },
+    ]);
+    const to = this.loopingContractAddress;
+
+    // Build and return the transaction
+    const actionTx: PopulatedTransaction = {
+      data: txData,
+      to,
+      from: user,
+      gasLimit,
+    };
+
+    if (value) {
+      actionTx.value = value;
+    }
+
+    return actionTx;
+  }
+
+  private createNTBILLTransaction(config: {
+    user: string;
+    numLoops: number;
+    amount: string;
+    targetHealthFactor: string;
+    minAmountSupplied: string;
+  }): PopulatedTransaction {
+    const { user, numLoops, amount, targetHealthFactor, minAmountSupplied } =
+      config;
+
+    const gasLimit = BigNumber.from(
+      gasLimitRecommendations[ProtocolAction.default].limit,
+    );
+
+    let value: BigNumber | undefined;
+
+    const txData = this.loopingInstance.encodeFunctionData('loopNTBILL', [
       {
         targetHealthFactor,
         onBehalfOf: user,

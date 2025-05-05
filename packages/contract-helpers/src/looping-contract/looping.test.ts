@@ -89,6 +89,78 @@ describe('LoopingService', () => {
     expect(tx.data).toEqual(expectedTxData);
   });
 
+  it('Expects to generate tx data for NELIXIR -> PUSD looping', () => {
+    const instance = new LoopingService(provider, LOOPING_CONTRACT_ADDRESS, {
+      POOL: POOL_ADDRESS,
+      WRAPPED_TOKEN_GATEWAY: WRAPPED_GATEWAY_ADDRESS,
+    });
+    expect(instance instanceof LoopingService).toEqual(true);
+
+    const targetHealthFactor = '12000';
+    const numLoops = 2;
+    const minAmountSupplied = '0';
+    const amount = '100000';
+
+    const tx = instance.loopSwapTxBuilder.generateTxData({
+      user,
+      supplyReserve: NELIXIR,
+      borrowReserve: PUSD,
+      numLoops,
+      amount,
+      targetHealthFactor,
+      minAmountSupplied,
+    });
+
+    const expectedTxData =
+      Looping__factory.createInterface().encodeFunctionData('loopNELIXIR', [
+        {
+          targetHealthFactor,
+          onBehalfOf: user,
+          numLoops,
+          initialAmount: amount,
+          minAmountSupplied,
+        },
+      ]);
+
+    expect(tx.data).toEqual(expectedTxData);
+  });
+
+  it('Expects to generate tx data for NTBILL -> PUSD looping', () => {
+    const instance = new LoopingService(provider, LOOPING_CONTRACT_ADDRESS, {
+      POOL: POOL_ADDRESS,
+      WRAPPED_TOKEN_GATEWAY: WRAPPED_GATEWAY_ADDRESS,
+    });
+    expect(instance instanceof LoopingService).toEqual(true);
+
+    const targetHealthFactor = '12000';
+    const numLoops = 2;
+    const minAmountSupplied = '0';
+    const amount = '100000';
+
+    const tx = instance.loopSwapTxBuilder.generateTxData({
+      user,
+      supplyReserve: NTBILL,
+      borrowReserve: PUSD,
+      numLoops,
+      amount,
+      targetHealthFactor,
+      minAmountSupplied,
+    });
+
+    const expectedTxData =
+      Looping__factory.createInterface().encodeFunctionData('loopNTBILL', [
+        {
+          targetHealthFactor,
+          onBehalfOf: user,
+          numLoops,
+          initialAmount: amount,
+          minAmountSupplied,
+        },
+      ]);
+
+    expect(tx.data).toEqual(expectedTxData);
+  });
+
   it('Expects to generate tx data for NRWA->ETH looping', () => {
     const instance = new LoopingService(provider, LOOPING_CONTRACT_ADDRESS, {
       POOL: POOL_ADDRESS,
@@ -454,46 +526,6 @@ describe('LoopingService', () => {
 
     expect(tx.data).toEqual(expectedTxData);
     expect(tx.value).toEqual(BigNumber.from(amount));
-  });
-
-  it('Expects to generate tx data for NTBILL -> PUSD', () => {
-    const instance = new LoopingService(provider, LOOPING_CONTRACT_ADDRESS, {
-      POOL: POOL_ADDRESS,
-      WRAPPED_TOKEN_GATEWAY: WRAPPED_GATEWAY_ADDRESS,
-    });
-    expect(instance instanceof LoopingService).toEqual(true);
-
-    const targetHealthFactor = '12000';
-    const numLoops = 2;
-    const minAmountSupplied = '0';
-    const amount = '100000';
-
-    const tx = instance.loopSwapTxBuilder.generateTxData({
-      user,
-      supplyReserve: NTBILL,
-      borrowReserve: PUSD,
-      numLoops,
-      amount,
-      targetHealthFactor,
-      minAmountSupplied,
-    });
-
-    const expectedTxData =
-      Looping__factory.createInterface().encodeFunctionData('loopSingleSwap', [
-        {
-          supplyToken: NTBILL,
-          targetHealthFactor,
-          onBehalfOf: user,
-          borrowToken: PUSD,
-          numLoops,
-          minAmountSupplied,
-          initialAmount: amount,
-          maverickPool: '0xB1Ac405847eaA909a67a7e5d67D61115303F6Fa0',
-          isSupplyTokenA: false,
-        },
-      ]);
-
-    expect(tx.data).toEqual(expectedTxData);
   });
 
   it('Expects to generate tx data for NTBILL -> NELIXIR', () => {
