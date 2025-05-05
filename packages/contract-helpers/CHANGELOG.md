@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.16.0](https://github.com/aave/aave-utilities/compare/@kevoh1516/solera-contract-helpers@3.15.3...@kevoh1516/solera-contract-helpers@3.16.0) (2025-05-05)
+
+
+### Features
+
+* nelixir ntbill looping ([25449f0](https://github.com/aave/aave-utilities/commit/25449f0a702f2cefec2fdc29e1722bec1d4ad8c9))
+
+
+
+
+
 ## [3.15.3](https://github.com/aave/aave-utilities/compare/@kevoh1516/solera-contract-helpers@3.15.2...@kevoh1516/solera-contract-helpers@3.15.3) (2025-05-01)
 
 
