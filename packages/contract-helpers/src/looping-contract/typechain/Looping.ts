@@ -22,6 +22,52 @@ import type {
 } from './common';
 
 export declare namespace LoopDataTypes {
+  export type LoopConstructorParamsStruct = {
+    aavePool: string;
+    priceOracle: string;
+    swapRouter: string;
+    oracleDecimals: BigNumberish;
+    pUSD: string;
+    nRWA: string;
+    nELIXIR: string;
+    nTBILL: string;
+    nRWATeller: string;
+    nELIXIRTeller: string;
+    nTBILLTeller: string;
+    sPLUME: string;
+    WPLUME: string;
+  };
+
+  export type LoopConstructorParamsStructOutput = [
+    string,
+    string,
+    string,
+    BigNumber,
+    string,
+    string,
+    string,
+    string,
+    string,
+    string,
+    string,
+    string,
+    string,
+  ] & {
+    aavePool: string;
+    priceOracle: string;
+    swapRouter: string;
+    oracleDecimals: BigNumber;
+    pUSD: string;
+    nRWA: string;
+    nELIXIR: string;
+    nTBILL: string;
+    nRWATeller: string;
+    nELIXIRTeller: string;
+    nTBILLTeller: string;
+    sPLUME: string;
+    WPLUME: string;
+  };
+
   export type LoopMultiSwapParamsStruct = {
     supplyToken: string;
     targetHealthFactor: BigNumberish;
@@ -131,6 +177,25 @@ export declare namespace LoopDataTypes {
     initialAmount: BigNumber;
   };
 
+  export type LoopSPLUMEParamsStruct = {
+    targetHealthFactor: BigNumberish;
+    onBehalfOf: string;
+    numLoops: BigNumberish;
+    initialAmount: BigNumberish;
+  };
+
+  export type LoopSPLUMEParamsStructOutput = [
+    number,
+    string,
+    number,
+    BigNumber,
+  ] & {
+    targetHealthFactor: number;
+    onBehalfOf: string;
+    numLoops: number;
+    initialAmount: BigNumber;
+  };
+
   export type LoopSingleAssetParamsStruct = {
     token: string;
     targetHealthFactor: BigNumberish;
@@ -194,6 +259,7 @@ export interface LoopingInterface extends utils.Interface {
     'loopNELIXIR((uint16,address,uint16,uint256,uint256))': FunctionFragment;
     'loopNRWA((uint16,address,uint16,uint256,uint256))': FunctionFragment;
     'loopNTBILL((uint16,address,uint16,uint256,uint256))': FunctionFragment;
+    'loopSPLUME((uint16,address,uint16,uint256))': FunctionFragment;
     'loopSingleAsset((address,uint16,address,uint16,uint256))': FunctionFragment;
     'loopSingleSwap((address,uint16,address,bool,address,uint16,address,uint256,uint256))': FunctionFragment;
   };
@@ -204,6 +270,7 @@ export interface LoopingInterface extends utils.Interface {
       | 'loopNELIXIR'
       | 'loopNRWA'
       | 'loopNTBILL'
+      | 'loopSPLUME'
       | 'loopSingleAsset'
       | 'loopSingleSwap',
   ): FunctionFragment;
@@ -225,6 +292,10 @@ export interface LoopingInterface extends utils.Interface {
     values: [LoopDataTypes.LoopNTBILLParamsStruct],
   ): string;
   encodeFunctionData(
+    functionFragment: 'loopSPLUME',
+    values: [LoopDataTypes.LoopSPLUMEParamsStruct],
+  ): string;
+  encodeFunctionData(
     functionFragment: 'loopSingleAsset',
     values: [LoopDataTypes.LoopSingleAssetParamsStruct],
   ): string;
@@ -243,6 +314,7 @@ export interface LoopingInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: 'loopNRWA', data: BytesLike): Result;
   decodeFunctionResult(functionFragment: 'loopNTBILL', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'loopSPLUME', data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: 'loopSingleAsset',
     data: BytesLike,
@@ -302,6 +374,11 @@ export interface Looping extends BaseContract {
       overrides?: Overrides & { from?: string },
     ): Promise<ContractTransaction>;
 
+    loopSPLUME(
+      params: LoopDataTypes.LoopSPLUMEParamsStruct,
+      overrides?: Overrides & { from?: string },
+    ): Promise<ContractTransaction>;
+
     loopSingleAsset(
       params: LoopDataTypes.LoopSingleAssetParamsStruct,
       overrides?: Overrides & { from?: string },
@@ -333,6 +410,11 @@ export interface Looping extends BaseContract {
     overrides?: Overrides & { from?: string },
   ): Promise<ContractTransaction>;
 
+  loopSPLUME(
+    params: LoopDataTypes.LoopSPLUMEParamsStruct,
+    overrides?: Overrides & { from?: string },
+  ): Promise<ContractTransaction>;
+
   loopSingleAsset(
     params: LoopDataTypes.LoopSingleAssetParamsStruct,
     overrides?: Overrides & { from?: string },
@@ -361,6 +443,11 @@ export interface Looping extends BaseContract {
 
     loopNTBILL(
       params: LoopDataTypes.LoopNTBILLParamsStruct,
+      overrides?: CallOverrides,
+    ): Promise<LoopDataTypes.LoopDataStructOutput>;
+
+    loopSPLUME(
+      params: LoopDataTypes.LoopSPLUMEParamsStruct,
       overrides?: CallOverrides,
     ): Promise<LoopDataTypes.LoopDataStructOutput>;
 
@@ -398,6 +485,11 @@ export interface Looping extends BaseContract {
       overrides?: Overrides & { from?: string },
     ): Promise<BigNumber>;
 
+    loopSPLUME(
+      params: LoopDataTypes.LoopSPLUMEParamsStruct,
+      overrides?: Overrides & { from?: string },
+    ): Promise<BigNumber>;
+
     loopSingleAsset(
       params: LoopDataTypes.LoopSingleAssetParamsStruct,
       overrides?: Overrides & { from?: string },
@@ -427,6 +519,11 @@ export interface Looping extends BaseContract {
 
     loopNTBILL(
       params: LoopDataTypes.LoopNTBILLParamsStruct,
+      overrides?: Overrides & { from?: string },
+    ): Promise<PopulatedTransaction>;
+
+    loopSPLUME(
+      params: LoopDataTypes.LoopSPLUMEParamsStruct,
       overrides?: Overrides & { from?: string },
     ): Promise<PopulatedTransaction>;
 

@@ -28,7 +28,14 @@ export type LoopETHParamsType = {
 };
 
 export type SwapConfig = {
-  swapType: 'single' | 'multi' | 'nrwa' | 'nelixir' | 'ntbill' | null;
+  swapType:
+    | 'single'
+    | 'multi'
+    | 'nrwa'
+    | 'nelixir'
+    | 'ntbill'
+    | 'splume'
+    | null;
   singleSwapConfig?: SingleSwapConfig;
   multiSwapConfig?: MultiSwapConfig;
 };

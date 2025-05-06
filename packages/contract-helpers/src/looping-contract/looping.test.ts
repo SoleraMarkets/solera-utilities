@@ -12,6 +12,7 @@ describe('LoopingService', () => {
   const POOL_ADDRESS = '0x0000000000000000000000000000000000000002';
   const WRAPPED_GATEWAY_ADDRESS = '0x0000000000000000000000000000000000000003';
   const user = '0x0000000000000000000000000000000000000004';
+  const STAKING_ADDRESS = '0x0000000000000000000000000000000000000005';
 
   it('Expects to generate tx data for WPLUME -> PUSD', () => {
     const instance = new LoopingService(provider, LOOPING_CONTRACT_ADDRESS, {
@@ -157,6 +158,81 @@ describe('LoopingService', () => {
           minAmountSupplied,
         },
       ]);
+
+    expect(tx.data).toEqual(expectedTxData);
+  });
+
+  it('Expects to generate tx data for sPLUME->WPLUME looping', () => {
+    const instance = new LoopingService(provider, LOOPING_CONTRACT_ADDRESS, {
+      POOL: POOL_ADDRESS,
+      WRAPPED_TOKEN_GATEWAY: WRAPPED_GATEWAY_ADDRESS,
+      STAKING: STAKING_ADDRESS,
+    });
+    expect(instance instanceof LoopingService).toEqual(true);
+
+    const targetHealthFactor = '12000';
+    const numLoops = 2;
+    const minAmountSupplied = '0';
+    const amount = '100000';
+
+    const tx = instance.loopSwapTxBuilder.generateTxData({
+      user,
+      supplyReserve: STAKING_ADDRESS,
+      borrowReserve: WPLUME,
+      numLoops,
+      amount,
+      targetHealthFactor,
+      minAmountSupplied,
+    });
+
+    const expectedTxData =
+      Looping__factory.createInterface().encodeFunctionData('loopSPLUME', [
+        {
+          targetHealthFactor,
+          onBehalfOf: user,
+          numLoops,
+          initialAmount: amount,
+        },
+      ]);
+
+    expect(tx.data).toEqual(expectedTxData);
+  });
+
+  it('Expects to generate tx data for sPLUME->PLUME looping', () => {
+    const instance = new LoopingService(provider, LOOPING_CONTRACT_ADDRESS, {
+      POOL: POOL_ADDRESS,
+      WRAPPED_TOKEN_GATEWAY: WRAPPED_GATEWAY_ADDRESS,
+      STAKING: STAKING_ADDRESS,
+    });
+    expect(instance instanceof LoopingService).toEqual(true);
+
+    const targetHealthFactor = '12000';
+    const numLoops = 2;
+    const minAmountSupplied = '0';
+    const amount = '100000';
+
+    const tx = instance.loopSwapTxBuilder.generateTxData({
+      user,
+      supplyReserve: STAKING_ADDRESS,
+      borrowReserve: API_ETH_MOCK_ADDRESS,
+      numLoops,
+      amount,
+      targetHealthFactor,
+      minAmountSupplied,
+    });
+
+    const expectedTxData =
+      WrappedTokenGatewayV3__factory.createInterface().encodeFunctionData(
+        'loopExitPLUMESPLUME',
+        [
+          {
+            targetHealthFactor,
+            onBehalfOf: user,
+            numLoops,
+            initialAmount: amount,
+          },
+        ],
+      );
 
     expect(tx.data).toEqual(expectedTxData);
   });

@@ -132,6 +132,7 @@ export type LendingPoolMarketConfigV3 = {
   SWAP_COLLATERAL_ADAPTER?: tEthereumAddress;
   L2_ENCODER?: tEthereumAddress;
   L2_POOL?: tEthereumAddress;
+  STAKING?: tEthereumAddress;
 };
 
 const buildParaSwapLiquiditySwapParams = (

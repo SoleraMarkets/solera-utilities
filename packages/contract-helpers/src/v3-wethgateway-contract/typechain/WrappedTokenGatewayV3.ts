@@ -132,6 +132,25 @@ export declare namespace LoopDataTypes {
     path: string;
   };
 
+  export type LoopExitPLUMESPLUMEParamsStruct = {
+    targetHealthFactor: BigNumberish;
+    onBehalfOf: string;
+    numLoops: BigNumberish;
+    initialAmount: BigNumberish;
+  };
+
+  export type LoopExitPLUMESPLUMEParamsStructOutput = [
+    number,
+    string,
+    number,
+    BigNumber,
+  ] & {
+    targetHealthFactor: number;
+    onBehalfOf: string;
+    numLoops: number;
+    initialAmount: BigNumber;
+  };
+
   export type LoopExitPLUMESingleAssetParamsStruct = {
     targetHealthFactor: BigNumberish;
     onBehalfOf: string;
@@ -206,6 +225,7 @@ export interface WrappedTokenGatewayV3Interface extends utils.Interface {
     'loopEntryPLUMESingleAsset((uint16,address,uint16))': FunctionFragment;
     'loopEntryPLUMESingleSwap((uint16,address,bool,address,uint16,address,uint256))': FunctionFragment;
     'loopExitPLUMEMultiSwap((address,uint16,address,uint16,uint256,uint256,bytes))': FunctionFragment;
+    'loopExitPLUMESPLUME((uint16,address,uint16,uint256))': FunctionFragment;
     'loopExitPLUMESingleAsset((uint16,address,uint16,uint256))': FunctionFragment;
     'loopExitPLUMESingleSwap((address,uint16,address,bool,uint16,address,uint256,uint256))': FunctionFragment;
     'loopPLUMESingleAsset((uint16,address,uint16))': FunctionFragment;
@@ -228,6 +248,7 @@ export interface WrappedTokenGatewayV3Interface extends utils.Interface {
       | 'loopEntryPLUMESingleAsset'
       | 'loopEntryPLUMESingleSwap'
       | 'loopExitPLUMEMultiSwap'
+      | 'loopExitPLUMESPLUME'
       | 'loopExitPLUMESingleAsset'
       | 'loopExitPLUMESingleSwap'
       | 'loopPLUMESingleAsset'
@@ -274,6 +295,10 @@ export interface WrappedTokenGatewayV3Interface extends utils.Interface {
   encodeFunctionData(
     functionFragment: 'loopExitPLUMEMultiSwap',
     values: [LoopDataTypes.LoopExitPLUMEMultiSwapParamsStruct],
+  ): string;
+  encodeFunctionData(
+    functionFragment: 'loopExitPLUMESPLUME',
+    values: [LoopDataTypes.LoopExitPLUMESPLUMEParamsStruct],
   ): string;
   encodeFunctionData(
     functionFragment: 'loopExitPLUMESingleAsset',
@@ -351,6 +376,10 @@ export interface WrappedTokenGatewayV3Interface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: 'loopExitPLUMEMultiSwap',
+    data: BytesLike,
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: 'loopExitPLUMESPLUME',
     data: BytesLike,
   ): Result;
   decodeFunctionResult(
@@ -479,6 +508,11 @@ export interface WrappedTokenGatewayV3 extends BaseContract {
       overrides?: Overrides & { from?: string },
     ): Promise<ContractTransaction>;
 
+    loopExitPLUMESPLUME(
+      params: LoopDataTypes.LoopExitPLUMESPLUMEParamsStruct,
+      overrides?: Overrides & { from?: string },
+    ): Promise<ContractTransaction>;
+
     loopExitPLUMESingleAsset(
       params: LoopDataTypes.LoopExitPLUMESingleAssetParamsStruct,
       overrides?: Overrides & { from?: string },
@@ -580,6 +614,11 @@ export interface WrappedTokenGatewayV3 extends BaseContract {
     overrides?: Overrides & { from?: string },
   ): Promise<ContractTransaction>;
 
+  loopExitPLUMESPLUME(
+    params: LoopDataTypes.LoopExitPLUMESPLUMEParamsStruct,
+    overrides?: Overrides & { from?: string },
+  ): Promise<ContractTransaction>;
+
   loopExitPLUMESingleAsset(
     params: LoopDataTypes.LoopExitPLUMESingleAssetParamsStruct,
     overrides?: Overrides & { from?: string },
@@ -678,6 +717,11 @@ export interface WrappedTokenGatewayV3 extends BaseContract {
 
     loopExitPLUMEMultiSwap(
       params: LoopDataTypes.LoopExitPLUMEMultiSwapParamsStruct,
+      overrides?: CallOverrides,
+    ): Promise<LoopDataTypes.LoopDataStructOutput>;
+
+    loopExitPLUMESPLUME(
+      params: LoopDataTypes.LoopExitPLUMESPLUMEParamsStruct,
       overrides?: CallOverrides,
     ): Promise<LoopDataTypes.LoopDataStructOutput>;
 
@@ -792,6 +836,11 @@ export interface WrappedTokenGatewayV3 extends BaseContract {
       overrides?: Overrides & { from?: string },
     ): Promise<BigNumber>;
 
+    loopExitPLUMESPLUME(
+      params: LoopDataTypes.LoopExitPLUMESPLUMEParamsStruct,
+      overrides?: Overrides & { from?: string },
+    ): Promise<BigNumber>;
+
     loopExitPLUMESingleAsset(
       params: LoopDataTypes.LoopExitPLUMESingleAssetParamsStruct,
       overrides?: Overrides & { from?: string },
@@ -891,6 +940,11 @@ export interface WrappedTokenGatewayV3 extends BaseContract {
 
     loopExitPLUMEMultiSwap(
       params: LoopDataTypes.LoopExitPLUMEMultiSwapParamsStruct,
+      overrides?: Overrides & { from?: string },
+    ): Promise<PopulatedTransaction>;
+
+    loopExitPLUMESPLUME(
+      params: LoopDataTypes.LoopExitPLUMESPLUMEParamsStruct,
       overrides?: Overrides & { from?: string },
     ): Promise<PopulatedTransaction>;
 

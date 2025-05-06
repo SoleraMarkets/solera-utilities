@@ -94,6 +94,7 @@ export class LoopingService extends BaseService<Looping> {
   readonly wrappedTokenGatewayAddress: tEthereumAddress;
   readonly poolAddress: tEthereumAddress;
   readonly loopAddress: tEthereumAddress;
+  readonly stakingAddress: tEthereumAddress;
 
   loopSwapTxBuilder: LoopSwapTxBuilder;
   loopSingleAssetTxBuilder: LoopSingleAssetTxBuilder;
@@ -106,7 +107,7 @@ export class LoopingService extends BaseService<Looping> {
   ) {
     super(provider, Looping__factory);
 
-    const { POOL, WRAPPED_TOKEN_GATEWAY } = lendingPoolConfig ?? {};
+    const { POOL, WRAPPED_TOKEN_GATEWAY, STAKING } = lendingPoolConfig ?? {};
 
     this.erc20Service = new ERC20Service(provider);
 
@@ -122,6 +123,7 @@ export class LoopingService extends BaseService<Looping> {
     this.poolAddress = POOL ?? '';
     this.wrappedTokenGatewayAddress = WRAPPED_TOKEN_GATEWAY ?? '';
     this.loopAddress = contractAddress ?? '';
+    this.stakingAddress = STAKING ?? '';
 
     this.loopSwapTxBuilder = {
       generateTxData: ({
@@ -133,19 +135,8 @@ export class LoopingService extends BaseService<Looping> {
         targetHealthFactor,
         minAmountSupplied,
       }: LoopSwapParamsType): PopulatedTransaction => {
-        // Normalize token addresses for WETH
-        const supplyWrapped =
-          supplyReserve.toLowerCase() === API_ETH_MOCK_ADDRESS.toLowerCase()
-            ? WPLUME
-            : supplyReserve;
-        const borrowWrapped =
-          borrowReserve.toLowerCase() === API_ETH_MOCK_ADDRESS.toLowerCase()
-            ? WPLUME
-            : borrowReserve;
-
-        // Determine swap type and pool
         const { swapType, singleSwapConfig, multiSwapConfig } =
-          this.determineSwapConfig(supplyWrapped, borrowWrapped);
+          this.determineSwapConfig(supplyReserve, borrowReserve);
 
         if (swapType === 'single') {
           return this.createSingleSwapTransaction({
@@ -201,6 +192,18 @@ export class LoopingService extends BaseService<Looping> {
             amount,
             targetHealthFactor,
             minAmountSupplied,
+          });
+        }
+
+        if (swapType === 'splume') {
+          return this.createSPLUMETransaction({
+            user,
+            unwrap:
+              borrowReserve.toLowerCase() ===
+              API_ETH_MOCK_ADDRESS.toLowerCase(),
+            numLoops,
+            amount,
+            targetHealthFactor,
           });
         }
 
@@ -424,7 +427,16 @@ export class LoopingService extends BaseService<Looping> {
     };
   }
 
-  private determineSwapConfig(supply: string, borrow: string): SwapConfig {
+  private determineSwapConfig(_supply: string, _borrow: string): SwapConfig {
+    const supply =
+      _supply.toLowerCase() === API_ETH_MOCK_ADDRESS.toLowerCase()
+        ? WPLUME
+        : _supply;
+    const borrow =
+      _borrow.toLowerCase() === API_ETH_MOCK_ADDRESS.toLowerCase()
+        ? WPLUME
+        : _borrow;
+
     if (
       supply.toLowerCase() === NRWA.toLowerCase() &&
       borrow.toLowerCase() === PUSD.toLowerCase()
@@ -449,6 +461,15 @@ export class LoopingService extends BaseService<Looping> {
     ) {
       return {
         swapType: 'ntbill',
+      };
+    }
+
+    if (
+      supply.toLowerCase() === this.stakingAddress.toLowerCase() &&
+      borrow.toLowerCase() === WPLUME.toLowerCase()
+    ) {
+      return {
+        swapType: 'splume',
       };
     }
 
@@ -795,6 +816,65 @@ export class LoopingService extends BaseService<Looping> {
         ],
       );
       to = this.wrappedTokenGatewayAddress;
+    }
+
+    // Build and return the transaction
+    const actionTx: PopulatedTransaction = {
+      data: txData,
+      to,
+      from: user,
+      gasLimit,
+    };
+
+    if (value) {
+      actionTx.value = value;
+    }
+
+    return actionTx;
+  }
+
+  private createSPLUMETransaction(config: {
+    user: string;
+    unwrap: boolean;
+    numLoops: number;
+    amount: string;
+    targetHealthFactor: string;
+  }): PopulatedTransaction {
+    const { user, unwrap, numLoops, amount, targetHealthFactor } = config;
+
+    const gasLimit = BigNumber.from(
+      gasLimitRecommendations[ProtocolAction.default].limit,
+    );
+
+    let txData: string;
+    let to: string;
+    let value: BigNumber | undefined;
+
+    if (unwrap) {
+      // Case 1: sPLUME->PLUME
+      txData = this.wethGatewayInstance.encodeFunctionData(
+        'loopExitPLUMESPLUME',
+        [
+          {
+            targetHealthFactor,
+            onBehalfOf: user,
+            numLoops,
+            initialAmount: amount,
+          },
+        ],
+      );
+      to = this.wrappedTokenGatewayAddress;
+    } else {
+      // Case 2: sPLUME->WPLUME
+      txData = this.loopingInstance.encodeFunctionData('loopSPLUME', [
+        {
+          targetHealthFactor,
+          onBehalfOf: user,
+          numLoops,
+          initialAmount: amount,
+        },
+      ]);
+      to = this.loopingContractAddress;
     }
 
     // Build and return the transaction
