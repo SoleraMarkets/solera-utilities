@@ -171,7 +171,6 @@ export class LoopingService extends BaseService<Looping> {
             numLoops,
             amount,
             targetHealthFactor,
-            minAmountSupplied,
           });
         }
 
@@ -191,7 +190,6 @@ export class LoopingService extends BaseService<Looping> {
             numLoops,
             amount,
             targetHealthFactor,
-            minAmountSupplied,
           });
         }
 
@@ -508,10 +506,8 @@ export class LoopingService extends BaseService<Looping> {
     numLoops: number;
     amount: string;
     targetHealthFactor: string;
-    minAmountSupplied: string;
   }): PopulatedTransaction {
-    const { user, numLoops, amount, targetHealthFactor, minAmountSupplied } =
-      config;
+    const { user, numLoops, amount, targetHealthFactor } = config;
 
     const gasLimit = BigNumber.from(
       gasLimitRecommendations[ProtocolAction.default].limit,
@@ -524,7 +520,6 @@ export class LoopingService extends BaseService<Looping> {
         targetHealthFactor,
         onBehalfOf: user,
         numLoops,
-        minAmountSupplied,
         initialAmount: amount,
       },
     ]);
@@ -592,10 +587,8 @@ export class LoopingService extends BaseService<Looping> {
     numLoops: number;
     amount: string;
     targetHealthFactor: string;
-    minAmountSupplied: string;
   }): PopulatedTransaction {
-    const { user, numLoops, amount, targetHealthFactor, minAmountSupplied } =
-      config;
+    const { user, numLoops, amount, targetHealthFactor } = config;
 
     const gasLimit = BigNumber.from(
       gasLimitRecommendations[ProtocolAction.default].limit,
@@ -608,7 +601,6 @@ export class LoopingService extends BaseService<Looping> {
         targetHealthFactor,
         onBehalfOf: user,
         numLoops,
-        minAmountSupplied,
         initialAmount: amount,
       },
     ]);

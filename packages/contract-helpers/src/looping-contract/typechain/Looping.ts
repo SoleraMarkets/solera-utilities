@@ -137,7 +137,6 @@ export declare namespace LoopDataTypes {
     targetHealthFactor: BigNumberish;
     onBehalfOf: string;
     numLoops: BigNumberish;
-    minAmountSupplied: BigNumberish;
     initialAmount: BigNumberish;
   };
 
@@ -146,12 +145,10 @@ export declare namespace LoopDataTypes {
     string,
     number,
     BigNumber,
-    BigNumber,
   ] & {
     targetHealthFactor: number;
     onBehalfOf: string;
     numLoops: number;
-    minAmountSupplied: BigNumber;
     initialAmount: BigNumber;
   };
 
@@ -159,7 +156,6 @@ export declare namespace LoopDataTypes {
     targetHealthFactor: BigNumberish;
     onBehalfOf: string;
     numLoops: BigNumberish;
-    minAmountSupplied: BigNumberish;
     initialAmount: BigNumberish;
   };
 
@@ -168,12 +164,10 @@ export declare namespace LoopDataTypes {
     string,
     number,
     BigNumber,
-    BigNumber,
   ] & {
     targetHealthFactor: number;
     onBehalfOf: string;
     numLoops: number;
-    minAmountSupplied: BigNumber;
     initialAmount: BigNumber;
   };
 
@@ -257,8 +251,8 @@ export interface LoopingInterface extends utils.Interface {
   functions: {
     'loopMultiSwap((address,uint16,address,uint16,address,uint256,uint256,bytes))': FunctionFragment;
     'loopNELIXIR((uint16,address,uint16,uint256,uint256))': FunctionFragment;
-    'loopNRWA((uint16,address,uint16,uint256,uint256))': FunctionFragment;
-    'loopNTBILL((uint16,address,uint16,uint256,uint256))': FunctionFragment;
+    'loopNRWA((uint16,address,uint16,uint256))': FunctionFragment;
+    'loopNTBILL((uint16,address,uint16,uint256))': FunctionFragment;
     'loopSPLUME((uint16,address,uint16,uint256))': FunctionFragment;
     'loopSingleAsset((address,uint16,address,uint16,uint256))': FunctionFragment;
     'loopSingleSwap((address,uint16,address,bool,address,uint16,address,uint256,uint256))': FunctionFragment;

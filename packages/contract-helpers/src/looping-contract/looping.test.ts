@@ -83,7 +83,6 @@ describe('LoopingService', () => {
           onBehalfOf: user,
           numLoops,
           initialAmount: amount,
-          minAmountSupplied,
         },
       ]);
 
@@ -155,7 +154,6 @@ describe('LoopingService', () => {
           onBehalfOf: user,
           numLoops,
           initialAmount: amount,
-          minAmountSupplied,
         },
       ]);
 
