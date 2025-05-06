@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.17.1](https://github.com/aave/aave-utilities/compare/@kevoh1516/solera-contract-helpers@3.17.0...@kevoh1516/solera-contract-helpers@3.17.1) (2025-05-06)
+
+
+### Bug Fixes
+
+* remove unused slippage param ([c15ea0a](https://github.com/aave/aave-utilities/commit/c15ea0a38b09cf3d4b30b8a518b2a2ae8f34bc75))
+
+
+
+
+
 # [3.17.0](https://github.com/aave/aave-utilities/compare/@kevoh1516/solera-contract-helpers@3.16.0...@kevoh1516/solera-contract-helpers@3.17.0) (2025-05-06)
 
 
