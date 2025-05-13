@@ -31,9 +31,10 @@ export type SwapConfig = {
   swapType:
     | 'single'
     | 'multi'
-    | 'nrwa'
-    | 'nelixir'
-    | 'ntbill'
+    | 'nalpha'
+    | 'ninsto'
+    | 'nbasis'
+    | 'netf'
     | 'splume'
     | null;
   singleSwapConfig?: SingleSwapConfig;

@@ -28,12 +28,14 @@ export declare namespace LoopDataTypes {
     swapRouter: string;
     oracleDecimals: BigNumberish;
     pUSD: string;
-    nRWA: string;
-    nELIXIR: string;
-    nTBILL: string;
-    nRWATeller: string;
-    nELIXIRTeller: string;
-    nTBILLTeller: string;
+    nALPHA: string;
+    nINSTO: string;
+    nBASIS: string;
+    nETF: string;
+    nALPHATeller: string;
+    nINSTOTeller: string;
+    nBASISTeller: string;
+    nETFTeller: string;
     sPLUME: string;
     WPLUME: string;
   };
@@ -52,18 +54,22 @@ export declare namespace LoopDataTypes {
     string,
     string,
     string,
+    string,
+    string,
   ] & {
     aavePool: string;
     priceOracle: string;
     swapRouter: string;
     oracleDecimals: BigNumber;
     pUSD: string;
-    nRWA: string;
-    nELIXIR: string;
-    nTBILL: string;
-    nRWATeller: string;
-    nELIXIRTeller: string;
-    nTBILLTeller: string;
+    nALPHA: string;
+    nINSTO: string;
+    nBASIS: string;
+    nETF: string;
+    nALPHATeller: string;
+    nINSTOTeller: string;
+    nBASISTeller: string;
+    nETFTeller: string;
     sPLUME: string;
     WPLUME: string;
   };
@@ -111,7 +117,7 @@ export declare namespace LoopDataTypes {
     leftoverBorrowAmount: BigNumber;
   };
 
-  export type LoopNELIXIRParamsStruct = {
+  export type LoopNALPHAParamsStruct = {
     targetHealthFactor: BigNumberish;
     onBehalfOf: string;
     numLoops: BigNumberish;
@@ -119,7 +125,7 @@ export declare namespace LoopDataTypes {
     initialAmount: BigNumberish;
   };
 
-  export type LoopNELIXIRParamsStructOutput = [
+  export type LoopNALPHAParamsStructOutput = [
     number,
     string,
     number,
@@ -133,41 +139,69 @@ export declare namespace LoopDataTypes {
     initialAmount: BigNumber;
   };
 
-  export type LoopNRWAParamsStruct = {
+  export type LoopNBASISParamsStruct = {
     targetHealthFactor: BigNumberish;
     onBehalfOf: string;
     numLoops: BigNumberish;
+    minAmountSupplied: BigNumberish;
     initialAmount: BigNumberish;
   };
 
-  export type LoopNRWAParamsStructOutput = [
+  export type LoopNBASISParamsStructOutput = [
     number,
     string,
     number,
+    BigNumber,
     BigNumber,
   ] & {
     targetHealthFactor: number;
     onBehalfOf: string;
     numLoops: number;
+    minAmountSupplied: BigNumber;
     initialAmount: BigNumber;
   };
 
-  export type LoopNTBILLParamsStruct = {
+  export type LoopNETFParamsStruct = {
     targetHealthFactor: BigNumberish;
     onBehalfOf: string;
     numLoops: BigNumberish;
+    minAmountSupplied: BigNumberish;
     initialAmount: BigNumberish;
   };
 
-  export type LoopNTBILLParamsStructOutput = [
+  export type LoopNETFParamsStructOutput = [
     number,
     string,
     number,
+    BigNumber,
     BigNumber,
   ] & {
     targetHealthFactor: number;
     onBehalfOf: string;
     numLoops: number;
+    minAmountSupplied: BigNumber;
+    initialAmount: BigNumber;
+  };
+
+  export type LoopNINSTOParamsStruct = {
+    targetHealthFactor: BigNumberish;
+    onBehalfOf: string;
+    numLoops: BigNumberish;
+    minAmountSupplied: BigNumberish;
+    initialAmount: BigNumberish;
+  };
+
+  export type LoopNINSTOParamsStructOutput = [
+    number,
+    string,
+    number,
+    BigNumber,
+    BigNumber,
+  ] & {
+    targetHealthFactor: number;
+    onBehalfOf: string;
+    numLoops: number;
+    minAmountSupplied: BigNumber;
     initialAmount: BigNumber;
   };
 
@@ -250,9 +284,10 @@ export declare namespace LoopDataTypes {
 export interface LoopingInterface extends utils.Interface {
   functions: {
     'loopMultiSwap((address,uint16,address,uint16,address,uint256,uint256,bytes))': FunctionFragment;
-    'loopNELIXIR((uint16,address,uint16,uint256,uint256))': FunctionFragment;
-    'loopNRWA((uint16,address,uint16,uint256))': FunctionFragment;
-    'loopNTBILL((uint16,address,uint16,uint256))': FunctionFragment;
+    'loopNALPHA((uint16,address,uint16,uint256,uint256))': FunctionFragment;
+    'loopNBASIS((uint16,address,uint16,uint256,uint256))': FunctionFragment;
+    'loopNETF((uint16,address,uint16,uint256,uint256))': FunctionFragment;
+    'loopNINSTO((uint16,address,uint16,uint256,uint256))': FunctionFragment;
     'loopSPLUME((uint16,address,uint16,uint256))': FunctionFragment;
     'loopSingleAsset((address,uint16,address,uint16,uint256))': FunctionFragment;
     'loopSingleSwap((address,uint16,address,bool,address,uint16,address,uint256,uint256))': FunctionFragment;
@@ -261,9 +296,10 @@ export interface LoopingInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | 'loopMultiSwap'
-      | 'loopNELIXIR'
-      | 'loopNRWA'
-      | 'loopNTBILL'
+      | 'loopNALPHA'
+      | 'loopNBASIS'
+      | 'loopNETF'
+      | 'loopNINSTO'
       | 'loopSPLUME'
       | 'loopSingleAsset'
       | 'loopSingleSwap',
@@ -274,16 +310,20 @@ export interface LoopingInterface extends utils.Interface {
     values: [LoopDataTypes.LoopMultiSwapParamsStruct],
   ): string;
   encodeFunctionData(
-    functionFragment: 'loopNELIXIR',
-    values: [LoopDataTypes.LoopNELIXIRParamsStruct],
+    functionFragment: 'loopNALPHA',
+    values: [LoopDataTypes.LoopNALPHAParamsStruct],
   ): string;
   encodeFunctionData(
-    functionFragment: 'loopNRWA',
-    values: [LoopDataTypes.LoopNRWAParamsStruct],
+    functionFragment: 'loopNBASIS',
+    values: [LoopDataTypes.LoopNBASISParamsStruct],
   ): string;
   encodeFunctionData(
-    functionFragment: 'loopNTBILL',
-    values: [LoopDataTypes.LoopNTBILLParamsStruct],
+    functionFragment: 'loopNETF',
+    values: [LoopDataTypes.LoopNETFParamsStruct],
+  ): string;
+  encodeFunctionData(
+    functionFragment: 'loopNINSTO',
+    values: [LoopDataTypes.LoopNINSTOParamsStruct],
   ): string;
   encodeFunctionData(
     functionFragment: 'loopSPLUME',
@@ -302,12 +342,10 @@ export interface LoopingInterface extends utils.Interface {
     functionFragment: 'loopMultiSwap',
     data: BytesLike,
   ): Result;
-  decodeFunctionResult(
-    functionFragment: 'loopNELIXIR',
-    data: BytesLike,
-  ): Result;
-  decodeFunctionResult(functionFragment: 'loopNRWA', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'loopNTBILL', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'loopNALPHA', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'loopNBASIS', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'loopNETF', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'loopNINSTO', data: BytesLike): Result;
   decodeFunctionResult(functionFragment: 'loopSPLUME', data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: 'loopSingleAsset',
@@ -353,18 +391,23 @@ export interface Looping extends BaseContract {
       overrides?: Overrides & { from?: string },
     ): Promise<ContractTransaction>;
 
-    loopNELIXIR(
-      params: LoopDataTypes.LoopNELIXIRParamsStruct,
+    loopNALPHA(
+      params: LoopDataTypes.LoopNALPHAParamsStruct,
       overrides?: Overrides & { from?: string },
     ): Promise<ContractTransaction>;
 
-    loopNRWA(
-      params: LoopDataTypes.LoopNRWAParamsStruct,
+    loopNBASIS(
+      params: LoopDataTypes.LoopNBASISParamsStruct,
       overrides?: Overrides & { from?: string },
     ): Promise<ContractTransaction>;
 
-    loopNTBILL(
-      params: LoopDataTypes.LoopNTBILLParamsStruct,
+    loopNETF(
+      params: LoopDataTypes.LoopNETFParamsStruct,
+      overrides?: Overrides & { from?: string },
+    ): Promise<ContractTransaction>;
+
+    loopNINSTO(
+      params: LoopDataTypes.LoopNINSTOParamsStruct,
       overrides?: Overrides & { from?: string },
     ): Promise<ContractTransaction>;
 
@@ -389,18 +432,23 @@ export interface Looping extends BaseContract {
     overrides?: Overrides & { from?: string },
   ): Promise<ContractTransaction>;
 
-  loopNELIXIR(
-    params: LoopDataTypes.LoopNELIXIRParamsStruct,
+  loopNALPHA(
+    params: LoopDataTypes.LoopNALPHAParamsStruct,
     overrides?: Overrides & { from?: string },
   ): Promise<ContractTransaction>;
 
-  loopNRWA(
-    params: LoopDataTypes.LoopNRWAParamsStruct,
+  loopNBASIS(
+    params: LoopDataTypes.LoopNBASISParamsStruct,
     overrides?: Overrides & { from?: string },
   ): Promise<ContractTransaction>;
 
-  loopNTBILL(
-    params: LoopDataTypes.LoopNTBILLParamsStruct,
+  loopNETF(
+    params: LoopDataTypes.LoopNETFParamsStruct,
+    overrides?: Overrides & { from?: string },
+  ): Promise<ContractTransaction>;
+
+  loopNINSTO(
+    params: LoopDataTypes.LoopNINSTOParamsStruct,
     overrides?: Overrides & { from?: string },
   ): Promise<ContractTransaction>;
 
@@ -425,18 +473,23 @@ export interface Looping extends BaseContract {
       overrides?: CallOverrides,
     ): Promise<LoopDataTypes.LoopDataStructOutput>;
 
-    loopNELIXIR(
-      params: LoopDataTypes.LoopNELIXIRParamsStruct,
+    loopNALPHA(
+      params: LoopDataTypes.LoopNALPHAParamsStruct,
       overrides?: CallOverrides,
     ): Promise<LoopDataTypes.LoopDataStructOutput>;
 
-    loopNRWA(
-      params: LoopDataTypes.LoopNRWAParamsStruct,
+    loopNBASIS(
+      params: LoopDataTypes.LoopNBASISParamsStruct,
       overrides?: CallOverrides,
     ): Promise<LoopDataTypes.LoopDataStructOutput>;
 
-    loopNTBILL(
-      params: LoopDataTypes.LoopNTBILLParamsStruct,
+    loopNETF(
+      params: LoopDataTypes.LoopNETFParamsStruct,
+      overrides?: CallOverrides,
+    ): Promise<LoopDataTypes.LoopDataStructOutput>;
+
+    loopNINSTO(
+      params: LoopDataTypes.LoopNINSTOParamsStruct,
       overrides?: CallOverrides,
     ): Promise<LoopDataTypes.LoopDataStructOutput>;
 
@@ -464,18 +517,23 @@ export interface Looping extends BaseContract {
       overrides?: Overrides & { from?: string },
     ): Promise<BigNumber>;
 
-    loopNELIXIR(
-      params: LoopDataTypes.LoopNELIXIRParamsStruct,
+    loopNALPHA(
+      params: LoopDataTypes.LoopNALPHAParamsStruct,
       overrides?: Overrides & { from?: string },
     ): Promise<BigNumber>;
 
-    loopNRWA(
-      params: LoopDataTypes.LoopNRWAParamsStruct,
+    loopNBASIS(
+      params: LoopDataTypes.LoopNBASISParamsStruct,
       overrides?: Overrides & { from?: string },
     ): Promise<BigNumber>;
 
-    loopNTBILL(
-      params: LoopDataTypes.LoopNTBILLParamsStruct,
+    loopNETF(
+      params: LoopDataTypes.LoopNETFParamsStruct,
+      overrides?: Overrides & { from?: string },
+    ): Promise<BigNumber>;
+
+    loopNINSTO(
+      params: LoopDataTypes.LoopNINSTOParamsStruct,
       overrides?: Overrides & { from?: string },
     ): Promise<BigNumber>;
 
@@ -501,18 +559,23 @@ export interface Looping extends BaseContract {
       overrides?: Overrides & { from?: string },
     ): Promise<PopulatedTransaction>;
 
-    loopNELIXIR(
-      params: LoopDataTypes.LoopNELIXIRParamsStruct,
+    loopNALPHA(
+      params: LoopDataTypes.LoopNALPHAParamsStruct,
       overrides?: Overrides & { from?: string },
     ): Promise<PopulatedTransaction>;
 
-    loopNRWA(
-      params: LoopDataTypes.LoopNRWAParamsStruct,
+    loopNBASIS(
+      params: LoopDataTypes.LoopNBASISParamsStruct,
       overrides?: Overrides & { from?: string },
     ): Promise<PopulatedTransaction>;
 
-    loopNTBILL(
-      params: LoopDataTypes.LoopNTBILLParamsStruct,
+    loopNETF(
+      params: LoopDataTypes.LoopNETFParamsStruct,
+      overrides?: Overrides & { from?: string },
+    ): Promise<PopulatedTransaction>;
+
+    loopNINSTO(
+      params: LoopDataTypes.LoopNINSTOParamsStruct,
       overrides?: Overrides & { from?: string },
     ): Promise<PopulatedTransaction>;
 

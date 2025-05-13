@@ -30,8 +30,7 @@ import {
   LoopSwapParamsType,
   SwapConfig,
 } from './loopingTypes';
-import { findMultiHopPool, findSingleHopPool } from './pools';
-import { NELIXIR, NRWA, NTBILL, PUSD, WPLUME } from './tokens';
+import { NBASIS, NETF, NINSTO, NALPHA, PUSD, WPLUME } from './tokens';
 import { Looping, LoopingInterface } from './typechain/Looping';
 import { Looping__factory } from './typechain/factories';
 
@@ -135,47 +134,23 @@ export class LoopingService extends BaseService<Looping> {
         targetHealthFactor,
         minAmountSupplied,
       }: LoopSwapParamsType): PopulatedTransaction => {
-        const { swapType, singleSwapConfig, multiSwapConfig } =
-          this.determineSwapConfig(supplyReserve, borrowReserve);
+        const { swapType } = this.determineSwapConfig(
+          supplyReserve,
+          borrowReserve,
+        );
 
-        if (swapType === 'single') {
-          return this.createSingleSwapTransaction({
+        if (swapType === 'nalpha') {
+          return this.createNALPHATransaction({
             user,
-            supplyReserve,
-            borrowReserve,
             numLoops,
             amount,
-            targetHealthFactor,
             minAmountSupplied,
-            pool: singleSwapConfig?.pool ?? '',
-            isSupplyTokenA: singleSwapConfig?.isSupplyTokenA ?? true,
-          });
-        }
-
-        if (swapType === 'multi') {
-          return this.createMultiSwapTransaction({
-            user,
-            supplyReserve,
-            borrowReserve,
-            numLoops,
-            amount,
-            targetHealthFactor,
-            minAmountSupplied,
-            path: multiSwapConfig?.path ?? '',
-          });
-        }
-
-        if (swapType === 'nrwa') {
-          return this.createNRWATransaction({
-            user,
-            numLoops,
-            amount,
             targetHealthFactor,
           });
         }
 
-        if (swapType === 'nelixir') {
-          return this.createNELIXIRTransaction({
+        if (swapType === 'ninsto') {
+          return this.createNINSTOTransaction({
             user,
             numLoops,
             amount,
@@ -184,11 +159,22 @@ export class LoopingService extends BaseService<Looping> {
           });
         }
 
-        if (swapType === 'ntbill') {
-          return this.createNTBILLTransaction({
+        if (swapType === 'nbasis') {
+          return this.createNBASISTransaction({
             user,
             numLoops,
             amount,
+            minAmountSupplied,
+            targetHealthFactor,
+          });
+        }
+
+        if (swapType === 'netf') {
+          return this.createNETFTransaction({
+            user,
+            numLoops,
+            amount,
+            minAmountSupplied,
             targetHealthFactor,
           });
         }
@@ -436,29 +422,38 @@ export class LoopingService extends BaseService<Looping> {
         : _borrow;
 
     if (
-      supply.toLowerCase() === NRWA.toLowerCase() &&
+      supply.toLowerCase() === NALPHA.toLowerCase() &&
       borrow.toLowerCase() === PUSD.toLowerCase()
     ) {
       return {
-        swapType: 'nrwa',
+        swapType: 'nalpha',
       };
     }
 
     if (
-      supply.toLowerCase() === NELIXIR.toLowerCase() &&
+      supply.toLowerCase() === NINSTO.toLowerCase() &&
       borrow.toLowerCase() === PUSD.toLowerCase()
     ) {
       return {
-        swapType: 'nelixir',
+        swapType: 'ninsto',
       };
     }
 
     if (
-      supply.toLowerCase() === NTBILL.toLowerCase() &&
+      supply.toLowerCase() === NBASIS.toLowerCase() &&
       borrow.toLowerCase() === PUSD.toLowerCase()
     ) {
       return {
-        swapType: 'ntbill',
+        swapType: 'nbasis',
+      };
+    }
+
+    if (
+      supply.toLowerCase() === NETF.toLowerCase() &&
+      borrow.toLowerCase() === PUSD.toLowerCase()
+    ) {
+      return {
+        swapType: 'netf',
       };
     }
 
@@ -471,81 +466,17 @@ export class LoopingService extends BaseService<Looping> {
       };
     }
 
-    // Check for single swap
-    const singlePool = findSingleHopPool(supply, borrow);
-    const isReversed = singlePool?.tokenA.toLowerCase() === borrow;
-
-    const multiPool = findMultiHopPool(borrow, supply);
-
-    if (singlePool) {
-      return {
-        swapType: 'single',
-        singleSwapConfig: {
-          pool: singlePool.poolAddress,
-          isSupplyTokenA: Boolean(!isReversed),
-        },
-      };
-    }
-
-    if (multiPool) {
-      return {
-        swapType: 'multi',
-        multiSwapConfig: {
-          path: multiPool.path ?? '',
-        },
-      };
-    }
-
     return {
       swapType: null,
     };
   }
 
-  private createNRWATransaction(config: {
+  private createNALPHATransaction(config: {
     user: string;
     numLoops: number;
     amount: string;
-    targetHealthFactor: string;
-  }): PopulatedTransaction {
-    const { user, numLoops, amount, targetHealthFactor } = config;
-
-    const gasLimit = BigNumber.from(
-      gasLimitRecommendations[ProtocolAction.default].limit,
-    );
-
-    let value: BigNumber | undefined;
-
-    const txData = this.loopingInstance.encodeFunctionData('loopNRWA', [
-      {
-        targetHealthFactor,
-        onBehalfOf: user,
-        numLoops,
-        initialAmount: amount,
-      },
-    ]);
-    const to = this.loopingContractAddress;
-
-    // Build and return the transaction
-    const actionTx: PopulatedTransaction = {
-      data: txData,
-      to,
-      from: user,
-      gasLimit,
-    };
-
-    if (value) {
-      actionTx.value = value;
-    }
-
-    return actionTx;
-  }
-
-  private createNELIXIRTransaction(config: {
-    user: string;
-    numLoops: number;
-    amount: string;
-    targetHealthFactor: string;
     minAmountSupplied: string;
+    targetHealthFactor: string;
   }): PopulatedTransaction {
     const { user, numLoops, amount, targetHealthFactor, minAmountSupplied } =
       config;
@@ -556,7 +487,7 @@ export class LoopingService extends BaseService<Looping> {
 
     let value: BigNumber | undefined;
 
-    const txData = this.loopingInstance.encodeFunctionData('loopNELIXIR', [
+    const txData = this.loopingInstance.encodeFunctionData('loopNALPHA', [
       {
         targetHealthFactor,
         onBehalfOf: user,
@@ -582,13 +513,15 @@ export class LoopingService extends BaseService<Looping> {
     return actionTx;
   }
 
-  private createNTBILLTransaction(config: {
+  private createNINSTOTransaction(config: {
     user: string;
     numLoops: number;
     amount: string;
     targetHealthFactor: string;
+    minAmountSupplied: string;
   }): PopulatedTransaction {
-    const { user, numLoops, amount, targetHealthFactor } = config;
+    const { user, numLoops, amount, targetHealthFactor, minAmountSupplied } =
+      config;
 
     const gasLimit = BigNumber.from(
       gasLimitRecommendations[ProtocolAction.default].limit,
@@ -596,11 +529,12 @@ export class LoopingService extends BaseService<Looping> {
 
     let value: BigNumber | undefined;
 
-    const txData = this.loopingInstance.encodeFunctionData('loopNTBILL', [
+    const txData = this.loopingInstance.encodeFunctionData('loopNINSTO', [
       {
         targetHealthFactor,
         onBehalfOf: user,
         numLoops,
+        minAmountSupplied,
         initialAmount: amount,
       },
     ]);
@@ -621,96 +555,32 @@ export class LoopingService extends BaseService<Looping> {
     return actionTx;
   }
 
-  private createSingleSwapTransaction(config: {
+  private createNBASISTransaction(config: {
     user: string;
-    supplyReserve: string;
-    borrowReserve: string;
-    pool: string;
-    isSupplyTokenA: boolean;
     numLoops: number;
     amount: string;
     targetHealthFactor: string;
     minAmountSupplied: string;
   }): PopulatedTransaction {
-    const {
-      user,
-      supplyReserve,
-      borrowReserve,
-      pool,
-      isSupplyTokenA,
-      numLoops,
-      amount,
-      targetHealthFactor,
-      minAmountSupplied,
-    } = config;
-
-    const isSupplyingEth =
-      supplyReserve.toLowerCase() === API_ETH_MOCK_ADDRESS.toLowerCase();
-    const isBorrowingEth =
-      borrowReserve.toLowerCase() === API_ETH_MOCK_ADDRESS.toLowerCase();
+    const { user, numLoops, amount, targetHealthFactor, minAmountSupplied } =
+      config;
 
     const gasLimit = BigNumber.from(
       gasLimitRecommendations[ProtocolAction.default].limit,
     );
 
-    let txData: string;
-    let to: string;
     let value: BigNumber | undefined;
 
-    // Determine the transaction method and parameters based on scenario
-    if (!isSupplyingEth && !isBorrowingEth) {
-      // Case 1: Regular single-swap
-      txData = this.loopingInstance.encodeFunctionData('loopSingleSwap', [
-        {
-          supplyToken: supplyReserve,
-          targetHealthFactor,
-          onBehalfOf: user,
-          isSupplyTokenA,
-          borrowToken: borrowReserve,
-          numLoops,
-          maverickPool: pool,
-          minAmountSupplied,
-          initialAmount: amount,
-        },
-      ]);
-      to = this.loopingContractAddress;
-    } else if (isSupplyingEth && !isBorrowingEth) {
-      // Case 2: ETH->Token single-swap
-      txData = this.wethGatewayInstance.encodeFunctionData(
-        'loopEntryPLUMESingleSwap',
-        [
-          {
-            targetHealthFactor,
-            onBehalfOf: user,
-            isSupplyTokenA,
-            borrowToken: borrowReserve,
-            numLoops,
-            maverickPool: pool,
-            minAmountSupplied,
-          },
-        ],
-      );
-      to = this.wrappedTokenGatewayAddress;
-      value = BigNumber.from(amount);
-    } else {
-      // Case 3: Token->ETH single-swap
-      txData = this.wethGatewayInstance.encodeFunctionData(
-        'loopExitPLUMESingleSwap',
-        [
-          {
-            supplyToken: supplyReserve,
-            targetHealthFactor,
-            onBehalfOf: user,
-            isSupplyTokenA,
-            numLoops,
-            maverickPool: pool,
-            minAmountSupplied,
-            initialAmount: amount,
-          },
-        ],
-      );
-      to = this.wrappedTokenGatewayAddress;
-    }
+    const txData = this.loopingInstance.encodeFunctionData('loopNBASIS', [
+      {
+        targetHealthFactor,
+        onBehalfOf: user,
+        numLoops,
+        initialAmount: amount,
+        minAmountSupplied,
+      },
+    ]);
+    const to = this.loopingContractAddress;
 
     // Build and return the transaction
     const actionTx: PopulatedTransaction = {
@@ -727,88 +597,32 @@ export class LoopingService extends BaseService<Looping> {
     return actionTx;
   }
 
-  private createMultiSwapTransaction(config: {
+  private createNETFTransaction(config: {
     user: string;
-    supplyReserve: string;
-    borrowReserve: string;
-    path: string;
     numLoops: number;
     amount: string;
     targetHealthFactor: string;
     minAmountSupplied: string;
   }): PopulatedTransaction {
-    const {
-      user,
-      supplyReserve,
-      borrowReserve,
-      path,
-      numLoops,
-      amount,
-      targetHealthFactor,
-      minAmountSupplied,
-    } = config;
-
-    const isSupplyingEth = supplyReserve === API_ETH_MOCK_ADDRESS.toLowerCase();
-    const isBorrowingEth = borrowReserve === API_ETH_MOCK_ADDRESS.toLowerCase();
+    const { user, numLoops, amount, targetHealthFactor, minAmountSupplied } =
+      config;
 
     const gasLimit = BigNumber.from(
       gasLimitRecommendations[ProtocolAction.default].limit,
     );
 
-    let txData: string;
-    let to: string;
     let value: BigNumber | undefined;
 
-    if (!isSupplyingEth && !isBorrowingEth) {
-      // Case 1: Regular multi-swap
-      txData = this.loopingInstance.encodeFunctionData('loopMultiSwap', [
-        {
-          supplyToken: supplyReserve,
-          targetHealthFactor,
-          onBehalfOf: user,
-          borrowToken: borrowReserve,
-          numLoops,
-          minAmountSupplied,
-          initialAmount: amount,
-          path,
-        },
-      ]);
-      to = this.loopingContractAddress;
-    } else if (isSupplyingEth && !isBorrowingEth) {
-      // Case 2: ETH->Token multi-swap
-      txData = this.wethGatewayInstance.encodeFunctionData(
-        'loopEntryPLUMEMultiSwap',
-        [
-          {
-            targetHealthFactor,
-            onBehalfOf: user,
-            borrowToken: borrowReserve,
-            numLoops,
-            minAmountSupplied,
-            path,
-          },
-        ],
-      );
-      to = this.wrappedTokenGatewayAddress;
-      value = BigNumber.from(amount);
-    } else {
-      // Case 3: Token->ETH multi-swap
-      txData = this.wethGatewayInstance.encodeFunctionData(
-        'loopExitPLUMEMultiSwap',
-        [
-          {
-            supplyToken: supplyReserve,
-            targetHealthFactor,
-            onBehalfOf: user,
-            numLoops,
-            minAmountSupplied,
-            path,
-            initialAmount: amount,
-          },
-        ],
-      );
-      to = this.wrappedTokenGatewayAddress;
-    }
+    const txData = this.loopingInstance.encodeFunctionData('loopNETF', [
+      {
+        targetHealthFactor,
+        onBehalfOf: user,
+        numLoops,
+        initialAmount: amount,
+        minAmountSupplied,
+      },
+    ]);
+    const to = this.loopingContractAddress;
 
     // Build and return the transaction
     const actionTx: PopulatedTransaction = {
@@ -824,6 +638,210 @@ export class LoopingService extends BaseService<Looping> {
 
     return actionTx;
   }
+
+  // private createSingleSwapTransaction(config: {
+  //   user: string;
+  //   supplyReserve: string;
+  //   borrowReserve: string;
+  //   pool: string;
+  //   isSupplyTokenA: boolean;
+  //   numLoops: number;
+  //   amount: string;
+  //   targetHealthFactor: string;
+  //   minAmountSupplied: string;
+  // }): PopulatedTransaction {
+  //   const {
+  //     user,
+  //     supplyReserve,
+  //     borrowReserve,
+  //     pool,
+  //     isSupplyTokenA,
+  //     numLoops,
+  //     amount,
+  //     targetHealthFactor,
+  //     minAmountSupplied,
+  //   } = config;
+
+  //   const isSupplyingEth =
+  //     supplyReserve.toLowerCase() === API_ETH_MOCK_ADDRESS.toLowerCase();
+  //   const isBorrowingEth =
+  //     borrowReserve.toLowerCase() === API_ETH_MOCK_ADDRESS.toLowerCase();
+
+  //   const gasLimit = BigNumber.from(
+  //     gasLimitRecommendations[ProtocolAction.default].limit,
+  //   );
+
+  //   let txData: string;
+  //   let to: string;
+  //   let value: BigNumber | undefined;
+
+  //   // Determine the transaction method and parameters based on scenario
+  //   if (!isSupplyingEth && !isBorrowingEth) {
+  //     // Case 1: Regular single-swap
+  //     txData = this.loopingInstance.encodeFunctionData('loopSingleSwap', [
+  //       {
+  //         supplyToken: supplyReserve,
+  //         targetHealthFactor,
+  //         onBehalfOf: user,
+  //         isSupplyTokenA,
+  //         borrowToken: borrowReserve,
+  //         numLoops,
+  //         maverickPool: pool,
+  //         minAmountSupplied,
+  //         initialAmount: amount,
+  //       },
+  //     ]);
+  //     to = this.loopingContractAddress;
+  //   } else if (isSupplyingEth && !isBorrowingEth) {
+  //     // Case 2: ETH->Token single-swap
+  //     txData = this.wethGatewayInstance.encodeFunctionData(
+  //       'loopEntryPLUMESingleSwap',
+  //       [
+  //         {
+  //           targetHealthFactor,
+  //           onBehalfOf: user,
+  //           isSupplyTokenA,
+  //           borrowToken: borrowReserve,
+  //           numLoops,
+  //           maverickPool: pool,
+  //           minAmountSupplied,
+  //         },
+  //       ],
+  //     );
+  //     to = this.wrappedTokenGatewayAddress;
+  //     value = BigNumber.from(amount);
+  //   } else {
+  //     // Case 3: Token->ETH single-swap
+  //     txData = this.wethGatewayInstance.encodeFunctionData(
+  //       'loopExitPLUMESingleSwap',
+  //       [
+  //         {
+  //           supplyToken: supplyReserve,
+  //           targetHealthFactor,
+  //           onBehalfOf: user,
+  //           isSupplyTokenA,
+  //           numLoops,
+  //           maverickPool: pool,
+  //           minAmountSupplied,
+  //           initialAmount: amount,
+  //         },
+  //       ],
+  //     );
+  //     to = this.wrappedTokenGatewayAddress;
+  //   }
+
+  //   // Build and return the transaction
+  //   const actionTx: PopulatedTransaction = {
+  //     data: txData,
+  //     to,
+  //     from: user,
+  //     gasLimit,
+  //   };
+
+  //   if (value) {
+  //     actionTx.value = value;
+  //   }
+
+  //   return actionTx;
+  // }
+
+  // private createMultiSwapTransaction(config: {
+  //   user: string;
+  //   supplyReserve: string;
+  //   borrowReserve: string;
+  //   path: string;
+  //   numLoops: number;
+  //   amount: string;
+  //   targetHealthFactor: string;
+  //   minAmountSupplied: string;
+  // }): PopulatedTransaction {
+  //   const {
+  //     user,
+  //     supplyReserve,
+  //     borrowReserve,
+  //     path,
+  //     numLoops,
+  //     amount,
+  //     targetHealthFactor,
+  //     minAmountSupplied,
+  //   } = config;
+
+  //   const isSupplyingEth = supplyReserve === API_ETH_MOCK_ADDRESS.toLowerCase();
+  //   const isBorrowingEth = borrowReserve === API_ETH_MOCK_ADDRESS.toLowerCase();
+
+  //   const gasLimit = BigNumber.from(
+  //     gasLimitRecommendations[ProtocolAction.default].limit,
+  //   );
+
+  //   let txData: string;
+  //   let to: string;
+  //   let value: BigNumber | undefined;
+
+  //   if (!isSupplyingEth && !isBorrowingEth) {
+  //     // Case 1: Regular multi-swap
+  //     txData = this.loopingInstance.encodeFunctionData('loopMultiSwap', [
+  //       {
+  //         supplyToken: supplyReserve,
+  //         targetHealthFactor,
+  //         onBehalfOf: user,
+  //         borrowToken: borrowReserve,
+  //         numLoops,
+  //         minAmountSupplied,
+  //         initialAmount: amount,
+  //         path,
+  //       },
+  //     ]);
+  //     to = this.loopingContractAddress;
+  //   } else if (isSupplyingEth && !isBorrowingEth) {
+  //     // Case 2: ETH->Token multi-swap
+  //     txData = this.wethGatewayInstance.encodeFunctionData(
+  //       'loopEntryPLUMEMultiSwap',
+  //       [
+  //         {
+  //           targetHealthFactor,
+  //           onBehalfOf: user,
+  //           borrowToken: borrowReserve,
+  //           numLoops,
+  //           minAmountSupplied,
+  //           path,
+  //         },
+  //       ],
+  //     );
+  //     to = this.wrappedTokenGatewayAddress;
+  //     value = BigNumber.from(amount);
+  //   } else {
+  //     // Case 3: Token->ETH multi-swap
+  //     txData = this.wethGatewayInstance.encodeFunctionData(
+  //       'loopExitPLUMEMultiSwap',
+  //       [
+  //         {
+  //           supplyToken: supplyReserve,
+  //           targetHealthFactor,
+  //           onBehalfOf: user,
+  //           numLoops,
+  //           minAmountSupplied,
+  //           path,
+  //           initialAmount: amount,
+  //         },
+  //       ],
+  //     );
+  //     to = this.wrappedTokenGatewayAddress;
+  //   }
+
+  //   // Build and return the transaction
+  //   const actionTx: PopulatedTransaction = {
+  //     data: txData,
+  //     to,
+  //     from: user,
+  //     gasLimit,
+  //   };
+
+  //   if (value) {
+  //     actionTx.value = value;
+  //   }
+
+  //   return actionTx;
+  // }
 
   private createSPLUMETransaction(config: {
     user: string;
