@@ -75,6 +75,8 @@ export type LoopETHTxBuilder = {
   }) => Promise<DelegationApprovedType>;
 };
 
+export * from './types';
+
 const WPLUME_V_TOKEN = '0x578899D60B4ea83537d7d5DD399C2f17Bd15F489';
 
 export class LoopingService extends BaseService<Looping> {
