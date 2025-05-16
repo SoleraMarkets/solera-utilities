@@ -33,6 +33,7 @@ import {
 import { NBASIS, NETF, NINSTO, NALPHA, PUSD, WPLUME } from './tokens';
 import { Looping, LoopingInterface } from './typechain/Looping';
 import { Looping__factory } from './typechain/factories';
+import { LoopData, LoopSimulationParams } from './types';
 
 export type LoopSwapTxBuilder = {
   generateTxData: (args: LoopSwapParamsType) => PopulatedTransaction;
@@ -99,6 +100,8 @@ export class LoopingService extends BaseService<Looping> {
   loopSingleAssetTxBuilder: LoopSingleAssetTxBuilder;
   loopETHTxBuilder: LoopETHTxBuilder;
 
+  private readonly _contract: Looping;
+
   constructor(
     provider: providers.Provider,
     contractAddress: string | undefined,
@@ -123,6 +126,8 @@ export class LoopingService extends BaseService<Looping> {
     this.wrappedTokenGatewayAddress = WRAPPED_TOKEN_GATEWAY ?? '';
     this.loopAddress = contractAddress ?? '';
     this.stakingAddress = STAKING ?? '';
+
+    this._contract = Looping__factory.connect(this.loopAddress, provider);
 
     this.loopSwapTxBuilder = {
       generateTxData: ({
@@ -409,6 +414,10 @@ export class LoopingService extends BaseService<Looping> {
         };
       },
     };
+  }
+
+  public async simulateLoop(params: LoopSimulationParams): Promise<LoopData> {
+    return this._contract.simulateLoop(params);
   }
 
   private determineSwapConfig(_supply: string, _borrow: string): SwapConfig {

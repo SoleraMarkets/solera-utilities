@@ -279,6 +279,28 @@ export declare namespace LoopDataTypes {
     minAmountSupplied: BigNumber;
     initialAmount: BigNumber;
   };
+
+  export type LoopSimulationParamsStruct = {
+    supply: string;
+    borrow: string;
+    targetHealthFactor: BigNumberish;
+    numLoops: BigNumberish;
+    initialAmount: BigNumberish;
+  };
+
+  export type LoopSimulationParamsStructOutput = [
+    string,
+    string,
+    number,
+    number,
+    BigNumber,
+  ] & {
+    supply: string;
+    borrow: string;
+    targetHealthFactor: number;
+    numLoops: number;
+    initialAmount: BigNumber;
+  };
 }
 
 export interface LoopingInterface extends utils.Interface {
@@ -291,6 +313,7 @@ export interface LoopingInterface extends utils.Interface {
     'loopSPLUME((uint16,address,uint16,uint256))': FunctionFragment;
     'loopSingleAsset((address,uint16,address,uint16,uint256))': FunctionFragment;
     'loopSingleSwap((address,uint16,address,bool,address,uint16,address,uint256,uint256))': FunctionFragment;
+    'simulateLoop((address,address,uint16,uint16,uint256))': FunctionFragment;
   };
 
   getFunction(
@@ -302,7 +325,8 @@ export interface LoopingInterface extends utils.Interface {
       | 'loopNINSTO'
       | 'loopSPLUME'
       | 'loopSingleAsset'
-      | 'loopSingleSwap',
+      | 'loopSingleSwap'
+      | 'simulateLoop',
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -337,6 +361,10 @@ export interface LoopingInterface extends utils.Interface {
     functionFragment: 'loopSingleSwap',
     values: [LoopDataTypes.LoopSingleSwapParamsStruct],
   ): string;
+  encodeFunctionData(
+    functionFragment: 'simulateLoop',
+    values: [LoopDataTypes.LoopSimulationParamsStruct],
+  ): string;
 
   decodeFunctionResult(
     functionFragment: 'loopMultiSwap',
@@ -353,6 +381,10 @@ export interface LoopingInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: 'loopSingleSwap',
+    data: BytesLike,
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: 'simulateLoop',
     data: BytesLike,
   ): Result;
 
@@ -425,6 +457,15 @@ export interface Looping extends BaseContract {
       params: LoopDataTypes.LoopSingleSwapParamsStruct,
       overrides?: Overrides & { from?: string },
     ): Promise<ContractTransaction>;
+
+    simulateLoop(
+      params: LoopDataTypes.LoopSimulationParamsStruct,
+      overrides?: CallOverrides,
+    ): Promise<
+      [LoopDataTypes.LoopDataStructOutput] & {
+        data: LoopDataTypes.LoopDataStructOutput;
+      }
+    >;
   };
 
   loopMultiSwap(
@@ -467,6 +508,11 @@ export interface Looping extends BaseContract {
     overrides?: Overrides & { from?: string },
   ): Promise<ContractTransaction>;
 
+  simulateLoop(
+    params: LoopDataTypes.LoopSimulationParamsStruct,
+    overrides?: CallOverrides,
+  ): Promise<LoopDataTypes.LoopDataStructOutput>;
+
   callStatic: {
     loopMultiSwap(
       params: LoopDataTypes.LoopMultiSwapParamsStruct,
@@ -505,6 +551,11 @@ export interface Looping extends BaseContract {
 
     loopSingleSwap(
       params: LoopDataTypes.LoopSingleSwapParamsStruct,
+      overrides?: CallOverrides,
+    ): Promise<LoopDataTypes.LoopDataStructOutput>;
+
+    simulateLoop(
+      params: LoopDataTypes.LoopSimulationParamsStruct,
       overrides?: CallOverrides,
     ): Promise<LoopDataTypes.LoopDataStructOutput>;
   };
@@ -551,6 +602,11 @@ export interface Looping extends BaseContract {
       params: LoopDataTypes.LoopSingleSwapParamsStruct,
       overrides?: Overrides & { from?: string },
     ): Promise<BigNumber>;
+
+    simulateLoop(
+      params: LoopDataTypes.LoopSimulationParamsStruct,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -592,6 +648,11 @@ export interface Looping extends BaseContract {
     loopSingleSwap(
       params: LoopDataTypes.LoopSingleSwapParamsStruct,
       overrides?: Overrides & { from?: string },
+    ): Promise<PopulatedTransaction>;
+
+    simulateLoop(
+      params: LoopDataTypes.LoopSimulationParamsStruct,
+      overrides?: CallOverrides,
     ): Promise<PopulatedTransaction>;
   };
 }
