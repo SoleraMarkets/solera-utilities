@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.19.0](https://github.com/aave/aave-utilities/compare/@kevoh1516/solera-contract-helpers@3.18.0...@kevoh1516/solera-contract-helpers@3.19.0) (2025-05-16)
+
+
+### Features
+
+* loop simulation ([6204fd2](https://github.com/aave/aave-utilities/commit/6204fd2103c5de60879d1007de4993754d9946e6))
+
+
+
+
+
 # [3.18.0](https://github.com/aave/aave-utilities/compare/@kevoh1516/solera-contract-helpers@3.17.1...@kevoh1516/solera-contract-helpers@3.18.0) (2025-05-13)
 
 
